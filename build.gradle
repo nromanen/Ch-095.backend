@@ -1,0 +1,53 @@
+apply plugin: 'java'
+apply plugin: 'war'
+
+group 'softserve.academy'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+configurations.all {
+    exclude group: "commons-logging", module: "commons-logging"
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
+
+    /* SPRING */
+    compile group: 'org.springframework', name: 'spring-core', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-beans', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-web', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-orm', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.2.1.RELEASE'
+
+    /* LOGGER */
+    compile 'org.slf4j:jcl-over-slf4j:1.7.12'
+    compile 'ch.qos.logback:logback-classic:1.1.3'
+
+    /* SERVLET */
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+
+    /* DATABASE */
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.8'
+
+
+    /* HIBERNATE */
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.4.9.Final'
+    compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.1.0.Final'
+
+    /* JSON */
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
+
+    /* For lazy people (clevercattv or cat's LOL) */
+    compileOnly 'org.projectlombok:lombok:1.18.10'
+    annotationProcessor 'org.projectlombok:lombok:1.18.10'
+
+}
