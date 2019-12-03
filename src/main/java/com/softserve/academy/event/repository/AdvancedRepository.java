@@ -1,7 +1,5 @@
 package com.softserve.academy.event.repository;
 
-import com.softserve.academy.event.util.Sort;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;

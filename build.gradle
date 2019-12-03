@@ -33,6 +33,7 @@ dependencies {
 
     /* SERVLET */
     providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    compile 'javax.servlet:jstl:1.2'
 
     /* DATABASE */
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.8'
