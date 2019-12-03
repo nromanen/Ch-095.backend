@@ -4,7 +4,6 @@
     <title>File Upload Example</title>
 </head>
 <body>
-FileName :
-lt;b> ${fileName} </b> - Uploaded Successfully.
+FileName : ${fileName} </b> - Uploaded Successfully.
 </body>
 </html>

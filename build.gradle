@@ -10,6 +10,15 @@ repositories {
     mavenCentral()
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.2.1.RELEASE")
+    }
+}
+
 configurations.all {
     exclude group: "commons-logging", module: "commons-logging"
 }
@@ -26,6 +35,9 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-orm', version: '5.2.1.RELEASE'
     compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.2.1.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.2.1.RELEASE'
+
 
     /* LOGGER */
     compile 'org.slf4j:jcl-over-slf4j:1.7.12'
