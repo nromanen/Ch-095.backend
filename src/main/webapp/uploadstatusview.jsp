@@ -4,6 +4,6 @@
     <title>File Upload Example</title>
 </head>
 <body>
-FileName : ${fileName} </b> - Uploaded Successfully.
+ ${msg} </b>
 </body>
 </html>
