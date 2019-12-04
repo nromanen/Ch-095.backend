@@ -4,6 +4,9 @@
     <title>$Title$</title>
   </head>
   <body>
-  asdasdasd
+  <form action="${pageContext.request.contextPath}/fileupload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" >
+    <input type="submit" value="Upload Files"/>
+  </form>
   </body>
 </html>
