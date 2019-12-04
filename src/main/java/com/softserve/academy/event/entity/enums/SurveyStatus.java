@@ -1,6 +1,8 @@
 package com.softserve.academy.event.entity.enums;
 
-public enum EventStatus {
+public enum SurveyStatus {
     NON_ACTIVE,
-    ACTIVE;
+    ACTIVE,
+    DONE,
+    TEMPLATE;
 }
