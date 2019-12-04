@@ -2,14 +2,11 @@ package com.softserve.academy.event.config;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -57,10 +54,6 @@ public class HibernateConfig {
         sessionFactoryBean.setDataSource(getDataSource());
         Properties properties = new Properties();
 
-        properties.put(DRIVER, Objects.requireNonNull(environment.getProperty(DRIVER)));
-        properties.put(URL, Objects.requireNonNull(environment.getProperty(URL)));
-        properties.put(USER, Objects.requireNonNull(environment.getProperty(USER)));
-        properties.put(PASS, Objects.requireNonNull(environment.getProperty(PASS)));
         properties.put(SHOW_SQL, Objects.requireNonNull(environment.getProperty(SHOW_SQL)));
         properties.put(HBM2DDL_AUTO, Objects.requireNonNull(environment.getProperty(HBM2DDL_AUTO)));
         properties.put(DIALECT, Objects.requireNonNull(environment.getProperty(DIALECT)));
