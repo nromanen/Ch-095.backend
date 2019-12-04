@@ -1,6 +1,7 @@
 package com.softserve.academy.event.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -13,6 +14,7 @@ import static org.hibernate.cfg.AvailableSettings.*;
 
 @Configuration
 @PropertySource("classpath:database.properties")
+@ComponentScan(basePackages = "com.softserve.academy.event.repository")
 public class HibernateConfig {
 
     private static final String ENTITY_PACKAGE = "hibernate.entity.package";

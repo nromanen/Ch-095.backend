@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.softserve.academy.event.config", "com.softserve.academy.event.controller", "com.softserve.academy.event.repository"})
+@ComponentScan(basePackages = {"com.softserve.academy.event.config", "com.softserve.academy.event.controller"})
 public class WebConfig {
 
 }
