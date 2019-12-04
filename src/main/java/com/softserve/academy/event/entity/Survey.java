@@ -1,6 +1,6 @@
 package com.softserve.academy.event.entity;
 
-import com.softserve.academy.event.entity.enums.EventStatus;
+import com.softserve.academy.event.entity.enums.SurveyStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,14 +34,11 @@ public class Survey implements Serializable {
     private Date creationDate = new Date();
 
     @Enumerated
-    private EventStatus status = EventStatus.NON_ACTIVE;
+    private SurveyStatus status = SurveyStatus.NON_ACTIVE;
 
     @ManyToOne
     @JoinColumn(nullable = false)
     private User user;
-
-    @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL)
-    private Set<SurveyTemplate> templates = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
