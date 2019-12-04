@@ -4,6 +4,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -20,6 +21,7 @@ import static org.hibernate.cfg.AvailableSettings.*;
 
 @Configuration
 @PropertySource("classpath:database.properties")
+@ComponentScan(basePackages = "com.softserve.academy.event.repository")
 @EnableTransactionManagement
 @Slf4j
 public class HibernateConfig {
