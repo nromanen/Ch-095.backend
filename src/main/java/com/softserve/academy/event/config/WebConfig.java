@@ -13,13 +13,9 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @EnableWebMvc
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
-@ComponentScan(basePackages = "com.softserve.academy.event")
+@ComponentScan(basePackages = {"com.softserve.academy.event.config", "com.softserve.academy.event.controller", "com.softserve.academy.event.service"})
 public class WebConfig {
-    @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        return new CommonsMultipartResolver();
-    }
-
+  
     @Bean(name = "multipartResolver")
     public CommonsMultipartResolver getResolver() {
         CommonsMultipartResolver resolver = new CommonsMultipartResolver();
@@ -36,4 +32,5 @@ public class WebConfig {
 
         return resolver;
     }
+
 }

@@ -50,6 +50,7 @@ dependencies {
     /* DATABASE */
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.8'
 
+    compile group: 'com.mchange', name: 'c3p0', version: '0.9.5.4'
 
     /* HIBERNATE */
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.4.9.Final'
