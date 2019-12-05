@@ -1,10 +1,7 @@
 package com.softserve.academy.event.entity;
 
 import com.softserve.academy.event.entity.enums.Roles;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -58,82 +55,6 @@ public class User implements UserDetails {
         this.active = active;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
-    public static String getEmailPattern() {
-        return EMAIL_PATTERN;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Roles getRole() {
-        return role;
-    }
-
-    public void setRole(Roles role) {
-        this.role = role;
-    }
-
-    public Set<UserSocial> getUserSocials() {
-        return userSocials;
-    }
-
-    public void setUserSocials(Set<UserSocial> userSocials) {
-        this.userSocials = userSocials;
-    }
-
-    public Set<Contact> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(Set<Contact> contacts) {
-        this.contacts = contacts;
-    }
-
-    public Set<Survey> getSurveys() {
-        return surveys;
-    }
-
-    public void setSurveys(Set<Survey> surveys) {
-        this.surveys = surveys;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(role);
@@ -168,6 +89,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return active;
     }
-
 
 }
