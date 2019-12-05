@@ -1,6 +1,6 @@
 package com.softserve.academy.event.entity;
 
-import com.softserve.academy.event.entity.enums.EventQuestionType;
+import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,7 +31,7 @@ public class SurveyQuestion implements Serializable {
     private String question;
 
     @Enumerated
-    private EventQuestionType type;
+    private SurveyQuestionType type;
 
     @Column(nullable = false)
     private String answers;
