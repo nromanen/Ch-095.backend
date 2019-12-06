@@ -5,7 +5,6 @@ import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.repository.impl.SurveyRepositoryImpl;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -14,28 +13,42 @@ import java.util.stream.Collectors;
 @Service
 public class SurveyService {
 
-    private final SurveyRepositoryImpl surveyRepository;
+    private final SurveyRepositoryImpl repository;
 
-    public SurveyService(SurveyRepositoryImpl surveyRepository) {
-        this.surveyRepository = surveyRepository;
+    public SurveyService(SurveyRepositoryImpl repository) {
+        this.repository = repository;
     }
 
     @Transactional
     public Page<SimpleSurveyDTO> findAll(Pageable pageable) {
-        Page<Survey> page = surveyRepository.findAll(pageable);
-        return new Page<SimpleSurveyDTO>(
+        Page<Survey> page = repository.findAll(pageable);
+        return new Page<>(
                 page.getItems().stream()
                         .map(SimpleSurveyDTO::toSimpleUser)
                         .collect(Collectors.toList()),
                 pageable); // convert to dto
     }
 
+    @Transactional(dontRollbackOn = Exception.class)
+    public SimpleSurveyDTO duplicateSurvey(Long id){
+        Survey survey = repository.findFirstById(id).orElseThrow(RuntimeException::new);
+        survey.setId(null);
+        repository.detach(survey);
+        repository.save(survey);
+        return SimpleSurveyDTO.toSimpleUser(survey);
+    }
+
     @Transactional
-    public HttpStatus updateTitle(Long id, String title){
-        Survey survey = surveyRepository.findFirstById(id).orElseThrow(RuntimeException::new);
+    public String setTitleForSurvey(Long id, String title){
+        Survey survey = repository.findFirstById(id).orElseThrow(RuntimeException::new);
         survey.setTitle(title);
-        surveyRepository.update(survey);
-        return HttpStatus.OK;
+        repository.update(survey);
+        return survey.getTitle();
+    }
+
+    @Transactional
+    public void deleteById(Long id){
+        repository.deleteById(id);
     }
 
 }
