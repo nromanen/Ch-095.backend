@@ -14,10 +14,10 @@ import java.util.Optional;
 @SuppressWarnings("unchecked")
 public abstract class BasicRepositoryImpl<T extends Serializable, I extends Serializable> implements BasicRepository<T, I> {
 
-    private final Class<T> clazz;
+    protected final Class<T> clazz;
 
     @Autowired
-    private SessionFactory sessionFactory;
+    protected SessionFactory sessionFactory;
 
     public BasicRepositoryImpl() {
         clazz = (Class<T>) ((ParameterizedType) getClass()
