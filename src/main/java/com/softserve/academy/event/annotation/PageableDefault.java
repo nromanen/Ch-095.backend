@@ -23,7 +23,7 @@ public @interface PageableDefault {
 
     int page() default 0;
 
-    String[] sort();
+    String[] sort() default {};
 
     Sort.Direction direction() default Sort.Direction.ASC;
 
