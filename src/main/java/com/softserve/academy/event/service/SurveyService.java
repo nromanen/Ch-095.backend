@@ -47,7 +47,7 @@ public class SurveyService {
     }
 
     @Transactional
-    public void deleteById(Survey survey){
+    public void delete(Survey survey){
         repository.delete(survey);
     }
 
