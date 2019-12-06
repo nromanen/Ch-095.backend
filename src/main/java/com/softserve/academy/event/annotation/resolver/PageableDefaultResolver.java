@@ -19,16 +19,16 @@ public class PageableDefaultResolver implements CustomHandlerMethodArgumentResol
     public Pageable resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                     NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         PageableDefault annotation = parameter.getParameterAnnotation(PageableDefault.class);
-        Integer size = Integer.valueOf(webRequest.getParameter(annotation.params()[0]));
-        Integer page = Integer.valueOf(webRequest.getParameter(annotation.params()[1]));
+        String size = webRequest.getParameter(annotation.params()[0]);
+        String page = webRequest.getParameter(annotation.params()[1]);
         String[] sort = webRequest.getParameterValues(annotation.params()[2]);
-        Sort.Direction direction = Sort.Direction.valueOf(webRequest.getParameter(annotation.params()[3]));
+        String direction = webRequest.getParameter(annotation.params()[3]);
         return new Pageable(
-                page == null ? annotation.page() : page,
+                size == null ? annotation.size() : Integer.parseInt(size),
+                page == null ? annotation.page() : Integer.parseInt(page),
                 0,
-                size == null ? annotation.size() : size,
-                Sort.from(direction == null ? annotation.direction() : direction,
-                        sort == null ? annotation.sort() : sort)
+                Sort.from(direction == null ? annotation.direction() : Sort.Direction.valueOf(direction),
+                        sort == null || sort.length == 0 ? annotation.sort() : sort)
         );
     }
 
