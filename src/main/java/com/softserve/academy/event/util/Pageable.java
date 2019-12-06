@@ -14,5 +14,6 @@ public class Pageable {
     int currentPage;
     int lastPage;
     int size;
+    Sort sort;
 
 }
