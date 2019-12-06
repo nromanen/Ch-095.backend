@@ -14,7 +14,7 @@ public interface BasicRepository<T extends Serializable, I extends Serializable>
 
     T update(T entity);
 
-    void deleteById(I id);
+    void delete(T entity);
 
     void detach(T entity);
 
