@@ -6,9 +6,10 @@ import com.softserve.academy.event.util.Sort;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-public class PageableDefaultResolver implements CustomHandlerMethodArgumentResolver<Pageable> {
+public class PageableDefaultResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
