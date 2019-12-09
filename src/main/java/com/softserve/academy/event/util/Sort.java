@@ -1,24 +1,18 @@
 package com.softserve.academy.event.util;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Sort {
 
     private Direction direction;
-    private String field;
-    private Sort nextSort;
+    private String[] fields;
 
-    public Sort(Direction direction, String field) {
-        this.direction = direction;
-        this.field = field;
-    }
-
-    public Sort setNextSort(Sort sort){
-        this.nextSort = sort;
-        return this;
+    public static Sort from(Direction direction, String[] fields){
+        return new Sort(direction,fields);
     }
 
     public enum Direction{

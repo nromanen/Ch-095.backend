@@ -11,8 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Pageable {
 
+    int size;
     int currentPage;
     int lastPage;
-    int size;
+    Sort sort;
 
 }
