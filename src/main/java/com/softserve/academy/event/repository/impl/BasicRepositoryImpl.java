@@ -1,6 +1,7 @@
 package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.repository.BasicRepository;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ import java.util.Optional;
 public abstract class BasicRepositoryImpl<T extends Serializable, I extends Serializable> implements BasicRepository<T, I> {
 
     private final Class<T> clazz;
-//    private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     @Autowired
     public BasicRepositoryImpl() {
@@ -54,13 +55,13 @@ public abstract class BasicRepositoryImpl<T extends Serializable, I extends Seri
         }
     }*/
 
-    @Override
-    public Optional<T> findFirstById(I id) {
-//        try (Session session = sessionFactory.openSession()) {
-//            return Optional.of(session.get(clazz,id));
-//        }
-        return null;
-    }
+//    @Override
+//    public Optional<T> findById(I id) {
+////        try (Session session = sessionFactory.openSession()) {
+////            return Optional.of(session.get(clazz,id));
+////        }
+//        return null;
+//    }
 
     @Override
     public T save(T entity) {

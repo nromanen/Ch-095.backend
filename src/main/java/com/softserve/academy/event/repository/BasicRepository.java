@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface BasicRepository<T extends Serializable, I extends Serializable> {
 
-    Optional<T> findFirstById(I id);
+    //Optional<T> findFirstById(I id);
 
     List<T> findAll();
 

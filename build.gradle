@@ -26,6 +26,17 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-orm', version: '5.2.1.RELEASE'
     compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.2.0.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.2.0.RELEASE'
+
+    /*Mail*/
+    // https://mvnrepository.com/artifact/com.sun.mail/javax.mail
+   // compile group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
+   // https://mvnrepository.com/artifact/org.springframework/spring-support
+     compile group: 'org.springframework', name: 'spring-support', version: '2.0.8'
+    // https://mvnrepository.com/artifact/org.springframework/spring-context-support
+    compile group: 'org.springframework', name: 'spring-context-support', version: '5.2.1.RELEASE'
+
 
     /* LOGGER */
     compile 'org.slf4j:jcl-over-slf4j:1.7.12'
