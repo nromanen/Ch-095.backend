@@ -1,5 +1,6 @@
 package com.softserve.academy.event.config;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -21,7 +22,6 @@ public class HibernateConfig {
     public LocalSessionFactoryBean getSessionFactory(Environment environment) {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         Properties properties = new Properties();
-
         properties.put(DRIVER, Objects.requireNonNull(environment.getProperty(DRIVER)));
         properties.put(URL, Objects.requireNonNull(environment.getProperty(URL)));
         properties.put(USER, Objects.requireNonNull(environment.getProperty(USER)));
