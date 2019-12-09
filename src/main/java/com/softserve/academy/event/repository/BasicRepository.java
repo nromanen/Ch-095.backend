@@ -7,9 +7,15 @@ import java.util.Optional;
 public interface BasicRepository<T extends Serializable, I extends Serializable> {
 
     Optional<T> findFirstById(I id);
+  
     List<T> findAll();
+  
     T save(T entity);
-    T update(T object);
-    void deleteById(I id);
+
+    T update(T entity);
+
+    void delete(T entity);
+
+    void detach(T entity);
 
 }
