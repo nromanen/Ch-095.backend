@@ -5,6 +5,7 @@ import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.repository.impl.SurveyRepositoryImpl;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -29,7 +30,15 @@ public class SurveyService {
                 pageable); // convert to dto
     }
 
-    @Transactional(dontRollbackOn = Exception.class)
+    @Transactional
+    public HttpStatus updateTitle(Long id, String title){
+        Survey survey = surveyRepository.findFirstById(id).orElseThrow(RuntimeException::new);
+        survey.setTitle(title);
+        surveyRepository.update(survey);
+        return HttpStatus.OK;
+    }
+  
+    @Transactional
     public SimpleSurveyDTO duplicateSurvey(Long id){
         Survey survey = repository.findFirstById(id).orElseThrow(RuntimeException::new);
         survey.setId(null);
