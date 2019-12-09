@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
 @Service
 public class SurveyService {
 
-    private final SurveyRepositoryImpl surveyRepository;
+    private final SurveyRepositoryImpl repository;
 
-    public SurveyService(SurveyRepositoryImpl surveyRepository) {
-        this.surveyRepository = surveyRepository;
+    public SurveyService(SurveyRepositoryImpl repository) {
+        this.repository = repository;
     }
 
     @Transactional
     public Page<SimpleSurveyDTO> findAll(Pageable pageable) {
-        Page<Survey> page = surveyRepository.findAll(pageable);
-        return new Page<SimpleSurveyDTO>(
+        Page<Survey> page = repository.findAll(pageable);
+        return new Page<>(
                 page.getItems().stream()
                         .map(SimpleSurveyDTO::toSimpleUser)
                         .collect(Collectors.toList()),
@@ -36,6 +36,28 @@ public class SurveyService {
         survey.setTitle(title);
         surveyRepository.update(survey);
         return HttpStatus.OK;
+    }
+  
+    @Transactional
+    public SimpleSurveyDTO duplicateSurvey(Long id){
+        Survey survey = repository.findFirstById(id).orElseThrow(RuntimeException::new);
+        survey.setId(null);
+        repository.detach(survey);
+        repository.save(survey);
+        return SimpleSurveyDTO.toSimpleUser(survey);
+    }
+
+    @Transactional
+    public String setTitleForSurvey(Long id, String title){
+        Survey survey = repository.findFirstById(id).orElseThrow(RuntimeException::new);
+        survey.setTitle(title);
+        repository.update(survey);
+        return survey.getTitle();
+    }
+
+    @Transactional
+    public void delete(Survey survey){
+        repository.delete(survey);
     }
 
 }

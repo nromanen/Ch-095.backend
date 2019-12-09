@@ -52,9 +52,14 @@ public abstract class BasicRepositoryImpl<T extends Serializable, I extends Seri
     }
 
     @Override
-    public void deleteById(I id) {
+    public void delete(T entity) {
         sessionFactory.getCurrentSession()
-                .createQuery("delete " + clazz.getName() + " where id = :id").setParameter("id",id);
+                .remove(entity);
+    }
+
+    @Override
+    public void detach(T entity){
+        sessionFactory.getCurrentSession().detach(entity);
     }
 
 }
