@@ -10,3 +10,4 @@ public interface UserRepository extends BasicRepository<User, Long> {
     User findByEmail(String email);
 }
 
+
