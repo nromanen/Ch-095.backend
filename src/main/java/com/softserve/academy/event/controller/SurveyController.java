@@ -4,7 +4,7 @@ import com.softserve.academy.event.annotation.PageableDefault;
 import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.response.ServerResponse;
-import com.softserve.academy.event.service.SurveyService;
+import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
