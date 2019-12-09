@@ -1,7 +1,7 @@
 package com.softserve.academy.event.entity.enums;
 
-public enum EventQuestionType {
-    TEXT,
+public enum SurveyQuestionType {
+    PICTURE,
     TEXTAREA,
     RADIO,
     CHECK;
