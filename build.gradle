@@ -21,6 +21,8 @@ dependencies {
     /* SPRING */
     compile group: 'org.springframework', name: 'spring-core', version: '5.2.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-context', version: '5.2.1.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework/spring-context-support
+    compile group: 'org.springframework', name: 'spring-context-support', version: '5.2.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-beans', version: '5.2.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-web', version: '5.2.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.1.RELEASE'
@@ -49,5 +51,14 @@ dependencies {
     /* For lazy people (clevercattv or cat's LOL) */
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
+
+    // https://mvnrepository.com/artifact/javax.mail/mail
+    compile group: 'javax.mail', name: 'mail', version: '1.4'
+    // https://mvnrepository.com/artifact/javax.mail/javax.mail-api
+    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.6.0'
+
+    // https://mvnrepository.com/artifact/com.sun.mail/javax.mail
+    compile group: 'com.sun.mail', name: 'javax.mail', version: '1.6.0'
+
 
 }
