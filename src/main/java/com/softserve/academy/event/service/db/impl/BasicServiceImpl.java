@@ -34,7 +34,13 @@ public class BasicServiceImpl<T extends Serializable, I extends Serializable> im
     }
 
     @Override
-    public void deleteById(I id) {
-        basicRepository.deleteById(id);
+    public void delete(T entity) {
+        basicRepository.delete(entity);
     }
+
+    @Override
+    public void detach(T entity) {
+        basicRepository.detach(entity);
+    }
+
 }
