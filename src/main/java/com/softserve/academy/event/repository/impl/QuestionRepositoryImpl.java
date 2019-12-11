@@ -5,5 +5,5 @@ import com.softserve.academy.event.repository.QuestionRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class QuestionRepositoryImpl extends BasicRepositoryImpl<SurveyQuestion, Long> implements QuestionRepository{
+public class QuestionRepositoryImpl extends BasicRepositoryImpl<SurveyQuestion, Long> implements QuestionRepository {
 }
