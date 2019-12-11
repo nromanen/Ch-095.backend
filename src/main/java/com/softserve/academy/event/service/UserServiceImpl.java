@@ -4,6 +4,7 @@ import com.softserve.academy.event.dto.UserDto;
 import com.softserve.academy.event.entity.PasswordResetToken;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
+import com.softserve.academy.event.service.mapper.UserMapper;
 import com.softserve.academy.event.repository.PasswordResetTokenRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.UUID;
 
 @Service
@@ -24,8 +24,12 @@ public class UserServiceImpl implements UserService {
     public static final String TOKEN_EXPIRED = "expired";
     public static final String TOKEN_VALID = "valid";
 
+
     @Autowired
-    PasswordResetTokenRepository passwordResetTokenRepository;
+    UserMapper userMapper;
+//
+//    @Autowired
+//    PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -46,15 +50,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User newUserAccount(UserDto accountDto) throws EmailExistsException {
-        if (emailExists(accountDto.getEmail())) {
-            throw new EmailExistsException("There is an account with that email address: " + accountDto.getEmail());
-        }
+    public UserDto newUserAccount(UserDto accountDto) throws EmailExistsException {
+//        if (emailExists(accountDto.getEmail())) {
+//            throw new EmailExistsException("There is an account with that email address: " + accountDto.getEmail());
+//        }
         User user = new User();
         user.setEmail(accountDto.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(accountDto.getPassword()));
         user.setRole(accountDto.getRole());
-        return userRepository.save(user);
+        userRepository.save(user);
+        return null;
+        //return userMapper.userToDto(userRepository.save(user));
     }
 
     private boolean emailExists(String email) {
@@ -66,14 +72,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String verificationToken) {
+    public UserDto getUser(String verificationToken) {
         User user = tokenRepository.findByToken(verificationToken).getUser();
-        return user;
+        return userMapper.userToDto(user);
     }
 
     @Override
-    public void saveRegisteredUser(User user) {
-        userRepository.save(user);
+    public void saveRegisteredUser(UserDto user) {
+
+        userRepository.save(userMapper.userDtoToUser(user));
     }
 
     @Override
@@ -103,12 +110,12 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return TOKEN_VALID;
     }
-
-    @Override
-    public void createPasswordResetTokenForUser(final User user, final String token) {
-        final PasswordResetToken myToken = new PasswordResetToken(token, user);
-        passwordResetTokenRepository.save(myToken);
-    }
+//
+//    @Override
+//    public void createPasswordResetTokenForUser(final User user, final String token) {
+//        final PasswordResetToken myToken = new PasswordResetToken(token, user);
+//        passwordResetTokenRepository.save(myToken);
+//    }
 
     @Override
     public User findUserByEmail(final String email) {

@@ -4,7 +4,9 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.Roles;
 import com.softserve.academy.event.validation.EmailValidator;
 import com.softserve.academy.event.validation.PasswordValidator;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.Constraint;
@@ -16,17 +18,12 @@ import java.util.Date;
 
 @Getter
 @Setter
-@UserDto.PasswordMatches
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
 
     private Long id;
-    @ValidEmail
-    @NotNull
-    @NotEmpty
     private String email;
-
-    @NotNull
-    @NotEmpty
     private String password;
     private String matchingPassword;
     private boolean active;
@@ -35,17 +32,6 @@ public class UserDto {
 
 //    private UserDto() {
 //    }
-
-    public static UserDto toSimpleUser(User user) {
-        UserDto dto = new UserDto();
-        dto.setId(user.getId());
-        dto.setEmail(user.getEmail());
-        dto.setPassword(user.getPassword());
-        dto.setActive(user.isActive());
-        dto.setCreationDate(user.getCreationDate());
-        dto.setRole(user.getRole());
-        return dto;
-    }
 
     @Target({ElementType.TYPE, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
     @Retention(RetentionPolicy.RUNTIME)

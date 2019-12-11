@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl  implements UserRepository {
@@ -36,7 +37,17 @@ public class UserRepositoryImpl  implements UserRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public Optional<User> findFirstById(Long id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void delete(User entity) {
+
+    }
+
+    @Override
+    public void detach(User entity) {
 
     }
 }

@@ -8,12 +8,12 @@ import com.softserve.academy.event.validation.EmailExistsException;
 public interface UserService {
 
     VerificationToken generateNewVerificationToken(String token);
-    User newUserAccount(UserDto accountDto) throws EmailExistsException;
-    User getUser(String verificationToken);
-    void saveRegisteredUser(User user);
+    UserDto newUserAccount(UserDto accountDto) throws EmailExistsException;
+    UserDto getUser(String verificationToken);
+    void saveRegisteredUser(UserDto user);
     void createVerificationToken(User user, String token);
     VerificationToken getVerificationToken(String VerificationToken);
     String validateVerificationToken(String token);
-    public void createPasswordResetTokenForUser(final User user, final String token);
+    //public void createPasswordResetTokenForUser(final User user, final String token);
     public User findUserByEmail(final String email);
 }
