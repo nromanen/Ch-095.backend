@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,6 +22,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Filter(name = "surveyStatusField", condition = "status != :status")
+@FilterDef(name = "surveyStatusField", parameters = @ParamDef(name = "status", type = "integer"))
 public class Survey implements Serializable {
 
     private static final long serialVersionUID = 2943648242656547434L;
@@ -29,7 +35,7 @@ public class Survey implements Serializable {
     @Column(nullable = false, length = 128)
     private String title;
 
-    @Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
@@ -43,8 +49,8 @@ public class Survey implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "survey_contacts",
-            joinColumns = { @JoinColumn(name = "survey_id") },
-            inverseJoinColumns = { @JoinColumn(name = "contact_id") }
+            joinColumns = {@JoinColumn(name = "survey_id")},
+            inverseJoinColumns = {@JoinColumn(name = "contact_id")}
     )
     private Set<Contact> contacts = new HashSet<>();
 
