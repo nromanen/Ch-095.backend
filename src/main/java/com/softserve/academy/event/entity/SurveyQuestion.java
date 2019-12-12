@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -36,6 +37,7 @@ public class SurveyQuestion implements Serializable {
     @Enumerated
     private SurveyQuestionType type;
 
+    @Length(max = 10000)
     @Column(nullable = false)
     private String answers;
 

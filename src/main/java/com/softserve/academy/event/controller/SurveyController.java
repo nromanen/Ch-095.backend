@@ -1,23 +1,35 @@
 package com.softserve.academy.event.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.academy.event.annotation.PageableDefault;
+import com.softserve.academy.event.dto.SaveSurveyDTO;
 import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.response.ServerResponse;
 import com.softserve.academy.event.service.db.SurveyService;
+import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 @RestController
 @RequestMapping("survey")
 public class SurveyController {
 
     private final SurveyService service;
+    private final UserService userService;
 
-    public SurveyController(SurveyService service) {
+    public SurveyController(SurveyService service, UserService userService) {
         this.service = service;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -42,11 +54,32 @@ public class SurveyController {
         return ServerResponse.success(survey.getId());
     }
 
-//    @PostMapping(value = "/save")
-//    public ServerResponse<Long> saveSurvey() throws IOException {
-//
-//    }
+    @GetMapping(value = "/save")
+    public HttpStatus saveSurvey() throws IOException {
+        SaveSurveyDTO saveSurveyDTO = getSaveSurveyDTO();
+        Survey survey = new Survey();
+        survey.setTitle(saveSurveyDTO.getTitle());
+        if (userService.findFirstById(saveSurveyDTO.getUserID()).isPresent()) {
+            User user = userService.findFirstById(saveSurveyDTO.getUserID()).get();
+            survey.setUser(user);
+        } else {
+            return HttpStatus.BAD_REQUEST;
+        }
+        service.save(survey);
+        return HttpStatus.OK;
+    }
 
+    private SaveSurveyDTO getSaveSurveyDTO() throws IOException {
+        File file = new File(pathToFileWithSurveyInJson("inputJson"));
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(file, SaveSurveyDTO.class);
+    }
 
+    private String pathToFileWithSurveyInJson(String fileName) throws IOException {
+        InputStream propertiesFile = FileUploadController.class.getClassLoader().getResourceAsStream("application.properties");
+        Properties properties = new Properties();
+        properties.load(propertiesFile);
+        return properties.getProperty("imageUploadDir") + File.separator + fileName + ".json";
+    }
 
 }

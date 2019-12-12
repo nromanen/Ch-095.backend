@@ -1,6 +1,7 @@
 package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import org.hibernate.Session;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
+
+    private UserService userService;
 
     @Autowired
     protected SessionFactory sessionFactory;
@@ -26,5 +29,6 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
         pageable.setLastPage((int) ((countResult / pageable.getSize()) + 1));
         return new Page<Survey>(query.list(), pageable);
     }
+
 
 }

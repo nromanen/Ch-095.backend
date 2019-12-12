@@ -1,22 +1,24 @@
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.softserve.academy.event.controller.FileUploadController;
 import com.softserve.academy.event.dto.SaveSurveyDTO;
+import com.softserve.academy.event.dto.SurveyQuestionDTO;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class Main {
+
     public static void main(String[] args) throws IOException {
-        File file = new File("C:\\Users\\skachtc\\projects\\ch095\\uploads\\inputJson.json");
-//        ObjectMapper mapper = new ObjectMapper();
-//        List<SurveyQuestion> questions = mapper.readValue(file, new TypeReference<List<SurveyQuestion>>() {});
-//        for(SurveyQuestion surveyQuestion : questions){
-//            System.out.println(surveyQuestion);
-//        }
+        InputStream propertiesFile = FileUploadController.class.getClassLoader().getResourceAsStream("application.properties");
+        Properties properties = new Properties();
+        properties.load(propertiesFile);
+        File file = new File(properties.getProperty("imageUploadDir") + File.separator + "inputJson" + ".json");
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(file);
-        JsonNode coordinatesNode = node.at("/survey");
-        SaveSurveyDTO coordinates = mapper.treeToValue(coordinatesNode, SaveSurveyDTO.class);
-        System.out.println(coordinates);
+        SaveSurveyDTO saveSurveyDTO = mapper.readValue(file, SaveSurveyDTO.class);
+        for (SurveyQuestionDTO question : saveSurveyDTO.getQuestions()) {
+            System.out.println(question.getAnswers());
+        }
     }
 }
