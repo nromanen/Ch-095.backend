@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFountException.class)
     public ServerResponse<?> userNotFoundHandler(Exception e, WebRequest request) {
-        return defaultHandler(e,request,HttpStatus.NOT_FOUND);
+        return defaultHandler(e, request, HttpStatus.NOT_FOUND);
     }
 
     private ServerResponse<?> defaultHandler(Exception e, WebRequest request, HttpStatus status) {

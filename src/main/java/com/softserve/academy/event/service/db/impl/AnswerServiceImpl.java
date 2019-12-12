@@ -5,5 +5,5 @@ import com.softserve.academy.event.service.db.AnswerService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AnswerServiceImpl extends BasicServiceImpl<SurveyAnswer, Long> implements AnswerService{
+public class AnswerServiceImpl extends BasicServiceImpl<SurveyAnswer, Long> implements AnswerService {
 }
