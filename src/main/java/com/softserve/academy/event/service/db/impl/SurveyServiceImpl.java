@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.stream.Collectors;
 
-//TODO
-//CHECK ALL CHANGES IN CLASSES
 @Service
 public class SurveyServiceImpl extends BasicServiceImpl<Survey, Long> implements SurveyService {
 

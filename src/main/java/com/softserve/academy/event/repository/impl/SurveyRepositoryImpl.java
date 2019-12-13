@@ -1,7 +1,6 @@
 package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Survey;
-import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import org.hibernate.Session;
@@ -10,6 +9,9 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
+@Transactional
 @Repository
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
     @Autowired
