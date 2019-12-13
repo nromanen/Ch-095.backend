@@ -3,11 +3,13 @@ package com.softserve.academy.event.service.db.impl;
 import com.softserve.academy.event.repository.BasicRepository;
 import com.softserve.academy.event.service.db.BasicService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 public class BasicServiceImpl<T extends Serializable, I extends Serializable> implements BasicService<T, I> {
 
     @Autowired
