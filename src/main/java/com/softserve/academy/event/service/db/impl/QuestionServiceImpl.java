@@ -6,4 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class QuestionServiceImpl extends BasicServiceImpl<SurveyQuestion, Long> implements QuestionService {
+    @Override
+    public SurveyQuestion save(SurveyQuestion entity) {
+        return super.save(entity);
+    }
 }

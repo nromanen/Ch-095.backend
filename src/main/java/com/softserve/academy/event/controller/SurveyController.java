@@ -5,6 +5,7 @@ import com.softserve.academy.event.dto.SaveSurveyDTO;
 import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.response.ServerResponse;
+import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class SurveyController {
 
     private final SurveyService service;
+    private final QuestionService questionService;
 
-    public SurveyController(SurveyService service) {
+    public SurveyController(SurveyService service, QuestionService questionService) {
         this.service = service;
+        this.questionService = questionService;
     }
 
     @GetMapping
@@ -43,10 +46,17 @@ public class SurveyController {
         return ServerResponse.success(survey.getId());
     }
 
-    @PostMapping(value = "/save")
+    @PostMapping(value = "/createNewSurvey")
     public ServerResponse<Survey> saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) {
-        Survey survey = new Survey();
-        survey.setTitle(saveSurveyDTO.getTitle());
-        return ServerResponse.success(service.saveSurvey(survey, saveSurveyDTO.getUserID()));
+//        Survey survey = new Survey();
+//        survey.setTitle(saveSurveyDTO.getTitle());
+//        List<SurveyQuestion> surveyQuestions =
+//        survey = service.saveSurvey(survey, saveSurveyDTO.getUserID());
+//
+//        for(SurveyQuestionDTO  surveyQuestionDTO : saveSurveyDTO.getQuestions()){
+//            surveyQuestionDTO.setSurvey(survey);
+//            SurveyQuestion surveyQuestion = new SurveyQuestion();
+//            questionService.saveQuestion(surveyQuestionDTO);
+//        }
     }
 }

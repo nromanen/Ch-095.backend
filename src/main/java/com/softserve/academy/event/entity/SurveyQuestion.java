@@ -23,6 +23,9 @@ public class SurveyQuestion implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private int index;
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private Survey survey;
