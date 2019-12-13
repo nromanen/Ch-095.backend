@@ -5,6 +5,7 @@ import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.service.db.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class QuestionServiceImpl extends BasicServiceImpl<SurveyQuestion, Long> 
     @Autowired
     QuestionRepository questionRepository;
 
+    @Transactional
     @Override
     public List<SurveyQuestion> findBySurveyId(Long surveyId) {
         return questionRepository.findBySurveyId(surveyId);
