@@ -10,15 +10,6 @@ repositories {
     mavenCentral()
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.2.1.RELEASE")
-    }
-}
-
 configurations.all {
     exclude group: "commons-logging", module: "commons-logging"
 }
@@ -36,6 +27,11 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-orm', version: '5.2.1.RELEASE'
     compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.2.1.RELEASE'
 
+    /* SECURITY */
+    compile 'org.springframework.security:spring-security-core:3.2.0.RELEASE'
+    compile 'org.springframework.security:spring-security-config:3.2.0.RELEASE'
+    compile 'org.springframework.security:spring-security-taglibs:3.2.0.RELEASE'
+    compile 'org.springframework.security:spring-security-web:3.2.0.RELEASE'
 
     /* LOGGER */
     compile 'org.slf4j:jcl-over-slf4j:1.7.12'
@@ -43,7 +39,6 @@ dependencies {
 
     /* SERVLET */
     providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
-    compile 'javax.servlet:jstl:1.2'
 
     /* DATABASE */
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.8'
