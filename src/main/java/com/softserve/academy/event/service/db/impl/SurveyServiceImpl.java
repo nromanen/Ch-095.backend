@@ -4,7 +4,6 @@ import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.repository.impl.SurveyRepositoryImpl;
 import com.softserve.academy.event.service.db.SurveyService;
-import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,11 +18,9 @@ import java.util.stream.Collectors;
 public class SurveyServiceImpl extends BasicServiceImpl<Survey, Long> implements SurveyService {
 
     private final SurveyRepositoryImpl repository;
-    private final UserService userService;
 
-    public SurveyServiceImpl(SurveyRepositoryImpl repository, UserService userService) {
+    public SurveyServiceImpl(SurveyRepositoryImpl repository) {
         this.repository = repository;
-        this.userService = userService;
     }
 
     @Transactional

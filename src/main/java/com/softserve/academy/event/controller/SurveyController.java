@@ -12,7 +12,6 @@ import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -54,19 +53,19 @@ public class SurveyController {
         return ServerResponse.success(survey.getId());
     }
 
-    @GetMapping(value = "/save")
-    public HttpStatus saveSurvey() throws IOException {
-        SaveSurveyDTO saveSurveyDTO = getSaveSurveyDTO();
+    @PostMapping(value = "/save")
+    public Survey saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws IOException {
         Survey survey = new Survey();
         survey.setTitle(saveSurveyDTO.getTitle());
         if (userService.findFirstById(saveSurveyDTO.getUserID()).isPresent()) {
             User user = userService.findFirstById(saveSurveyDTO.getUserID()).get();
             survey.setUser(user);
         } else {
-            return HttpStatus.BAD_REQUEST;
+//            return ServerResponse.from(saveSurveyDTO, HttpStatus.BAD_REQUEST);
+            return survey;
         }
-        service.save(survey);
-        return HttpStatus.OK;
+//        return ServerResponse.success(service.save(survey));
+        return service.save(survey);
     }
 
     private SaveSurveyDTO getSaveSurveyDTO() throws IOException {

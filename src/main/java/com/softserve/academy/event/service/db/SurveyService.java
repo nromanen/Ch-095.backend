@@ -15,5 +15,4 @@ public interface SurveyService extends BasicService<Survey, Long> {
     SimpleSurveyDTO duplicateSurvey(Long id);
 
     String setTitleForSurvey(Long id, String title);
-
 }

@@ -12,9 +12,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
-
-    private UserService userService;
-
     @Autowired
     protected SessionFactory sessionFactory;
 
