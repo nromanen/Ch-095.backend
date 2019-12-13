@@ -1,6 +1,7 @@
 package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.annotation.PageableDefault;
+import com.softserve.academy.event.dto.SaveSurveyDTO;
 import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.response.ServerResponse;
@@ -42,4 +43,10 @@ public class SurveyController {
         return ServerResponse.success(survey.getId());
     }
 
+    @PostMapping(value = "/save")
+    public ServerResponse<Survey> saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) {
+        Survey survey = new Survey();
+        survey.setTitle(saveSurveyDTO.getTitle());
+        return ServerResponse.success(service.saveSurvey(survey, saveSurveyDTO.getUserID()));
+    }
 }

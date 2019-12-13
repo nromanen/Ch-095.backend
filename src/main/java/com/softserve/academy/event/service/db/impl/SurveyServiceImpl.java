@@ -2,7 +2,9 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.repository.impl.SurveyRepositoryImpl;
+import com.softserve.academy.event.repository.impl.UserRepositoryImpl;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -16,9 +18,11 @@ import java.util.stream.Collectors;
 public class SurveyServiceImpl extends BasicServiceImpl<Survey, Long> implements SurveyService {
 
     private final SurveyRepositoryImpl repository;
+    private final UserRepositoryImpl userRepository;
 
-    public SurveyServiceImpl(SurveyRepositoryImpl repository) {
+    public SurveyServiceImpl(SurveyRepositoryImpl repository, UserRepositoryImpl userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -54,6 +58,13 @@ public class SurveyServiceImpl extends BasicServiceImpl<Survey, Long> implements
         survey.setTitle(title);
         update(survey);
         return survey.getTitle();
+    }
+
+    @Transactional
+    public Survey saveSurvey(Survey survey, long id) {
+        User user = userRepository.findFirstById(id).get();
+        survey.setUser(user);
+        return repository.save(survey);
     }
 
 }

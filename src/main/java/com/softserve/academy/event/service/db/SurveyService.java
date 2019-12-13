@@ -16,4 +16,5 @@ public interface SurveyService extends BasicService<Survey, Long> {
 
     String setTitleForSurvey(Long id, String title);
 
+    Survey saveSurvey(Survey survey, long id);
 }
