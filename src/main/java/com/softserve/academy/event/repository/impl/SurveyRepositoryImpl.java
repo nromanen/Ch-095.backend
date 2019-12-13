@@ -9,9 +9,11 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
+@Transactional
 @Repository
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
-
     @Autowired
     protected SessionFactory sessionFactory;
 
@@ -26,5 +28,6 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
         pageable.setLastPage((int) ((countResult / pageable.getSize()) + 1));
         return new Page<Survey>(query.list(), pageable);
     }
+
 
 }
