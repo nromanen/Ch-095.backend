@@ -1,19 +1,12 @@
 package com.softserve.academy.event.controller;
 
-import com.softserve.academy.event.dto.QuestionDTO;
 import com.softserve.academy.event.dto.SurveyContactDTO;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.mapper.QuestionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:4200/question")
 @RequestMapping("question")
 public class QuestionController {
 
@@ -24,12 +17,11 @@ public class QuestionController {
     private QuestionMapper questionMapper;
 
     @RequestMapping(method = RequestMethod.GET)
-    public SurveyContactDTO startSurvey(Long surveyId, String contactEmail){
-        List<QuestionDTO> questions = questionMapper.listQuestionToDTO(questionService.findBySurveyId(surveyId));
+    public SurveyContactDTO startSurvey(@RequestParam Long surveyId, @RequestParam String contactEmail){
         SurveyContactDTO dto = new SurveyContactDTO();
         dto.setContactEmail(contactEmail);
         dto.setSurveyId(surveyId);
-        dto.setQuestions(questions);
+        dto.setQuestions(questionMapper.listQuestionToDTO(questionService.findBySurveyId(surveyId)));
         return dto;
     }
 }
