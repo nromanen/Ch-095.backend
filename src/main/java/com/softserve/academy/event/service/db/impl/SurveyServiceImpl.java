@@ -2,28 +2,32 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.User;
+import com.softserve.academy.event.repository.impl.QuestionRepositoryImpl;
 import com.softserve.academy.event.repository.impl.SurveyRepositoryImpl;
+import com.softserve.academy.event.repository.impl.UserRepositoryImpl;
 import com.softserve.academy.event.service.db.SurveyService;
-import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.stream.Collectors;
 
-//TODO
-//CHECK ALL CHANGES IN CLASSES
 @Service
 public class SurveyServiceImpl extends BasicServiceImpl<Survey, Long> implements SurveyService {
 
     private final SurveyRepositoryImpl repository;
-    private final UserService userService;
+    private final UserRepositoryImpl userRepository;
+    private final QuestionRepositoryImpl questionRepository;
 
-    public SurveyServiceImpl(SurveyRepositoryImpl repository, UserService userService) {
+    public SurveyServiceImpl(SurveyRepositoryImpl repository, UserRepositoryImpl userRepository, QuestionRepositoryImpl questionRepository) {
         this.repository = repository;
-        this.userService = userService;
+        this.userRepository = userRepository;
+        this.questionRepository = questionRepository;
     }
 
     @Transactional
@@ -59,6 +63,17 @@ public class SurveyServiceImpl extends BasicServiceImpl<Survey, Long> implements
         survey.setTitle(title);
         update(survey);
         return survey.getTitle();
+    }
+
+    @Transactional
+    public Survey saveSurveyWithQuestions(Survey survey, long id, List<SurveyQuestion> surveyQuestions) {
+        User user = userRepository.findFirstById(id).get();
+        survey.setUser(user);
+        Survey savedSurvey = repository.save(survey);
+        surveyQuestions.forEach((x) -> x.setSurvey(savedSurvey));
+        surveyQuestions.forEach(questionRepository::save);
+        return savedSurvey;
+
     }
 
 }

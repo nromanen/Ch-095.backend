@@ -1,11 +1,17 @@
 package com.softserve.academy.event.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.softserve.academy.event.entity.Survey;
+
 import java.util.List;
 
 public class SurveyQuestionDTO {
     private Long id;
 
     private int index;
+
+    @JsonIgnore
+    private Survey survey;
 
     private String question;
 
@@ -49,6 +55,14 @@ public class SurveyQuestionDTO {
 
     public List<String> getAnswers() {
         return answers;
+    }
+
+    public Survey getSurvey() {
+        return survey;
+    }
+
+    public void setSurvey(Survey survey) {
+        this.survey = survey;
     }
 
     public void setAnswers(List<String> answers) {
