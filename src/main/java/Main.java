@@ -1,6 +1,5 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.academy.event.controller.FileUploadController;
-import com.softserve.academy.event.dto.SaveSurveyDTO;
 import com.softserve.academy.event.dto.SurveyQuestionDTO;
 
 import java.io.File;
