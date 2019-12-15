@@ -34,7 +34,4 @@ public class QuestionController {
         dto.setQuestions(questionsDTO);
         return dto;
     }
-
-//    @PostMapping("/thankyou")
-//    public ServerResponse<>
 }
