@@ -11,6 +11,10 @@ import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyContactConnectorService;
 import com.softserve.academy.event.service.mapper.AnswerMapper;
 import com.softserve.academy.event.service.mapper.QuestionMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(value = "/question")
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("question")
@@ -41,6 +46,13 @@ public class QuestionController {
         this.answerMapper = answerMapper;
     }
 
+    @ApiOperation(value = "Get a survey form for contact", notes = "It checks contact`s e-mail, surveyId and build form", response = SurveyContactDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved list"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     @GetMapping
     public SurveyContactDTO startSurvey(@RequestParam Long surveyId, @RequestParam String contactEmail){
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId)
@@ -55,6 +67,7 @@ public class QuestionController {
         return dto;
     }
 
+    @ApiOperation(value = "Save contact`s answers to the database")
     @PostMapping("/thankyou")
     public ResponseEntity<String> addAnswers(ContactResponseDTO contactResponseDTO){
         String result;
@@ -62,13 +75,13 @@ public class QuestionController {
                 contactService.getIdByEmail(contactResponseDTO.getContactEmail()).orElse(null);
         if(contactId == null) {
             result = "missing email data";
-            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         SurveyContactConnector scc =
                 sccService.findByContactAndSurvey(contactId, contactResponseDTO.getSurveyId()).orElse(null);
         if(scc == null){
             result = "mail is not in the invite list";
-            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
         scc.setEnable(true);
@@ -76,6 +89,6 @@ public class QuestionController {
         contactResponseDTO.getAnswers().stream()
                 .map(answerMapper::toEntity)
                 .forEach(answerService::save);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
