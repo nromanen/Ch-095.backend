@@ -1,30 +1,26 @@
 package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import org.hibernate.Filter;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 
 @Repository
-public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
+public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> implements SurveyRepository {
 
-    private final SessionFactory sessionFactory;
-
-    public SurveyRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
+    @Override
     public Page<Survey> findAll(Pageable pageable) {
         Session session = sessionFactory.getCurrentSession();
         return getSurveyPage(pageable, session);
     }
 
+    @Override
     public Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters) {
         Session session = sessionFactory.getCurrentSession();
         filters.forEach((key, value) -> {
@@ -42,7 +38,7 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
         Query countQuery = session.createQuery("select count(*) from " + clazz.getName());
         Long countResult = (Long) countQuery.uniqueResult();
         pageable.setLastPage((int) ((countResult / pageable.getSize()) + 1));
-        return new Page<Survey>(query.list(), pageable);
+        return new Page<>(query.list(), pageable);
     }
 
 }

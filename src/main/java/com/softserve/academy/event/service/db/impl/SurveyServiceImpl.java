@@ -2,7 +2,7 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
-import com.softserve.academy.event.repository.impl.SurveyRepositoryImpl;
+import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
@@ -17,9 +17,9 @@ import java.util.*;
 @Transactional
 public class SurveyServiceImpl implements SurveyService {
 
-    private final SurveyRepositoryImpl repository;
+    private final SurveyRepository repository;
 
-    public SurveyServiceImpl(SurveyRepositoryImpl repository) {
+    public SurveyServiceImpl(SurveyRepository repository) {
         this.repository = repository;
     }
 
@@ -39,32 +39,40 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public HttpStatus updateTitle(Long id, String title) {
-        Survey survey = findFirstById(id).orElseThrow(RuntimeException::new);
+        Survey survey = repository.findFirstById(id)
+                .orElseThrow(RuntimeException::new);
         survey.setTitle(title);
-        update(survey);
+        repository.update(survey);
+        return HttpStatus.OK;
+    }
+
+    @Override
+    public HttpStatus updateStatus(Long id, SurveyStatus status) {
+        Survey survey = repository.findFirstById(id)
+                .orElseThrow(RuntimeException::new);
+        survey.setStatus(status);
+        repository.update(survey);
         return HttpStatus.OK;
     }
 
     @Override
     public Survey duplicateSurvey(DuplicateSurveySettings settings) {
-        Survey survey = findFirstById(settings.getId()).orElseThrow(RuntimeException::new);
-        detach(survey);
+        Survey survey = repository.findFirstById(settings.getId())
+                .orElseThrow(RuntimeException::new);
+        repository.detach(survey);
         survey.setId(null);
         survey.setCreationDate(new Date());
         survey.setStatus(SurveyStatus.NON_ACTIVE);
         if (settings.isClearContacts()) {
             survey.setContacts(new HashSet<>());
         }
-        save(survey);
+        repository.save(survey);
         return survey;
     }
 
     @Override
-    public String setTitleForSurvey(Long id, String title) {
-        Survey survey = findFirstById(id).orElseThrow(RuntimeException::new);
-        survey.setTitle(title);
-        update(survey);
-        return survey.getTitle();
+    public void delete(Survey entity) {
+        repository.delete(entity);
     }
 
 }
