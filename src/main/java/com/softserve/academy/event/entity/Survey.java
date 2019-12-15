@@ -1,5 +1,6 @@
 package com.softserve.academy.event.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +43,7 @@ public class Survey implements Serializable {
     @Enumerated
     private SurveyStatus status = SurveyStatus.NON_ACTIVE;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(nullable = false)
     private User user;
