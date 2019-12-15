@@ -5,7 +5,6 @@ import com.softserve.academy.event.dto.QuestionDTO;
 import com.softserve.academy.event.dto.SurveyContactDTO;
 import com.softserve.academy.event.entity.SurveyContactConnector;
 import com.softserve.academy.event.entity.SurveyQuestion;
-import com.softserve.academy.event.response.ServerResponse;
 import com.softserve.academy.event.service.db.AnswerService;
 import com.softserve.academy.event.service.db.ContactService;
 import com.softserve.academy.event.service.db.QuestionService;
@@ -14,6 +13,7 @@ import com.softserve.academy.event.service.mapper.AnswerMapper;
 import com.softserve.academy.event.service.mapper.QuestionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,19 +56,19 @@ public class QuestionController {
     }
 
     @PostMapping("/thankyou")
-    public ServerResponse<String> addAnswers(ContactResponseDTO contactResponseDTO){
+    public ResponseEntity<String> addAnswers(ContactResponseDTO contactResponseDTO){
         String result;
         Long contactId =
                 contactService.getIdByEmail(contactResponseDTO.getContactEmail()).orElse(null);
         if(contactId == null) {
             result = "missing email data";
-            return ServerResponse.from(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         }
         SurveyContactConnector scc =
                 sccService.findByContactAndSurvey(contactId, contactResponseDTO.getSurveyId()).orElse(null);
         if(scc == null){
             result = "mail is not in the invite list";
-            return ServerResponse.from(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         }
 
         scc.setEnable(true);
@@ -76,7 +76,6 @@ public class QuestionController {
         contactResponseDTO.getAnswers().stream()
                 .map(answerMapper::toEntity)
                 .forEach(answerService::save);
-        result = "answers are included in the database";
-        return ServerResponse.success(result);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
