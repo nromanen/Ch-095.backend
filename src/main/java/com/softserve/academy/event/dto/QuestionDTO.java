@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class QuestionDTO {
 
+    private Long id;
     private int index;
     private boolean required;
     private SurveyQuestionType type;

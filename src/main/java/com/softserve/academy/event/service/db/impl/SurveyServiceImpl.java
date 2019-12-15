@@ -15,7 +15,7 @@ import java.util.*;
 
 @Service
 @Transactional
-public class SurveyServiceImpl extends BasicServiceImpl<Survey, Long> implements SurveyService {
+public class SurveyServiceImpl implements SurveyService {
 
     private final SurveyRepositoryImpl repository;
 

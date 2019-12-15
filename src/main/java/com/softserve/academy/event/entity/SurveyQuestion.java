@@ -16,7 +16,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SurveyQuestion implements Serializable {
+public class SurveyQuestion implements Serializable, Comparable<SurveyQuestion> {
 
     private static final long serialVersionUID = -2673922858877977323L;
 
@@ -31,6 +31,9 @@ public class SurveyQuestion implements Serializable {
     @Column(nullable = false)
     private String question;
 
+    @Column
+    private int index;
+
     @Enumerated
     private SurveyQuestionType type;
 
@@ -40,4 +43,8 @@ public class SurveyQuestion implements Serializable {
 
     private boolean required;
 
+    @Override
+    public int compareTo(SurveyQuestion question) {
+        return (this.getIndex() - question.getIndex());
+    }
 }
