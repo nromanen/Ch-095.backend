@@ -4,6 +4,16 @@ import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.repository.QuestionRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public class QuestionRepositoryImpl extends BasicRepositoryImpl<SurveyQuestion, Long> implements QuestionRepository {
+public class QuestionRepositoryImpl extends BasicRepositoryImpl<SurveyQuestion, Long> implements QuestionRepository{
+
+    @Override
+    public List<SurveyQuestion> findBySurveyId(Long surveyId) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from " + SurveyQuestion.class.getName() + " where survey_id = :surveyId")
+                .setParameter("surveyId", surveyId)
+                .getResultList();
+    }
 }
