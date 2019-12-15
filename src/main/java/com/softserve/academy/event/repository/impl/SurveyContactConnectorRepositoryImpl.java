@@ -6,12 +6,12 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-@Transactional
 public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<SurveyContactConnector, Long> implements SurveyContactConnectorRepository {
+
     @Override
     public boolean isEnable(Long contactId, Long surveyId) {
 
@@ -22,5 +22,16 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
         List<Boolean> res = query.getResultList();
         if (res.isEmpty())return false;
         return res.get(0);
+    }
+
+    @Override
+    public Optional<SurveyContactConnector> findByContactAndSurvey(Long contactId, Long surveyId) {
+        List<SurveyContactConnector> result = sessionFactory.getCurrentSession()
+                .createQuery("from " + clazz.getName() + " as t" +
+                        " where t.contact = " + contactId + " and t.survey = " + surveyId)
+                .getResultList();
+        if(result.isEmpty())
+            return Optional.empty();
+        return Optional.of(result.get(0));
     }
 }
