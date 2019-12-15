@@ -32,7 +32,7 @@ public class SurveyController {
     @GetMapping
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
             @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
-            @RequestBody(required = false) Map<String, Map<String, Object>> filters) {
+            @RequestBody(required = false) Map<String, Map<String, Object>> filters) { /* todo OMFG GET haven't have body ... */
         return ResponseEntity.ok(
                 surveyMapper.pageToDTO(service.findAllFiltered(pageable, filters))
         );
@@ -46,17 +46,17 @@ public class SurveyController {
     }
 
     @PutMapping
-    public ResponseEntity<HttpStatus> updateTitle(Long id, String title) {
+    public ResponseEntity<HttpStatus> updateTitle(@RequestParam Long id, @RequestParam String title) {
         return ResponseEntity.ok(service.updateTitle(id, title));
     }
 
     @PutMapping("/status/active")
-    public ResponseEntity<HttpStatus> setStatusActive(Long id) {
+    public ResponseEntity<HttpStatus> setStatusActive(@RequestParam Long id) {
         return ResponseEntity.ok(service.updateStatus(id, SurveyStatus.ACTIVE));
     }
 
     @PutMapping("/status/done")
-    public ResponseEntity<HttpStatus> setStatusDone(Long id) {
+    public ResponseEntity<HttpStatus> setStatusDone(@RequestParam Long id) {
         return ResponseEntity.ok(service.updateStatus(id, SurveyStatus.DONE));
     }
 

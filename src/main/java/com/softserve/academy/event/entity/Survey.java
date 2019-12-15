@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.*;
@@ -41,6 +40,8 @@ public class Survey implements Serializable {
 
     @Enumerated
     private SurveyStatus status = SurveyStatus.NON_ACTIVE;
+
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(nullable = false)

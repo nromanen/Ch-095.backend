@@ -32,7 +32,11 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
 
     @SuppressWarnings("unchecked")
     private Page<Survey> getSurveyPage(Pageable pageable, Session session) {
-        Query query = session.createQuery("from " + clazz.getName());
+        Query query = session.createQuery(
+                "from " + clazz.getName() + " ORDER BY " +
+                        String.join(pageable.getSort().getDirection().name() + ", ", pageable.getSort().getFields()) +
+                        " " + pageable.getSort().getDirection().name()
+        );
         query.setFirstResult(pageable.getCurrentPage() * pageable.getSize());
         query.setMaxResults(pageable.getSize());
         Query countQuery = session.createQuery("select count(*) from " + clazz.getName());
