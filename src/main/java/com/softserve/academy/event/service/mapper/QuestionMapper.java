@@ -12,7 +12,6 @@ import java.util.List;
 @Service
 public interface QuestionMapper {
 
-    @Mapping(target = "index", source = "survey.id")
     @Mapping(target = "value", source = "question")
     QuestionDTO toDTO(SurveyQuestion surveyQuestion);
 
