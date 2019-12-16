@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Api(value = "/question")
 @RestController
@@ -43,9 +44,9 @@ public class QuestionController {
         this.answerMapper = answerMapper;
     }
 
-    @ApiOperation(value = "Get a survey form for contact", notes = "Checks e-mail, surveyId and build form", response = SurveyContactDTO.class)
+    @ApiOperation(value = "Get a survey form for contact", notes = "Checks an e-mail, Id(survey) and builds a form", response = SurveyContactDTO.class)
     @GetMapping
-    public ResponseEntity<SurveyContactDTO> startSurvey(@RequestParam Long surveyId, @RequestParam String contactEmail){
+    public ResponseEntity<SurveyContactDTO> startSurvey(Long surveyId, String contactEmail){
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
         List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questions);
         SurveyContactDTO dto = new SurveyContactDTO();
@@ -61,22 +62,22 @@ public class QuestionController {
     @PostMapping
     public ResponseEntity<String> addAnswers(ContactResponseDTO contactResponseDTO){
         String result;
-        Long contactId =
-                contactService.getIdByEmail(contactResponseDTO.getContactEmail()).orElse(null);
-        if(contactId == null) {
+        Optional<Long> contactId = contactService.getIdByEmail(contactResponseDTO.getContactEmail());
+        if(!contactId.isPresent()) {
             result = "missing email data";
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
-        SurveyContactConnector scc =
-                sccService.findByContactAndSurvey(contactId, contactResponseDTO.getSurveyId()).orElse(null);
-        if(scc == null){
+        Optional <SurveyContactConnector> scc =
+                sccService.findByContactAndSurvey(contactId.get(), contactResponseDTO.getSurveyId());
+        if(!scc.isPresent()){
             result = "mail is not in the invite list";
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        scc.setEnable(true);
-        sccService.update(scc);
+        scc.get().setEnable(true);
+        sccService.update(scc.get());
         contactResponseDTO.getAnswers().stream()
+                .peek(answerDTO -> answerDTO.setContactId(contactId.get()))
                 .map(answerMapper::toEntity)
                 .forEach(answerService::save);
         return new ResponseEntity<>(HttpStatus.OK);

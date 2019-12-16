@@ -40,7 +40,7 @@ public class CheckOpportunityController {
         return ServerResponse.from("", HttpStatus.BAD_REQUEST);
     }
 
-    @ApiOperation(value = "")
+    @ApiOperation(value = "Check e-mail")
     @PostMapping(value = "/check")
     public ServerResponse<String> enterEmail(@RequestBody CheckOpportunityDTO checkOpportunityDTO){
         String token_email = new String(Base64.getDecoder().decode(checkOpportunityDTO.getToken())).split(";")[0];
