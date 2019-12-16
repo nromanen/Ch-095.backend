@@ -1,11 +1,10 @@
-package com.softserve.academy.event.repository;
+package com.softserve.academy.event.service.db;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-
-public interface BasicRepository<T extends Serializable, I extends Serializable> {
+public interface BasicService<T extends Serializable, I extends Serializable> {
 
     Optional<T> findFirstById(I id);
 
@@ -18,5 +17,4 @@ public interface BasicRepository<T extends Serializable, I extends Serializable>
     void delete(T entity);
 
     void detach(T entity);
-
 }

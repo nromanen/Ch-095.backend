@@ -1,6 +1,5 @@
 package com.softserve.academy.event.exception.handler;
 
-import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.exception.UserNotFountException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,12 +22,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFountException.class)
     public ResponseEntity<?> userNotFoundHandler(Exception e, WebRequest request) {
-        return defaultHandler(e,request,HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(EmailExistException.class)
-    public ResponseEntity<?> emailExistHandler(Exception e, WebRequest request) {
-        return defaultHandler(e, request, HttpStatus.CONFLICT);
+        return defaultHandler(e, request, HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity<?> defaultHandler(Exception e, WebRequest request, HttpStatus status) {

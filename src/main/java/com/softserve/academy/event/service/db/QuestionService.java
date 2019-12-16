@@ -1,10 +1,10 @@
-package com.softserve.academy.event.repository;
+package com.softserve.academy.event.service.db;
 
 import com.softserve.academy.event.entity.SurveyQuestion;
 
 import java.util.List;
 
-public interface QuestionRepository extends BasicRepository<SurveyQuestion, Long>{
+public interface QuestionService extends BasicService<SurveyQuestion, Long>{
 
     List<SurveyQuestion> findBySurveyId(Long surveyId);
 }
