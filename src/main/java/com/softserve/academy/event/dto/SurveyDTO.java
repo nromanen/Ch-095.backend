@@ -16,5 +16,6 @@ public class SurveyDTO {
     private String title;
     private Date creationDate;
     private SurveyStatus status;
+    private String imageUrl;
 
 }
