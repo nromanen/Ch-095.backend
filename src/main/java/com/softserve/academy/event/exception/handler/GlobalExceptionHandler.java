@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
         String description = request.getDescription(false);
         log.error(e.getMessage());
         log.error("WebRequest description  : " + description);
-        return new ResponseEntity<>(e.getMessage() + "\n" + description, status);
+        return new ResponseEntity<>(e.getMessage(), status);
     }
 
 }
