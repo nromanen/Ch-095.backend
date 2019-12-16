@@ -17,6 +17,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@org.hibernate.annotations.NamedQuery(name="SurveyAnswer.findByQuestionId",
+        query="from SurveyAnswer where questionId = :questionId ")
+
 public class SurveyAnswer implements Serializable {
 
     private static final long serialVersionUID = -1003597080168505177L;
