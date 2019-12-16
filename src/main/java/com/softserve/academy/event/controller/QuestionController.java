@@ -13,15 +13,12 @@ import com.softserve.academy.event.service.mapper.AnswerMapper;
 import com.softserve.academy.event.service.mapper.QuestionMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Api(value = "/question")
 @RestController
@@ -46,29 +43,22 @@ public class QuestionController {
         this.answerMapper = answerMapper;
     }
 
-    @ApiOperation(value = "Get a survey form for contact", notes = "It checks contact`s e-mail, surveyId and build form", response = SurveyContactDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved list"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-    })
+    @ApiOperation(value = "Get a survey form for contact", notes = "Checks e-mail, surveyId and build form", response = SurveyContactDTO.class)
     @GetMapping
-    public SurveyContactDTO startSurvey(@RequestParam Long surveyId, @RequestParam String contactEmail){
-        List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId)
-                .stream()
-                .sorted()
-                .collect(Collectors.toList());
+    public ResponseEntity<SurveyContactDTO> startSurvey(@RequestParam Long surveyId, @RequestParam String contactEmail){
+        List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
         List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questions);
         SurveyContactDTO dto = new SurveyContactDTO();
         dto.setContactEmail(contactEmail);
         dto.setSurveyId(surveyId);
         dto.setQuestions(questionsDTO);
-        return dto;
+        if(questionsDTO.isEmpty())
+            return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Save contact`s answers to the database")
-    @PostMapping("/thankyou")
+    @ApiOperation(value = "Save answers to the database")
+    @PostMapping
     public ResponseEntity<String> addAnswers(ContactResponseDTO contactResponseDTO){
         String result;
         Long contactId =
