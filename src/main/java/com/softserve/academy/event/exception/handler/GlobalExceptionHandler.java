@@ -13,7 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> exceptionHandler(Exception e, WebRequest request) {
+    public ResponseEntity<Object> exceptionHandler(Exception e, WebRequest request) {
         String description = request.getDescription(false);
         log.error("Not default exception : " + e.getMessage());
         log.error("WebRequest description  : " + description);
@@ -21,11 +21,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFountException.class)
-    public ResponseEntity<?> userNotFoundHandler(Exception e, WebRequest request) {
+    public ResponseEntity<Object> userNotFoundHandler(Exception e, WebRequest request) {
         return defaultHandler(e, request, HttpStatus.NOT_FOUND);
     }
 
-    private ResponseEntity<?> defaultHandler(Exception e, WebRequest request, HttpStatus status) {
+    private ResponseEntity<Object> defaultHandler(Exception e, WebRequest request, HttpStatus status) {
         String description = request.getDescription(false);
         log.error(e.getMessage());
         log.error("WebRequest description  : " + description);
