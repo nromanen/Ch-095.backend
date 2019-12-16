@@ -10,6 +10,16 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.*;
 
+
+@NamedQueries(
+        {
+                @NamedQuery(
+                        name = "findEmail",
+                        query = "from User u where u.email= :email"
+                )
+        }
+)
+
 @Entity
 @Table(name = "users")
 @EqualsAndHashCode(of = {"id"})
@@ -19,6 +29,7 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 8894016998310477567L;
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,7 +48,7 @@ public class User implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Roles role = Roles.USER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -58,10 +69,6 @@ public class User implements Serializable {
         this.active = false;
     }
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return Collections.singleton(role);
-//    }
 
     public String getPassword() {
         return password;
@@ -69,30 +76,8 @@ public class User implements Serializable {
     public String getUsername() {
         return email;
     }
-
     public Roles getRole() {
         return role;
     }
-
-    public boolean isEnabled() {
-        return active;
-    }
-
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-
-
 
 }

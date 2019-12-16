@@ -1,5 +1,7 @@
 package com.softserve.academy.event.config;
 
+import com.softserve.academy.event.service.MyAuthenticationEntryPoint;
+import com.softserve.academy.event.service.MySavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,30 +14,45 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackages = { "com.softserve.academy.event.service" })
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private MyAuthenticationEntryPoint myAuthenticationEntryPoint;
+
+    @Autowired
+    private   MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler;
+
+    private SimpleUrlAuthenticationFailureHandler myFailureHandler = new SimpleUrlAuthenticationFailureHandler();
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(myAuthenticationEntryPoint)
+                .and()
+                .httpBasic()
+                .and()
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/resources/**", "/registration").permitAll()
+                .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration").permitAll()
+                .antMatchers("/testAccess/{token}", "/testAccess/check").permitAll()
+                .antMatchers("/survey/status/active", "/survey/status/done").permitAll()
+                .antMatchers("/question").permitAll()
                 .anyRequest().authenticated()
+               // .antMatchers("/login").hasAnyRole("ADMIN", "USER")
                 .and()
                 .formLogin()
-                .loginPage("/login")
-                .permitAll()
+                .successHandler(mySuccessHandler)
+                .failureHandler(myFailureHandler)
                 .and()
-                .logout()
-                .permitAll();
+                .csrf().disable();
     }
 
     @Bean

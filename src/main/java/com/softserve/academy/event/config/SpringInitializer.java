@@ -5,6 +5,6 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 public class SpringInitializer extends AbstractSecurityWebApplicationInitializer {
 //    public SpringInitializer() {
-//        super(WebSecurityConfig.class);
+//        super(SecurityConfig.class);
 //    }
 }

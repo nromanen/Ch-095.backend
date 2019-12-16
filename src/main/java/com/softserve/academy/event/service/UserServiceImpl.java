@@ -1,35 +1,27 @@
 package com.softserve.academy.event.service;
 
 import com.softserve.academy.event.dto.UserDto;
-import com.softserve.academy.event.entity.PasswordResetToken;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
+import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.service.mapper.UserMapper;
-import com.softserve.academy.event.repository.PasswordResetTokenRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
-import com.softserve.academy.event.validation.EmailExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
-    public static final String TOKEN_INVALID = "invalidToken";
-    public static final String TOKEN_EXPIRED = "expired";
-    public static final String TOKEN_VALID = "valid";
-
 
     @Autowired
     UserMapper userMapper;
-//
-//    @Autowired
-//    PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -50,37 +42,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto newUserAccount(UserDto accountDto) throws EmailExistsException {
-//        if (emailExists(accountDto.getEmail())) {
-//            throw new EmailExistsException("There is an account with that email address: " + accountDto.getEmail());
-//        }
+    public User newUserAccount(User userAccount) throws EmailExistException {
+        if (emailExists(userAccount.getEmail())) {
+            throw new EmailExistException("There is an account with that email address: " + userAccount.getEmail());
+        }
         User user = new User();
-        user.setEmail(accountDto.getEmail());
-        user.setPassword(bCryptPasswordEncoder.encode(accountDto.getPassword()));
-        user.setRole(accountDto.getRole());
-        userRepository.save(user);
-        return null;
-        //return userMapper.userToDto(userRepository.save(user));
+        user.setEmail(userAccount.getEmail());
+        user.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
+        return userRepository.save(user);
     }
 
     private boolean emailExists(String email) {
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
+       Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
             return true;
         }
         return false;
     }
 
     @Override
-    public UserDto getUser(String verificationToken) {
-        User user = tokenRepository.findByToken(verificationToken).getUser();
-        return userMapper.userToDto(user);
-    }
-
-    @Override
-    public void saveRegisteredUser(UserDto user) {
-
-        userRepository.save(userMapper.userDtoToUser(user));
+    public User getUser(String verificationToken) {
+        return tokenRepository.findByToken(verificationToken).getUser();
     }
 
     @Override
@@ -90,35 +72,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public VerificationToken getVerificationToken(String VerificationToken) {
-        return tokenRepository.findByToken(VerificationToken);
-    }
-
-    @Override
-    public String validateVerificationToken(String token) {
+    public TokenValidation validateVerificationToken(String token) {
         final VerificationToken verificationToken = tokenRepository.findByToken(token);
         if (verificationToken == null) {
-            return TOKEN_INVALID;
+            return TokenValidation.TOKEN_INVALID;
         }
         final User user = verificationToken.getUser();
         final Calendar calendar = Calendar.getInstance();
         if ((verificationToken.getExpiryDate()
              .getTime() - calendar.getTime().getTime()) <= 0) {
-            return TOKEN_EXPIRED;
+            return TokenValidation.TOKEN_EXPIRED;
         }
         user.setActive(true);
         userRepository.save(user);
-        return TOKEN_VALID;
-    }
-//
-//    @Override
-//    public void createPasswordResetTokenForUser(final User user, final String token) {
-//        final PasswordResetToken myToken = new PasswordResetToken(token, user);
-//        passwordResetTokenRepository.save(myToken);
-//    }
-
-    @Override
-    public User findUserByEmail(final String email) {
-        return userRepository.findByEmail(email);
+        return TokenValidation.TOKEN_VALID;
     }
 }

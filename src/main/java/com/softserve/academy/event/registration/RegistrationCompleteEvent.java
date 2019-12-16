@@ -9,6 +9,7 @@ import java.util.Locale;
 @Getter
 @Setter
 public class RegistrationCompleteEvent extends ApplicationEvent {
+    private static final long serialVersionUID = 1L;
     private String appUrl;
     private Locale locale;
     private User user;

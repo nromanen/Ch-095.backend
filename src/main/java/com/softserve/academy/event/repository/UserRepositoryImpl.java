@@ -1,12 +1,11 @@
 package com.softserve.academy.event.repository;
 
 import com.softserve.academy.event.entity.User;
-import com.softserve.academy.event.repository.impl.BasicRepositoryImpl;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.io.Serializable;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +16,15 @@ public class UserRepositoryImpl  implements UserRepository {
     private SessionFactory sessionFactory;
 
     @Override
-    public User findByEmail(String email) {
-        return sessionFactory.getCurrentSession().get(User.class, email);
+    public Optional<User> findByEmail(String email) {
+
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createNamedQuery("findEmail", User.class);
+        query.setParameter("email", email);
+        List<User> user = query.getResultList();
+        if (user.isEmpty()) {
+            return Optional.empty();
+        }
+       return Optional.of(query.getResultList().get(0));
     }
 
     @Override
@@ -28,7 +34,9 @@ public class UserRepositoryImpl  implements UserRepository {
 
     @Override
     public User save(User entity) {
-        return (User) sessionFactory.getCurrentSession().save(entity);
+        Session session = sessionFactory.getCurrentSession();
+        Long id = (Long) session.save(entity);
+        return session.get(User.class, id);
     }
 
     @Override

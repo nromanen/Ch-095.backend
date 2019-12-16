@@ -11,6 +11,17 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
+
+
+@NamedQueries(
+        {
+                @NamedQuery(
+                        name = "findToken",
+                        query = "from VerificationToken v where v.token= :token"
+                )
+        }
+)
+
 @Entity
 @Getter
 @Setter
