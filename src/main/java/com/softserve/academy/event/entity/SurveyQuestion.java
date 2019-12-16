@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "survey_questions")
@@ -39,7 +40,6 @@ public class SurveyQuestion implements Serializable {
 
     @Length(max = 10000)
     @Column(nullable = false)
-    @Length(max = 10000)
     private String answers;
 
     private boolean required;

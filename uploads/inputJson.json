@@ -3,7 +3,6 @@
   "userID": 0,
   "questions": [
     {
-      "id": 0,
       "index": 0,
       "question": "question0",
       "type": "RADIOBUTTON",
@@ -15,7 +14,6 @@
       "required": false
     },
     {
-      "id": 1,
       "index": 1,
       "question": "question1",
       "type": "RADIOBUTTON",
@@ -27,7 +25,6 @@
       "required": false
     },
     {
-      "id": 2,
       "index": 2,
       "question": "question2",
       "type": "RADIOBUTTON",
@@ -39,7 +36,6 @@
       "required": false
     },
     {
-      "id": 3,
       "index": 3,
       "question": "question3",
       "type": "RADIOBUTTON",
@@ -51,7 +47,6 @@
       "required": false
     },
     {
-      "id": 4,
       "index": 4,
       "question": "question4",
       "type": "RADIOBUTTON",
