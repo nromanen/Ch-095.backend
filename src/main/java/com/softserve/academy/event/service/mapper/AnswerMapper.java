@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AnswerMapper {
 
-    @Mapping(target = "question", source = "questionId")
-    @Mapping(target = "questionContact.contactId", source = "contactId")
+//    @Mapping(target = "question", source = "questionId")
+//    @Mapping(target = "questionContact.contactId", source = "contactId")
     SurveyAnswer toEntity(AnswerDTO answerDTO);
 }

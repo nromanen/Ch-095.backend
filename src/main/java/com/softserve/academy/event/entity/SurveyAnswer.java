@@ -14,8 +14,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@NamedQuery(name="SurveyAnswer.findByQuestionId",
-        query="from SurveyAnswer where questionId = :questionId ")
+@org.hibernate.annotations.NamedQuery(name="SurveyAnswer.findByQuestionId",
+        query="from SurveyAnswer where question_id = :questionId ")
 public class SurveyAnswer implements Serializable {
 
     private static final long serialVersionUID = -1003597080168505177L;
@@ -24,11 +24,11 @@ public class SurveyAnswer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @JoinColumn
     @ManyToOne
     private SurveyQuestion question;
 
-    @Column
+    @JoinColumn
     @ManyToOne
     private Contact contact;
 
