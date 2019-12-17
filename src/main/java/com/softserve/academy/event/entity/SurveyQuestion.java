@@ -38,8 +38,7 @@ public class SurveyQuestion implements Serializable {
     @Enumerated
     private SurveyQuestionType type;
 
-    @Column(nullable = false)
-    @Length(max = 10000)
+    @Column(nullable = false, length = 10000)
     private String answers;
 
     private boolean required;
