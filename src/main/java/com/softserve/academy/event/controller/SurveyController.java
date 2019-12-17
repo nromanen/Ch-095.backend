@@ -8,7 +8,6 @@ import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.dto.SurveyQuestionDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
-import com.softserve.academy.event.response.ServerResponse;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
 import com.softserve.academy.event.util.Page;
@@ -19,12 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("survey")
+@CrossOrigin(origins = "http://localhost:4200")
 public class SurveyController {
 
     private final SaveQuestionMapper saveQuestionMapper;
@@ -60,7 +59,7 @@ public class SurveyController {
     }
 
     @PostMapping(value = "/createNewSurvey")
-    public ServerResponse<Survey> saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
+    public ResponseEntity<Survey> saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
         Survey survey = new Survey();
         survey.setTitle(saveSurveyDTO.getTitle());
         long userID = saveSurveyDTO.getUserID();
@@ -72,6 +71,6 @@ public class SurveyController {
             surveyQuestion.setAnswers(answers);
             surveyQuestions.add(surveyQuestion);
         }
-        return ServerResponse.success(service.saveSurveyWithQuestions(survey, userID, surveyQuestions));
+        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, userID, surveyQuestions));
     }
 }

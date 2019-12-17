@@ -35,9 +35,6 @@ public class SurveyQuestion implements Serializable, Comparable<SurveyQuestion> 
     @Column(nullable = false)
     private String question;
 
-    @Column
-    private int index;
-
     @Enumerated
     private SurveyQuestionType type;
 

@@ -29,7 +29,7 @@ public class FileUploadController {
             try (InputStream propertiesFile = FileUploadController.class.getClassLoader().getResourceAsStream("application.properties")) {
                 properties.load(propertiesFile);
                 String originalFilename = inputFile.getOriginalFilename();
-                File destinationFile = new File(properties.getProperty("imageUploadDir") + File.separator + originalFilename);
+                File destinationFile = new File(properties.getProperty("image.upload.dir") + File.separator + originalFilename);
                 inputFile.transferTo(destinationFile);
                 photoInfo.setFileName(destinationFile.getPath());
                 headers.add("File Uploaded Successfully - ", originalFilename);
