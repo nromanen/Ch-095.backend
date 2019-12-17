@@ -9,6 +9,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.Objects;
+
 public class PageableDefaultResolver implements HandlerMethodArgumentResolver {
 
     @Override
@@ -18,18 +20,18 @@ public class PageableDefaultResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Pageable resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                    NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+                                    NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         PageableDefault annotation = parameter.getParameterAnnotation(PageableDefault.class);
         String size = webRequest.getParameter(annotation.params()[0]);
         String page = webRequest.getParameter(annotation.params()[1]);
         String[] sort = webRequest.getParameterValues(annotation.params()[2]);
         String direction = webRequest.getParameter(annotation.params()[3]);
         return new Pageable(
-                size == null ? annotation.size() : Integer.parseInt(size),
-                page == null ? annotation.page() : Integer.parseInt(page),
+                Objects.isNull(size) ? annotation.size() : Integer.parseInt(size),
+                Objects.isNull(page) ? annotation.page() : Integer.parseInt(page),
                 0,
-                Sort.from(direction == null ? annotation.direction() : Sort.Direction.valueOf(direction),
-                        sort == null || sort.length == 0 ? annotation.sort() : sort)
+                Sort.from(Objects.isNull(direction)  ? annotation.direction() : Sort.Direction.valueOf(direction),
+                        Objects.isNull(sort) || sort.length == 0 ? annotation.sort() : sort)
         );
     }
 
