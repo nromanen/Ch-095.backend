@@ -3,6 +3,8 @@ package com.softserve.academy.event.controller;
 import com.softserve.academy.event.dto.CheckOpportunityDTO;
 import com.softserve.academy.event.service.db.ContactService;
 import com.softserve.academy.event.service.db.SurveyContactConnectorService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Base64;
 import java.util.Optional;
 
+@Api(value = "/testAccess")
 @RestController
 @RequestMapping(value = "/testAccess")
 @Slf4j
@@ -25,6 +28,7 @@ public class CheckOpportunityController {
         this.contactService = contactService;
     }
 
+    @ApiOperation(value = "Mail verification")
     @GetMapping(value = "/{token}")
     public ResponseEntity<String> mailTest(@PathVariable(name = "token") String token) {
         String[] res = new String(Base64.getDecoder().decode(token)).split(";");
@@ -36,6 +40,7 @@ public class CheckOpportunityController {
         return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
     }
 
+    @ApiOperation(value = "Check e-mail")
     @PostMapping(value = "/check")
     public ResponseEntity<String> enterEmail(@RequestBody CheckOpportunityDTO checkOpportunityDTO) {
         String token_email = new String(Base64.getDecoder().decode(checkOpportunityDTO.getToken())).split(";")[0];

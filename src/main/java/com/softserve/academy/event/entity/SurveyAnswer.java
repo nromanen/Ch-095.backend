@@ -5,11 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.NamedQuery;
-
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -24,9 +20,19 @@ public class SurveyAnswer implements Serializable {
 
     private static final long serialVersionUID = -1003597080168505177L;
 
-    @EmbeddedId
-    private QuestionContact questionContact;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column
+    @ManyToOne
+    private SurveyQuestion question;
+
+    @Column
+    @ManyToOne
+    private Contact contact;
+
+    @Column
     private String value;
 
 }

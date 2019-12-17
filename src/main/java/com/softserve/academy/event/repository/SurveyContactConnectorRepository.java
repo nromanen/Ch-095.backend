@@ -1,7 +1,11 @@
 package com.softserve.academy.event.repository;
 
-import com.softserve.academy.event.entity.SurveyContactConnector;
+import com.softserve.academy.event.entity.SurveyContact;
 
-public interface SurveyContactConnectorRepository extends BasicRepository<SurveyContactConnector, Long> {
-    public boolean isEnable(Long contactId, Long surveyId);
+import java.util.Optional;
+
+public interface SurveyContactConnectorRepository extends BasicRepository<SurveyContact, Long> {
+
+    boolean isEnable(Long contactId, Long surveyId);
+    Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId);
 }
