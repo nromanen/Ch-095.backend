@@ -86,7 +86,7 @@ public class StatisticController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200/statistic/surveyTitle")
-    @GetMapping("/answers")
+    @GetMapping("/surveyTitle")
     public ResponseEntity<String> getSurveyTitle(
             @RequestParam(name = "surveyId") long surveyId){
         log.info("Called getSurveyTitle with surveyId = " + surveyId );
