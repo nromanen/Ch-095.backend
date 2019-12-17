@@ -2,6 +2,7 @@ package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.dto.CheckOpportunityDTO;
 import com.softserve.academy.event.dto.ContactSurveyDTO;
+import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.service.db.ContactService;
 import com.softserve.academy.event.service.db.SurveyContactConnectorService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,16 +30,26 @@ public class CheckOpportunityController {
 
     @GetMapping(value = "/{token}")
     public ResponseEntity<String> mailTest(@PathVariable(name = "token") String token){
-        String[] res = new String(Base64.getDecoder().decode(token)).split(";");
+        String[] res;
+        try{
+            res =new String(Base64.getDecoder().decode(token)).split(";");
+        }catch (Exception e){
+            return new ResponseEntity<>("Sorry, but you can`t pass survey by this link", HttpStatus.BAD_REQUEST);
+        }
         Optional<Long> longOptional = contactService.getIdByEmail(res[0]);
         if (longOptional.isPresent()){
-            if (surveyContactConnectorService.isEnable(longOptional.get(), Long.valueOf(res[1]))){
-//                return new ResponseEntity<>(token, HttpStatus.OK);
-                return ResponseEntity.ok(token);
+            try {
+                if (surveyContactConnectorService.isEnable(longOptional.get(), Long.valueOf(res[1]))){
+                    return ResponseEntity.ok(token);
+                }
+            } catch (SurveyAlreadyPassedException e) {
+                return new ResponseEntity<>("Sorry, but you have already passed this survey", HttpStatus.BAD_REQUEST);
+            } catch (Exception e) {
+                return new ResponseEntity<>("Sorry, but you can`t pass survey by this link", HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>("", HttpStatus.GONE);
+//            return new ResponseEntity<>("", HttpStatus.GONE);
         }
-        return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
 
     }
 
