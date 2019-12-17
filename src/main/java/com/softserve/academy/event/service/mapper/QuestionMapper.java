@@ -16,4 +16,5 @@ public interface QuestionMapper {
     QuestionDTO toDTO(SurveyQuestion surveyQuestion);
 
     List<QuestionDTO> listQuestionToDTO(List<SurveyQuestion> list);
+
 }

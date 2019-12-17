@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NamedQuery;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -17,9 +18,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@org.hibernate.annotations.NamedQuery(name="SurveyAnswer.findByQuestionId",
+@NamedQuery(name="SurveyAnswer.findByQuestionId",
         query="from SurveyAnswer where questionId = :questionId ")
-
 public class SurveyAnswer implements Serializable {
 
     private static final long serialVersionUID = -1003597080168505177L;
