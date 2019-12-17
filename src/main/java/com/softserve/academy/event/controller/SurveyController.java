@@ -6,10 +6,7 @@ import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
-import com.softserve.academy.event.util.DuplicateSurveySettings;
-import com.softserve.academy.event.util.Pageable;
-import com.softserve.academy.event.util.Sort;
-import com.softserve.academy.event.util.SurveyPage;
+import com.softserve.academy.event.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +27,7 @@ public class SurveyController {
     }
 
     @GetMapping
-    public ResponseEntity<SurveyPage<SurveyDTO>> findAllSurveys(
+    public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
             @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, name = "status") String status) {
         return ResponseEntity.ok(
