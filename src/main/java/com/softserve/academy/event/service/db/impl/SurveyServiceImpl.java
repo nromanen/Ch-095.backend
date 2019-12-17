@@ -11,19 +11,47 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class SurveyServiceImpl extends BasicServiceImpl<Survey, Long> implements SurveyService {
+public class SurveyServiceImpl implements SurveyService {
 
     private final SurveyRepositoryImpl repository;
 
     public SurveyServiceImpl(SurveyRepositoryImpl repository) {
         this.repository = repository;
+    }
+
+    @Override
+    public Optional<Survey> findFirstById(Long id) {
+        return repository.findFirstById(id);
+    }
+
+    @Override
+    public List<Survey> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Survey save(Survey entity) {
+        return repository.save(entity);
+    }
+
+    @Override
+    public Survey update(Survey object) {
+        return repository.update(object);
+    }
+
+    @Override
+    public void delete(Survey entity) {
+        repository.delete(entity);
+    }
+
+    @Override
+    public void detach(Survey entity) {
+        repository.detach(entity);
     }
 
     @Override
