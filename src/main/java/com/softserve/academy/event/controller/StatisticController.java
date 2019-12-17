@@ -39,7 +39,8 @@ public class StatisticController {
 
     @CrossOrigin(origins = "http://localhost:4200/statistic/questions")
     @GetMapping("/questions")
-    public ResponseEntity<List<QuestionStatisticDTO>> getQuestions(@RequestParam(name = "surveyId") long surveyId) {
+    public ResponseEntity<List<QuestionStatisticDTO>> getQuestions(
+            @RequestParam(name = "surveyId") long surveyId) {
         log.info("Called getQuestions with surveyId = " + surveyId );
         Optional<Survey> surveyOptional = surveyService.findFirstById(surveyId);
         if(surveyOptional.isPresent()) {
@@ -84,4 +85,21 @@ public class StatisticController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:4200/statistic/surveyTitle")
+    @GetMapping("/answers")
+    public ResponseEntity<String> getSurveyTitle(
+            @RequestParam(name = "surveyId") long surveyId){
+        log.info("Called getSurveyTitle with surveyId = " + surveyId );
+        Optional<Survey> surveyOptional = surveyService.findFirstById(surveyId);
+        if(surveyOptional.isPresent()){
+            log.info("Return responseEntity for surveyId = "
+                    + surveyId + " with HttpStatus " + HttpStatus.OK);
+            return new ResponseEntity<>(surveyOptional.get().getTitle(),HttpStatus.OK);
+        }
+        else {
+            log.info("Return responseEntity for surveyId = "
+                    + surveyId + " with HttpStatus " + HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }
