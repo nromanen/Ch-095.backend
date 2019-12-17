@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SurveyQuestion implements Serializable {
+public class SurveyQuestion implements Serializable, Comparable<SurveyQuestion> {
 
     private static final long serialVersionUID = -2673922858877977323L;
 
