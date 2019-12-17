@@ -57,7 +57,7 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
         query.setMaxResults(pageable.getSize());
         Query countQuery = session.createQuery("select count(*) from " + clazz.getName());
         Long countResult = (Long) countQuery.uniqueResult();
-        pageable.setLastPage((int) (countResult / pageable.getSize()));
+        pageable.setLastPage((int) Math.ceil((double)countResult / pageable.getSize()));
         pageable.setCurrentPage(pageable.getCurrentPage() + 1);
         return new Page<>(query.list(), pageable);
     }
