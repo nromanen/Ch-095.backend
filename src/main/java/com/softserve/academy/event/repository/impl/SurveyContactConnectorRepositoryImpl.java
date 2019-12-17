@@ -14,11 +14,12 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
 
     @Override
     public boolean isEnable(Long contactId, Long surveyId) {
-
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("select t.enable " +
                 "from " + clazz.getName() + " as t" +
-                " where t.contact = " + contactId + " and t.survey = " + surveyId);
+                " where t.contact = :contactId" + " and t.survey = :surveyId")
+                .setParameter("surveyId", surveyId)
+                .setParameter("contactId", contactId);
         List<Boolean> res = query.getResultList();
         if (res.isEmpty())return false;
         return res.get(0);
@@ -28,7 +29,9 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
     public Optional<SurveyContactConnector> findByContactAndSurvey(Long contactId, Long surveyId) {
         List<SurveyContactConnector> result = sessionFactory.getCurrentSession()
                 .createQuery("from " + clazz.getName() + " as t" +
-                        " where t.contact = " + contactId + " and t.survey = " + surveyId)
+                        " where t.contact = :contactId" + " and t.survey = :surveyId")
+                .setParameter("surveyId", surveyId)
+                .setParameter("contactId", contactId)
                 .getResultList();
         if(result.isEmpty())
             return Optional.empty();
