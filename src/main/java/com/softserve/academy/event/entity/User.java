@@ -2,9 +2,6 @@ package com.softserve.academy.event.entity;
 
 import com.softserve.academy.event.entity.enums.Roles;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;

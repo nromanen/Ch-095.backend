@@ -1,10 +1,8 @@
 package com.softserve.academy.event.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -56,9 +54,9 @@ public class VerificationToken implements Serializable {
 
     private Date calculateExpiryDate(int timeInMinutes) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Timestamp(calendar.getTime().getTime()));
+        calendar.setTime(new Timestamp(calendar.getTimeInMillis()));
         calendar.add(Calendar.MINUTE, timeInMinutes);
-        return new Date(calendar.getTime().getTime());
+        return new Date(calendar.getTimeInMillis());
     }
 
     public void updateToken(final String token) {

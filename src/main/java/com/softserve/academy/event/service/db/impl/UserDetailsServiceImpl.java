@@ -28,8 +28,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
-
-        if (!userOptional.isPresent()) throw new UsernameNotFoundException("No user found with username" + email);
+        if (!userOptional.isPresent()) {
+            throw new UsernameNotFoundException("No user found with username" + email);
+        }
         User user = userOptional.get();
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().toString()));

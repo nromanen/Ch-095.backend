@@ -1,11 +1,15 @@
 package com.softserve.academy.event.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
 @Entity
+@Getter
+@Setter
 public class PasswordResetToken implements Serializable {
     private static final int EXPIRATION = 60 * 24;
 
@@ -40,40 +44,11 @@ public class PasswordResetToken implements Serializable {
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
-    //
-    public Long getId() {
-        return id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(final String token) {
-        this.token = token;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(final User user) {
-        this.user = user;
-    }
-
-    public Date getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(final Date expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
     private Date calculateExpiryDate(final int expiryTimeInMinutes) {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(new Date().getTime());
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
-        return new Date(cal.getTime().getTime());
+        return new Date(cal.getTimeInMillis());
     }
 
     public void updateToken(final String token) {

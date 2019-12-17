@@ -51,7 +51,6 @@ public class LoginController {
 
     @GetMapping(value = "/registrationConfirm")
     public ResponseEntity confirmRegistration( @RequestParam("token")String token, HttpServletRequest request)  {
-        Locale locale = request.getLocale();
         TokenValidation result = userService.validateVerificationToken(token);
         if (TokenValidation.TOKEN_VALID.equals(result)) {
             return new ResponseEntity(HttpStatus.OK);
