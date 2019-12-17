@@ -1,4 +1,4 @@
-package com.softserve.academy.event.service;
+package com.softserve.academy.event.entity.enums;
 
 public enum TokenValidation {
     TOKEN_INVALID("invalidToken"),

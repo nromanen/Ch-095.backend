@@ -1,7 +1,7 @@
 package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.dto.EmailDTO;
-import com.softserve.academy.event.service.EmailService;
+import com.softserve.academy.event.service.db.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;

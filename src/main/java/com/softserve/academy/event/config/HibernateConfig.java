@@ -28,8 +28,7 @@ public class HibernateConfig {
 
     private static final String ENTITY_PACKAGE = "hibernate.entity.package";
 
-    //@Autowired
-    private Environment environment;
+    private final Environment environment;
 
     @Autowired
     public HibernateConfig(Environment environment) {

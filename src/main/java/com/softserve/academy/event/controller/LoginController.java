@@ -3,19 +3,17 @@ package com.softserve.academy.event.controller;
 import com.softserve.academy.event.dto.UserDto;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.exception.EmailExistException;
-import com.softserve.academy.event.service.EmailService;
-import com.softserve.academy.event.service.TokenValidation;
+import com.softserve.academy.event.service.db.EmailService;
+import com.softserve.academy.event.entity.enums.TokenValidation;
+import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.service.mapper.UserMapper;
 import com.softserve.academy.event.registration.RegistrationCompleteEvent;
-import com.softserve.academy.event.service.UserService;
+//import com.softserve.academy.event.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
@@ -24,26 +22,24 @@ import java.util.Locale;
 @CrossOrigin(origins = "http://localhost:4200")
 public class LoginController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    private final UserMapper userMapper;
+
+    private final ApplicationEventPublisher eventPublisher;
+
+    final EmailService emailService;
+
+    final Environment env;
 
     @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
-
-    @Autowired
-    EmailService emailService;
-
-    @Autowired
-    Environment env;
-
-    @GetMapping
-    public  String getHello() {
-    return "Hello";
-}
+    public LoginController(UserService userService, UserMapper userMapper, ApplicationEventPublisher eventPublisher, EmailService emailService, Environment env) {
+        this.userService = userService;
+        this.userMapper = userMapper;
+        this.eventPublisher = eventPublisher;
+        this.emailService = emailService;
+        this.env = env;
+    }
 
     @PostMapping(value = "/registration")
     public ResponseEntity registerUserAccount(@RequestBody UserDto accountDto, HttpServletRequest request) throws EmailExistException {
@@ -76,8 +72,7 @@ public class LoginController {
 
     @GetMapping(value = "/login")
     public ResponseEntity getLogin() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return new ResponseEntity(authentication.getName(), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     private String getAppUrl(HttpServletRequest request) {

@@ -1,6 +1,7 @@
-package com.softserve.academy.event.repository;
+package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.User;
+import com.softserve.academy.event.repository.UserRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,12 @@ import java.util.Optional;
 @Repository
 public class UserRepositoryImpl  implements UserRepository {
 
+    private final SessionFactory sessionFactory;
+
     @Autowired
-    private SessionFactory sessionFactory;
+    public UserRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public Optional<User> findByEmail(String email) {

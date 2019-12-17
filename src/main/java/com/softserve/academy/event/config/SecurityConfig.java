@@ -21,16 +21,20 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 @ComponentScan(basePackages = { "com.softserve.academy.event.service" })
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    @Autowired
-    private MyAuthenticationEntryPoint myAuthenticationEntryPoint;
+    private final MyAuthenticationEntryPoint myAuthenticationEntryPoint;
 
-    @Autowired
-    private   MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler;
+    private final MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler;
 
     private SimpleUrlAuthenticationFailureHandler myFailureHandler = new SimpleUrlAuthenticationFailureHandler();
+
+    @Autowired
+    public SecurityConfig(UserDetailsService userDetailsService, MyAuthenticationEntryPoint myAuthenticationEntryPoint, MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler) {
+        this.userDetailsService = userDetailsService;
+        this.myAuthenticationEntryPoint = myAuthenticationEntryPoint;
+        this.mySuccessHandler = mySuccessHandler;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

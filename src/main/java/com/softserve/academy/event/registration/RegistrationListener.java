@@ -1,28 +1,27 @@
 package com.softserve.academy.event.registration;
 
 import com.softserve.academy.event.entity.User;
-import com.softserve.academy.event.service.EmailService;
-import com.softserve.academy.event.service.UserService;
+import com.softserve.academy.event.service.db.EmailService;
+//import com.softserve.academy.event.service.UserService;
+import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.UUID;
 
 @Component
 public class RegistrationListener  {
-   @Autowired
-   private UserService userService;
 
-   @Autowired
-   EmailService emailService;
+    private final UserService userService;
+
+    private final EmailService emailService;
+
+    @Autowired
+    public RegistrationListener(UserService userService, EmailService emailService) {
+        this.userService = userService;
+        this.emailService = emailService;
+    }
 
     @EventListener
     public void handleEvent(RegistrationCompleteEvent event) {

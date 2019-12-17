@@ -1,4 +1,4 @@
-package com.softserve.academy.event.service;
+package com.softserve.academy.event.service.db;
 
 public interface SecurityService {
     String findLoggedInUsername();

@@ -1,6 +1,7 @@
-package com.softserve.academy.event.repository;
+package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.VerificationToken;
+import com.softserve.academy.event.repository.VerificationTokenRepository;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -11,8 +12,12 @@ import java.util.Optional;
 @Repository
 public class VerificationTokenRepositoryImpl implements VerificationTokenRepository {
 
+    private final SessionFactory sessionFactory;
+
     @Autowired
-    private SessionFactory sessionFactory;
+    public VerificationTokenRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public VerificationToken findByToken(String token) {
