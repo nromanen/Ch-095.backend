@@ -13,6 +13,8 @@ public interface SurveyService {
 
     Page<Survey> findAll(Pageable pageable);
 
+    Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status);
+
     Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters);
 
     HttpStatus updateTitle(Long id, String title);

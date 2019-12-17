@@ -7,6 +7,7 @@ import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     private final SurveyRepository repository;
 
+    @Autowired
     public SurveyServiceImpl(SurveyRepository repository) {
         this.repository = repository;
     }
@@ -26,6 +28,11 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public Page<Survey> findAll(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status) {
+        return repository.findAllByPageableAndStatus(pageable, status);
     }
 
     @Override

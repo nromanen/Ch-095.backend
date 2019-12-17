@@ -7,14 +7,13 @@ import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
-import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
+import com.softserve.academy.event.util.SurveyPage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("survey")
@@ -24,17 +23,18 @@ public class SurveyController {
     private final SurveyService service;
     private final SurveyMapper surveyMapper;
 
+    @Autowired
     public SurveyController(SurveyService service, SurveyMapper surveyMapper) {
         this.service = service;
         this.surveyMapper = surveyMapper;
     }
 
     @GetMapping
-    public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
+    public ResponseEntity<SurveyPage<SurveyDTO>> findAllSurveys(
             @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
-            @RequestBody(required = false) Map<String, Map<String, Object>> filters) { /* todo OMFG GET haven't have body ... */
+            @RequestParam(required = false, name = "status") String status) {
         return ResponseEntity.ok(
-                surveyMapper.pageToDTO(service.findAllFiltered(pageable, filters))
+                surveyMapper.pageToDTO(service.findAllByPageableAndStatus(pageable, status))
         );
     }
 

@@ -1,6 +1,7 @@
 package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -10,6 +11,9 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.Objects;
+
+import static com.softserve.academy.event.util.Constants.*;
 
 @Repository
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> implements SurveyRepository {
@@ -17,6 +21,18 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     @Override
     public Page<Survey> findAll(Pageable pageable) {
         Session session = sessionFactory.getCurrentSession();
+        return getSurveyPage(pageable, session);
+    }
+
+    @Override
+    public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status) {
+        Session session = sessionFactory.getCurrentSession();
+        if (Objects.nonNull(status) && status.length() > 0) {
+            session.enableFilter(SURVEY_STATUS_FILTER_NAME)
+                    .setParameter(SURVEY_STATUS_FILTER_ARGUMENT, SurveyStatus.valueOf(status).getNumber());
+        } else {
+            session.enableFilter(SURVEY_DEFAULT_FILTER_NAME);
+        }
         return getSurveyPage(pageable, session);
     }
 
@@ -41,7 +57,8 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
         query.setMaxResults(pageable.getSize());
         Query countQuery = session.createQuery("select count(*) from " + clazz.getName());
         Long countResult = (Long) countQuery.uniqueResult();
-        pageable.setLastPage((int) ((countResult / pageable.getSize()) + 1));
+        pageable.setLastPage((int) (countResult / pageable.getSize()));
+        pageable.setCurrentPage(pageable.getCurrentPage() + 1);
         return new Page<>(query.list(), pageable);
     }
 
