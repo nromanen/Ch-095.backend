@@ -23,7 +23,7 @@ public class CheckOpportunityController {
     private final ContactService contactService;
 
     @Autowired
-    public CheckOpportunityController(SurveyContactConnectorService surveyContactConnectorService, ContactService contactService){
+    public CheckOpportunityController(SurveyContactConnectorService surveyContactConnectorService, ContactService contactService) {
         this.surveyContactConnectorService = surveyContactConnectorService;
         this.contactService = contactService;
     }
@@ -47,7 +47,6 @@ public class CheckOpportunityController {
             } catch (Exception e) {
                 return new ResponseEntity<>("Sorry, but you can`t pass survey by this link", HttpStatus.BAD_REQUEST);
             }
-//            return new ResponseEntity<>("", HttpStatus.GONE);
         }
         return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
 
