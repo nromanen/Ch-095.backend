@@ -1,6 +1,6 @@
 package com.softserve.academy.event.repository.impl;
 
-import com.softserve.academy.event.entity.SurveyContactConnector;
+import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.repository.SurveyContactConnectorRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<SurveyContactConnector, Long> implements SurveyContactConnectorRepository {
+public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<SurveyContact, Long> implements SurveyContactConnectorRepository {
 
     @Override
     public boolean isEnable(Long contactId, Long surveyId) {
@@ -26,8 +26,8 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
     }
 
     @Override
-    public Optional<SurveyContactConnector> findByContactAndSurvey(Long contactId, Long surveyId) {
-        List<SurveyContactConnector> result = sessionFactory.getCurrentSession()
+    public Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId) {
+        List<SurveyContact> result = sessionFactory.getCurrentSession()
                 .createQuery("from " + clazz.getName() + " as t" +
                         " where t.contact = :contactId" + " and t.survey = :surveyId")
                 .setParameter("surveyId", surveyId)
