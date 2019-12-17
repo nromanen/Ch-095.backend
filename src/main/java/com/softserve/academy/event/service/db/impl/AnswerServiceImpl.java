@@ -2,7 +2,6 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softserve.academy.event.dto.QuestionStatisticDTO;
 import com.softserve.academy.event.entity.SurveyAnswer;
 import com.softserve.academy.event.exception.QuestionNotFoundException;
 import com.softserve.academy.event.repository.AnswerRepository;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 @Service
@@ -59,18 +57,20 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public Map<String, Integer> createStatisticAnswersMap(Long questionId) throws JsonProcessingException {
+    public Map<String, Integer> createStatisticAnswersMap(Long questionId) throws JsonProcessingException
+                            ,QuestionNotFoundException {
         ObjectMapper mapper = new ObjectMapper();
         List<SurveyAnswer> answers = answerRepository.findByQuestionId(questionId);
         List<String> answersType = Arrays.asList(mapper.readValue(
                 questionRepository.findFirstById(questionId).orElseThrow(
-                        () -> new QuestionNotFoundException("No question with " + questionId))
+                        () -> new QuestionNotFoundException("No question with id = " + questionId ))
                         .getAnswers(),String[].class));
 
         Map<String,Integer> statisticMap = new HashMap<>();
         answersType.forEach(answer -> {
             statisticMap.put(answer,0);
         });
+
         answers.forEach(surveyAnswer -> {
             statisticMap.put(surveyAnswer.getValue()
                     ,1 + statisticMap.get(surveyAnswer.getValue()));
