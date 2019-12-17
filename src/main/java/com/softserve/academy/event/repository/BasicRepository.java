@@ -13,7 +13,7 @@ public interface BasicRepository<T extends Serializable, I extends Serializable>
 
     T save(T entity);
 
-    T update(T entity);
+    T update(T object);
 
     void delete(T entity);
 
