@@ -33,8 +33,4 @@ public class BasicServiceImpl<T extends Serializable, I extends Serializable> im
         return basicRepository.update(object);
     }
 
-    @Override
-    public void deleteById(I id) {
-        basicRepository.deleteById(id);
-    }
 }

@@ -1,6 +1,8 @@
 package com.softserve.academy.event.service.db;
 
-import com.softserve.academy.event.entity.Contact;
+import java.util.Optional;
 
-public interface ContactService extends BasicService<Contact, Long> {
+public interface ContactService{
+    Optional<Long> getIdByEmail(String email);
+    public void saveEmail(String email);
 }

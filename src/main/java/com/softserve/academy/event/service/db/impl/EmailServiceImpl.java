@@ -1,6 +1,6 @@
-package com.softserve.academy.event.service.impl;
+package com.softserve.academy.event.service.db.impl;
 
-import com.softserve.academy.event.service.EmailService;
+import com.softserve.academy.event.service.db.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
