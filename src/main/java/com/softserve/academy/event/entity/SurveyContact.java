@@ -1,7 +1,6 @@
 package com.softserve.academy.event.entity;
 
 import lombok.*;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -11,6 +10,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 public class SurveyContact implements Serializable {
+
     @Id
     @GeneratedValue
     private Long id;
