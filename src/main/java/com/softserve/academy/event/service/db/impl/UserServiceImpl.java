@@ -118,4 +118,10 @@ public class UserServiceImpl implements UserService {
     public void detach(User entity) {
         userRepository.detach(entity);
     }
+
+    //todo rewrite this method
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
