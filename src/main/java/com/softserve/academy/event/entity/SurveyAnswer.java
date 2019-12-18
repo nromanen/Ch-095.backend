@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "survey_answers")
-@EqualsAndHashCode(of = {"questionContact"})
+@EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
