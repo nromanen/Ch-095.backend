@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepositoryImpl  implements UserRepository {
+public class UserRepositoryImpl extends BasicRepositoryImpl<User, Long>  implements UserRepository {
 
     private final SessionFactory sessionFactory;
 
@@ -32,36 +32,5 @@ public class UserRepositoryImpl  implements UserRepository {
        return Optional.of(query.getResultList().get(0));
     }
 
-    @Override
-    public List<User> findAll() {
-        return null;
-    }
-
-    @Override
-    public User save(User entity) {
-        Session session = sessionFactory.getCurrentSession();
-        Long id = (Long) session.save(entity);
-        return session.get(User.class, id);
-    }
-
-    @Override
-    public User update(User object) {
-        return null;
-    }
-
-    @Override
-    public Optional<User> findFirstById(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public void delete(User entity) {
-
-    }
-
-    @Override
-    public void detach(User entity) {
-
-    }
 }
 
