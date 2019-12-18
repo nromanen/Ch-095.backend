@@ -1,6 +1,9 @@
 package com.softserve.academy.event.service.db.impl;
 
+import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.repository.impl.SurveyRepositoryImpl;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -10,9 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import java.util.Map;
-import java.util.Set;
 
 @Service
 @Transactional

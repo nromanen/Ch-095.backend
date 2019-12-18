@@ -10,8 +10,6 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
-import java.util.List;
-import java.util.Set;
 
 @Repository
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
@@ -59,9 +57,9 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> {
 //        return res.get(0);
 //    }
 
-    @Override
-    public void save(Set<Contact> contactSet) {
-        Session session = sessionFactory.getCurrentSession();
-        session.save(contactSet);
-    }
+//    @Override
+//    public void save(Set<Contact> contactSet) {
+//        Session session = sessionFactory.getCurrentSession();
+//        session.save(contactSet);
+//    }
 }
