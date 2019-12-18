@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/survey/**").permitAll()
                 .antMatchers("/fileupload").permitAll()
                 .antMatchers("/sendEmails").permitAll()
+                .antMatchers("/statistic/**").permitAll()
                 .antMatchers("/question").permitAll()
                 .anyRequest().authenticated()
                // .antMatchers("/login").hasAnyRole("ADMIN", "USER")

@@ -1,12 +1,17 @@
 package com.softserve.academy.event.service.db;
 
-import com.softserve.academy.event.entity.Contact;
-import com.softserve.academy.event.entity.Survey;
-import com.softserve.academy.event.entity.SurveyContactConnector;
+import com.softserve.academy.event.entity.SurveyContact;
+import com.softserve.academy.event.exception.IncorrectLinkException;
+import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.repository.BasicRepository;
 
-public interface SurveyContactConnectorService extends BasicRepository<SurveyContactConnector, Long> {
-    boolean isEnable(Long contactId, Long surveyId);
+import java.util.Optional;
+
+public interface SurveyContactConnectorService extends BasicRepository<SurveyContact, Long> {
+
+    Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId);
+
+    boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException;
 
     void addRow(Contact contact, Survey survey);
 }

@@ -1,23 +1,35 @@
 package com.softserve.academy.event.service.db;
 
-import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public interface SurveyService extends BasicService<Survey, Long> {
+public interface SurveyService {
 
-    Page<SimpleSurveyDTO> findAll(Pageable pageable);
+    Page<Survey> findAll(Pageable pageable);
 
-    Page<SimpleSurveyDTO> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters);
+    Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status);
+
+    Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters);
 
     HttpStatus updateTitle(Long id, String title);
 
-    SimpleSurveyDTO duplicateSurvey(Long id);
+    HttpStatus updateStatus(Long id, SurveyStatus status);
 
-    String setTitleForSurvey(Long id, String title);
+    Survey duplicateSurvey(DuplicateSurveySettings settings);
+
+    void delete(Survey entity);
+
+    Optional<Survey> findFirstById(long surveyId);
+
+    Survey saveSurveyWithQuestions(Survey survey, long id, List<SurveyQuestion> surveyQuestions);
 
 }

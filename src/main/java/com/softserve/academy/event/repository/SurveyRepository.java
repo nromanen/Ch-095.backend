@@ -3,17 +3,16 @@ package com.softserve.academy.event.repository;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
-import org.springframework.http.HttpStatus;
+
+import java.util.Map;
 
 public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
     Page<Survey> findAll(Pageable pageable);
 
-    HttpStatus updateTitle(Long id, String title);
+    Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status);
 
-    Survey duplicateSurvey(Long id);
-
-    String setTitleForSurvey(Long id, String title);
+    Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters);
 
 //    public void save(Set<Contact> contactSet);
 }

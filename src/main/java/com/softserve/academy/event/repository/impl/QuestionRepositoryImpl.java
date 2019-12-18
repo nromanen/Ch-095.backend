@@ -12,7 +12,7 @@ public class QuestionRepositoryImpl extends BasicRepositoryImpl<SurveyQuestion, 
     @Override
     public List<SurveyQuestion> findBySurveyId(Long surveyId) {
         return sessionFactory.getCurrentSession()
-                .createQuery("from " + SurveyQuestion.class.getName() + " where survey_id = :surveyId")
+                .createQuery("from " + SurveyQuestion.class.getName() + " where survey_id = :surveyId ORDER BY index")
                 .setParameter("surveyId", surveyId)
                 .getResultList();
     }
