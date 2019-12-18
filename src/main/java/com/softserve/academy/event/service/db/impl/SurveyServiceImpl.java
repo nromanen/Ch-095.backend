@@ -1,6 +1,5 @@
 package com.softserve.academy.event.service.db.impl;
 
-import com.softserve.academy.event.dto.SimpleSurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.User;
@@ -8,9 +7,12 @@ import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.impl.SurveyRepositoryImpl;
+import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.service.db.SurveyService;
+import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,93 +30,72 @@ import java.util.stream.Collectors;
 @Transactional
 public class SurveyServiceImpl implements SurveyService {
 
-    private final SurveyRepositoryImpl repository;
+    private final SurveyRepository repository;
     private UserRepository userRepository;
     private QuestionRepository questionRepository;
 
-    public SurveyServiceImpl(SurveyRepositoryImpl repository, UserRepository userRepository, QuestionRepository questionRepository) {
+    @Autowired
+    public SurveyServiceImpl(SurveyRepository repository, UserRepository userRepository, QuestionRepository questionRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.questionRepository = questionRepository;
     }
 
     @Override
-    public Optional<Survey> findFirstById(Long id) {
-        return repository.findFirstById(id);
+    public Page<Survey> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override
-    public List<Survey> findAll() {
-        return repository.findAll();
+    public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status) {
+        return repository.findAllByPageableAndStatus(pageable, status);
     }
 
     @Override
-    public Survey save(Survey entity) {
-        return repository.save(entity);
+    public Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters) {
+        return repository.findAllFiltered(pageable,
+                Objects.nonNull(filters) ? filters :
+                        Collections.singletonMap("surveyStatusField",
+                                Collections.singletonMap("status", SurveyStatus.TEMPLATE.getNumber()))
+        );
     }
 
     @Override
-    public Survey update(Survey object) {
-        return repository.update(object);
+    public HttpStatus updateTitle(Long id, String title) {
+        Survey survey = repository.findFirstById(id)
+                .orElseThrow(RuntimeException::new);
+        survey.setTitle(title);
+        repository.update(survey);
+        return HttpStatus.OK;
+    }
+
+    @Override
+    public HttpStatus updateStatus(Long id, SurveyStatus status) {
+        Survey survey = repository.findFirstById(id)
+                .orElseThrow(RuntimeException::new);
+        survey.setStatus(status);
+        repository.update(survey);
+        return HttpStatus.OK;
+    }
+
+    @Override
+    public Survey duplicateSurvey(DuplicateSurveySettings settings) {
+        Survey survey = repository.findFirstById(settings.getId())
+                .orElseThrow(RuntimeException::new);
+        repository.detach(survey);
+        survey.setId(null);
+        survey.setCreationDate(new Date());
+        survey.setStatus(SurveyStatus.NON_ACTIVE);
+        if (settings.isClearContacts()) {
+            survey.setContacts(new HashSet<>());
+        }
+        repository.save(survey);
+        return survey;
     }
 
     @Override
     public void delete(Survey entity) {
         repository.delete(entity);
-    }
-
-    @Override
-    public void detach(Survey entity) {
-        repository.detach(entity);
-    }
-
-    @Override
-    public Page<SimpleSurveyDTO> findAll(Pageable pageable) {
-        Page<Survey> page = repository.findAll(pageable);
-        return new Page<>(
-                page.getItems().stream()
-                        .map(SimpleSurveyDTO::toSimpleUser)
-                        .collect(Collectors.toList()),
-                pageable);
-    }
-
-    @Override
-    public Page<SimpleSurveyDTO> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters) {
-        Page<Survey> page = repository.findAllFiltered(pageable,
-                Objects.nonNull(filters) ? filters :
-                        Collections.singletonMap("surveyStatusField",
-                                Collections.singletonMap("status", SurveyStatus.TEMPLATE.getNumber()))
-        );
-        return new Page<>(
-                page.getItems().stream()
-                        .map(SimpleSurveyDTO::toSimpleUser)
-                        .collect(Collectors.toList()),
-                pageable); // convert to dto
-    }
-
-    @Override
-    public HttpStatus updateTitle(Long id, String title) {
-        Survey survey = findFirstById(id).orElseThrow(RuntimeException::new);
-        survey.setTitle(title);
-        update(survey);
-        return HttpStatus.OK;
-    }
-
-    @Override
-    public SimpleSurveyDTO duplicateSurvey(Long id) {
-        Survey survey = findFirstById(id).orElseThrow(RuntimeException::new);
-        survey.setId(null);
-        detach(survey);
-        save(survey);
-        return SimpleSurveyDTO.toSimpleUser(survey);
-    }
-
-    @Override
-    public String setTitleForSurvey(Long id, String title) {
-        Survey survey = findFirstById(id).orElseThrow(RuntimeException::new);
-        survey.setTitle(title);
-        update(survey);
-        return survey.getTitle();
     }
 
     @Override
