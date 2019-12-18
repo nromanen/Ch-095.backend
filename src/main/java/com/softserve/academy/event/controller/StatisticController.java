@@ -41,6 +41,7 @@ public class StatisticController {
     @CrossOrigin(origins = "http://localhost:4200/statistic/questions")
     @GetMapping("/questions")
     public ResponseEntity<List<QuestionStatisticDTO>> getQuestions(
+
             @RequestParam(name = "surveyId") long surveyId) {
         log.info("Called getQuestions with surveyId = " + surveyId );
         Optional<Survey> surveyOptional = surveyService.findFirstById(surveyId);
