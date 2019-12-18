@@ -3,7 +3,7 @@ package com.softserve.academy.event.controller;
 import com.softserve.academy.event.dto.ContactResponseDTO;
 import com.softserve.academy.event.dto.QuestionDTO;
 import com.softserve.academy.event.dto.SurveyContactDTO;
-import com.softserve.academy.event.entity.SurveyContactConnector;
+import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.service.db.AnswerService;
 import com.softserve.academy.event.service.db.ContactService;
@@ -67,15 +67,15 @@ public class QuestionController {
             result = "missing email data";
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
-        Optional <SurveyContactConnector> scc =
+        Optional <SurveyContact> surveyContact =
                 sccService.findByContactAndSurvey(contactId.get(), contactResponseDTO.getSurveyId());
-        if(!scc.isPresent()){
+        if(!surveyContact.isPresent()){
             result = "mail is not in the invite list";
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        scc.get().setEnable(true);
-        sccService.update(scc.get());
+        surveyContact.get().setEnable(true);
+        sccService.update(surveyContact.get());
         contactResponseDTO.getAnswers().stream()
                 .peek(answerDTO -> answerDTO.setContactId(contactId.get()))
                 .map(answerMapper::toEntity)

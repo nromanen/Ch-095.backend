@@ -1,6 +1,6 @@
 package com.softserve.academy.event.service.db.impl;
 
-import com.softserve.academy.event.entity.SurveyContactConnector;
+import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.exception.IncorrectLinkException;
 import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.repository.SurveyContactConnectorRepository;
@@ -24,32 +24,32 @@ public class SurveyContactConnectorServiceImpl implements SurveyContactConnector
     }
 
     @Override
-    public Optional<SurveyContactConnector> findFirstById(Long id) {
+    public Optional<SurveyContact> findFirstById(Long id) {
         return repository.findFirstById(id);
     }
 
     @Override
-    public List<SurveyContactConnector> findAll() {
+    public List<SurveyContact> findAll() {
         return repository.findAll();
     }
 
     @Override
-    public SurveyContactConnector save(SurveyContactConnector entity) {
+    public SurveyContact save(SurveyContact entity) {
         return repository.save(entity);
     }
 
     @Override
-    public SurveyContactConnector update(SurveyContactConnector object) {
+    public SurveyContact update(SurveyContact object) {
         return repository.update(object);
     }
 
     @Override
-    public void delete(SurveyContactConnector entity) {
+    public void delete(SurveyContact entity) {
         repository.delete(entity);
     }
 
     @Override
-    public void detach(SurveyContactConnector entity) {
+    public void detach(SurveyContact entity) {
         repository.detach(entity);
     }
 
@@ -59,7 +59,7 @@ public class SurveyContactConnectorServiceImpl implements SurveyContactConnector
     }
 
     @Override
-    public Optional<SurveyContactConnector> findByContactAndSurvey(Long contactId, Long surveyId) {
+    public Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId) {
         return repository.findByContactAndSurvey(contactId, surveyId);
     }
 }
