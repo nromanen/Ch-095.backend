@@ -2,6 +2,7 @@ package com.softserve.academy.event.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.softserve.academy.event.dto.AnswerSurveyTitle;
 import com.softserve.academy.event.dto.QuestionStatisticDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
@@ -48,6 +49,7 @@ public class StatisticController {
             List<SurveyQuestion> questions = questionService.findBySurveyId(survey.getId());
             List<QuestionStatisticDTO> questionDTOS =
                     questionMapper.listQuestionToStatisticDTO(questions);
+
             log.info("Return responseEntity for surveyId = "
                     + surveyId + " with HttpStatus" + HttpStatus.OK);
             return new ResponseEntity<>(questionDTOS,HttpStatus.OK);
@@ -76,6 +78,8 @@ public class StatisticController {
         }
         catch (JsonProcessingException e) {
             log.error(e.toString());
+            log.info("Return responseEntity for questionId = "
+                    + questionId + " with HttpStatus" + HttpStatus.OK);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         catch (QuestionNotFoundException e) {
@@ -87,14 +91,16 @@ public class StatisticController {
 
     @CrossOrigin(origins = "http://localhost:4200/statistic/surveyTitle")
     @GetMapping("/surveyTitle")
-    public ResponseEntity<String> getSurveyTitle(
+    @ResponseBody
+    public ResponseEntity<AnswerSurveyTitle> getSurveyTitle(
             @RequestParam(name = "surveyId") long surveyId){
         log.info("Called getSurveyTitle with surveyId = " + surveyId );
         Optional<Survey> surveyOptional = surveyService.findFirstById(surveyId);
         if(surveyOptional.isPresent()){
             log.info("Return responseEntity for surveyId = "
                     + surveyId + " with HttpStatus " + HttpStatus.OK);
-            return new ResponseEntity<>(surveyOptional.get().getTitle(),HttpStatus.OK);
+            return new ResponseEntity<>(new AnswerSurveyTitle(
+                    surveyOptional.get().getTitle()),HttpStatus.OK);
         }
         else {
             log.info("Return responseEntity for surveyId = "

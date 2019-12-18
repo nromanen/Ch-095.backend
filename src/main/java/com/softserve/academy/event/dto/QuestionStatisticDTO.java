@@ -13,5 +13,4 @@ public class QuestionStatisticDTO implements Serializable {
     private String[] answers;
     private int index;
 
-
 }
