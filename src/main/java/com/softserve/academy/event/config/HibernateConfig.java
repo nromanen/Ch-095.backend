@@ -69,10 +69,6 @@ public class HibernateConfig {
         sessionFactoryBean.setHibernateProperties(properties);
         sessionFactoryBean.setPackagesToScan(environment.getProperty(ENTITY_PACKAGE));
 
-        return getSessionFactoryBeasd(sessionFactoryBean);
-    }
-
-    private LocalSessionFactoryBean getSessionFactoryBeasd(LocalSessionFactoryBean sessionFactoryBean) {
         return sessionFactoryBean;
     }
 
