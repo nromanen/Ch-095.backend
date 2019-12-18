@@ -16,8 +16,10 @@ import java.util.List;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.softserve.academy.event.config", "com.softserve.academy.event.controller", "com.softserve.academy.event.service"})
+@ComponentScan(basePackages = {"com.softserve.academy.event.config", "com.softserve.academy.event.controller",
+        "com.softserve.academy.event.service", "com.softserve.academy.event.exception.handler", "com.softserve.academy.event.registration"})
 public class WebConfig implements WebMvcConfigurer {
+
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
