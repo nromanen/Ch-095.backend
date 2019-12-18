@@ -2,7 +2,9 @@ package com.softserve.academy.event.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,7 +15,8 @@ import org.springframework.stereotype.Component;
 import java.util.Properties;
 
 @Configuration
-@Component
+@PropertySource("classpath:email.properties")
+@ComponentScan(basePackages = { "com.softserve.academy.event.service"})
 public class EmailConfig
 {
     @Value("${email.host}")

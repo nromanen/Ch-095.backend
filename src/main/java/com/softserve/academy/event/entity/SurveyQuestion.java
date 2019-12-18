@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SurveyQuestion implements Serializable {
+public class SurveyQuestion implements Serializable, Comparable<SurveyQuestion> {
 
     private static final long serialVersionUID = -2673922858877977323L;
 
@@ -30,12 +31,20 @@ public class SurveyQuestion implements Serializable {
     @Column(nullable = false)
     private String question;
 
+    @Column
+    private int index;
+
     @Enumerated
     private SurveyQuestionType type;
 
     @Column(nullable = false)
+    @Length(max = 10000)
     private String answers;
 
     private boolean required;
 
+    @Override
+    public int compareTo(SurveyQuestion question) {
+        return (this.getIndex() - question.getIndex());
+    }
 }

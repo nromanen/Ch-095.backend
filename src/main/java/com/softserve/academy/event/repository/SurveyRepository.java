@@ -15,4 +15,5 @@ public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
     String setTitleForSurvey(Long id, String title);
 
+//    public void save(Set<Contact> contactSet);
 }
