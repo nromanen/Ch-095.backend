@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "survey_questions")
@@ -15,7 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SurveyQuestion implements Serializable {
+public class SurveyQuestion implements Serializable{
 
     private static final long serialVersionUID = -2673922858877977323L;
 
@@ -30,12 +30,15 @@ public class SurveyQuestion implements Serializable {
     @Column(nullable = false)
     private String question;
 
+    @Column
+    @OrderBy
+    private int index;
+
     @Enumerated
     private SurveyQuestionType type;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10000)
     private String answers;
 
     private boolean required;
-
 }
