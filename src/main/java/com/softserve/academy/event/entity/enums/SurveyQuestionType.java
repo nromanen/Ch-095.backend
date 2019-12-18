@@ -4,5 +4,6 @@ public enum SurveyQuestionType {
     PICTURE,
     TEXTAREA,
     RADIOBUTTON,
-    CHECKBOX;
+    CHECKBOX,
+    TEXTBOX;
 }
