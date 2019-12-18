@@ -20,7 +20,9 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("select t.enable " +
                 "from " + clazz.getName() + " as t" +
-                " where t.contact = " + contactId + " and t.survey = " + surveyId);
+                " where t.contact.id = :contactId and t.survey.id = :surveyId")
+                .setParameter("contactId", contactId)
+                .setParameter("surveyId", surveyId);
         List<Boolean> res = query.getResultList();
         if (res.isEmpty()){
             throw new IncorrectLinkException();
