@@ -1,6 +1,8 @@
 package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.entity.SurveyContact;
+import com.softserve.academy.event.exception.IncorrectLinkException;
+import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.repository.SurveyContactConnectorRepository;
 import com.softserve.academy.event.service.db.SurveyContactConnectorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +54,7 @@ public class SurveyContactConnectorServiceImpl implements SurveyContactConnector
     }
 
     @Override
-    public boolean isEnable(Long contactId, Long surveyId) {
+    public boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException {
         return repository.isEnable(contactId, surveyId);
     }
 

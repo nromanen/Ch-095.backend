@@ -1,11 +1,10 @@
 package com.softserve.academy.event.repository;
 
-import com.softserve.academy.event.entity.SurveyContact;
 
-import java.util.Optional;
+import com.softserve.academy.event.entity.SurveyContactConnector;
+import com.softserve.academy.event.exception.IncorrectLinkException;
+import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 
-public interface SurveyContactConnectorRepository extends BasicRepository<SurveyContact, Long> {
-
-    boolean isEnable(Long contactId, Long surveyId);
-    Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId);
+public interface SurveyContactConnectorRepository extends BasicRepository<SurveyContactConnector, Long> {
+    public boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException;
 }
