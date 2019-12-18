@@ -30,6 +30,7 @@ public class SurveyServiceImpl implements SurveyService {
         return repository.findAll(pageable);
     }
 
+
     @Override
     public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status) {
         return repository.findAllByPageableAndStatus(pageable, status);
@@ -80,6 +81,11 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public void delete(Survey entity) {
         repository.delete(entity);
+    }
+
+    @Override
+    public Optional<Survey> findFirstById(long surveyId) {
+        return repository.findFirstById(surveyId);
     }
 
 }

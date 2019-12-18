@@ -10,7 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SurveyContactConnector implements Serializable {
+public class SurveyContact implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
