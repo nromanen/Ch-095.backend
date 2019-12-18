@@ -66,4 +66,8 @@ public class Survey implements Serializable {
     )
     private Set<Contact> contacts = new HashSet<>();
 
+    public Survey(Long id) {
+        this.id = id;
+    }
+
 }

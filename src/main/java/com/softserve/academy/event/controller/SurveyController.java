@@ -4,20 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.academy.event.annotation.PageableDefault;
 import com.softserve.academy.event.dto.SaveSurveyDTO;
-import com.softserve.academy.event.dto.SimpleSurveyDTO;
-import com.softserve.academy.event.dto.SurveyQuestionDTO;
 import com.softserve.academy.event.dto.SurveyDTO;
+import com.softserve.academy.event.dto.SurveyQuestionDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
+import com.softserve.academy.event.service.mapper.SurveyMapper;
+import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.softserve.academy.event.service.mapper.SurveyMapper;
-import com.softserve.academy.event.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("survey")
