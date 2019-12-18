@@ -19,11 +19,11 @@ public class SurveyAnswer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @JoinColumn
     @ManyToOne
     private SurveyQuestion question;
 
-    @Column
+    @JoinColumn
     @ManyToOne
     private Contact contact;
 

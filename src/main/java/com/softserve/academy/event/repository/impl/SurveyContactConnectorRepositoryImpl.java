@@ -17,7 +17,7 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("select t.enable " +
                 "from " + clazz.getName() + " as t" +
-                " where t.contact = :contactId" + " and t.survey = :surveyId")
+                " where t.contact.id = :contactId and t.survey.id = :surveyId")
                 .setParameter("surveyId", surveyId)
                 .setParameter("contactId", contactId);
         List<Boolean> res = query.getResultList();
@@ -29,7 +29,7 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
     public Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId) {
         List<SurveyContact> result = sessionFactory.getCurrentSession()
                 .createQuery("from " + clazz.getName() + " as t" +
-                        " where t.contact = :contactId" + " and t.survey = :surveyId")
+                        " where t.contact.id = :contactId and t.survey.id = :surveyId")
                 .setParameter("surveyId", surveyId)
                 .setParameter("contactId", contactId)
                 .getResultList();
