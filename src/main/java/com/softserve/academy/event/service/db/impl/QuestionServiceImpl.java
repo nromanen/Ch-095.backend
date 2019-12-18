@@ -1,6 +1,7 @@
 package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.repository.AnswerRepository;
 import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.service.db.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -17,7 +19,7 @@ public class QuestionServiceImpl implements QuestionService{
     private final QuestionRepository questionRepository;
 
     @Autowired
-    public QuestionServiceImpl(QuestionRepository questionRepository) {
+    public QuestionServiceImpl(QuestionRepository questionRepository, AnswerRepository answerRepository) {
         this.questionRepository = questionRepository;
     }
 
@@ -55,4 +57,5 @@ public class QuestionServiceImpl implements QuestionService{
     public List<SurveyQuestion> findBySurveyId(Long surveyId) {
         return questionRepository.findBySurveyId(surveyId);
     }
+
 }
