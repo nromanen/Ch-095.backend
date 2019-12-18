@@ -1,12 +1,13 @@
 package com.softserve.academy.event.service.db.impl;
 
-import com.softserve.academy.event.entity.User;
+import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.repository.ContactRepository;
 import com.softserve.academy.event.service.db.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,12 +26,34 @@ public class ContactServiceImpl implements ContactService {
         return repository.getIdByEmail(email);
     }
 
+    @Override
+    public Optional<Contact> findFirstById(Long id) {
+        return repository.findFirstById(id);
+    }
 
     @Override
-    public void saveEmail(String email, User user) {
-        if (repository.getEmailAndUserId(email, user.getId()) == null) {
-            repository.saveEmail(email, user);
-        }
+    public List<Contact> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Contact save(Contact entity) {
+        return repository.save(entity);
+    }
+
+    @Override
+    public Contact update(Contact object) {
+        return repository.update(object);
+    }
+
+    @Override
+    public void delete(Contact entity) {
+        repository.delete(entity);
+    }
+
+    @Override
+    public void detach(Contact entity) {
+        repository.detach(entity);
     }
 
 }

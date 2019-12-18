@@ -1,7 +1,6 @@
 package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Contact;
-import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.repository.ContactRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -23,20 +22,12 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
         return Optional.ofNullable(res.get(0));
     }
 
-    @Override
-    public void saveEmail(String email, User user) {
-        Session session = sessionFactory.getCurrentSession();
-        Contact contact = new Contact();
-        contact.setEmail(email);
-        contact.setUser(user);
-        session.save(contact);
-    }
-
     public Contact getEmailAndUserId(String email, Long userId) {
         Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("select *" +
-                "from " + clazz.getName() + " as t" +
-                " where t.email = " + email + " and t.user_id = " + userId);
+        Query query = session.createQuery("from " + clazz.getName() + " as t " +
+                "where t.email = :email and t.user.id = :userId")
+                .setParameter("email", email)
+                .setParameter("userId", userId);
         List<Contact> res = query.getResultList();
         if (res.isEmpty()) return null;
         return res.get(0);
