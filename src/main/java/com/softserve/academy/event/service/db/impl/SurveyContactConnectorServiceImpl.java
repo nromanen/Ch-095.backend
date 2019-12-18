@@ -57,4 +57,9 @@ public class SurveyContactConnectorServiceImpl implements SurveyContactConnector
     public boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException {
         return repository.isEnable(contactId, surveyId);
     }
+
+    @Override
+    public Optional<SurveyContactConnector> findByContactAndSurvey(Long contactId, Long surveyId) {
+        return repository.findByContactAndSurvey(contactId, surveyId);
+    }
 }
