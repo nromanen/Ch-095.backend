@@ -26,12 +26,9 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-orm', version: '5.2.1.RELEASE'
     compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.2.1.RELEASE'
-    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-config
     compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.2.1.RELEASE'
-    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-web
     compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.2.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-context', version: '5.2.1.RELEASE'
-    // https://mvnrepository.com/artifact/org.springframework/spring-context-support
     compile group: 'org.springframework', name: 'spring-context-support', version: '5.2.2.RELEASE'
 
 
@@ -61,27 +58,18 @@ dependencies {
     /* For lazy people (clevercattv or cat's LOL) */
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
-    
-    /* SWAGGER */
-    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-
 
     /* MAPSTRUCT */
     implementation "org.mapstruct:mapstruct:1.3.1.Final"
     annotationProcessor "org.mapstruct:mapstruct-processor:1.3.1.Final"
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:1.3.1.Final"
 
-
     /* SWAGGER */
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 
-    // https://mvnrepository.com/artifact/javax.mail/mail
     compile group: 'javax.mail', name: 'mail', version: '1.4'
-// https://mvnrepository.com/artifact/javax.mail/javax.mail-api
     compile group: 'javax.mail', name: 'javax.mail-api', version: '1.6.0'
-// https://mvnrepository.com/artifact/com.sun.mail/javax.mail
     compile group: 'com.sun.mail', name: 'javax.mail', version: '1.6.0'
 }
 
