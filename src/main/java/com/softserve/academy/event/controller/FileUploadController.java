@@ -1,6 +1,8 @@
 package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.entity.PhotoInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,11 +17,14 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
+@Api
 @RestController
 public class FileUploadController {
+
     @Autowired
     ServletContext context;
 
+    @ApiOperation(value = "Upload a picture to the server")
     @PostMapping(value = "/fileupload", headers=("content-type=multipart/*"))
     public ResponseEntity<PhotoInfo> upload(@RequestParam("file") MultipartFile inputFile) {
         PhotoInfo photoInfo = new PhotoInfo();

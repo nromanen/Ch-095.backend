@@ -26,7 +26,7 @@ public class QuestionController {
     @GetMapping
     public SurveyContactDTO startSurvey(@RequestParam Long surveyId, @RequestParam String contactEmail){
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
-        Collections.sort(questions);
+       // Collections.sort(questions);
         List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questions);
         SurveyContactDTO dto = new SurveyContactDTO();
         dto.setContactEmail(contactEmail);

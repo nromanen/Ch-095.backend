@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface SurveyService {
 
@@ -27,6 +28,8 @@ public interface SurveyService {
 
     void delete(Survey entity);
 
-     Survey saveSurveyWithQuestions(Survey survey, long id, List<SurveyQuestion> surveyQuestions);
+    Optional<Survey> findFirstById(long surveyId);
+
+    Survey saveSurveyWithQuestions(Survey survey, long id, List<SurveyQuestion> surveyQuestions);
 
 }
