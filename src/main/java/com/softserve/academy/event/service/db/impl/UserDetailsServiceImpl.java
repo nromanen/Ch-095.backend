@@ -29,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (!userOptional.isPresent()) {
-            throw new UsernameNotFoundException("No user found with username" + email);
+             throw new UsernameNotFoundException("No user found with username" + email);
         }
         User user = userOptional.get();
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
