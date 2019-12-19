@@ -11,7 +11,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "contacts")
+@Table(name = "contacts",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"email", "user_id"}))
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @AllArgsConstructor

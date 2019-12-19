@@ -2,16 +2,13 @@ package com.softserve.academy.event.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.*;
 
-import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -25,6 +22,7 @@ import static com.softserve.academy.event.util.Constants.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@ToString(of = {"title"})
 @Filters({
         @Filter(name = SURVEY_STATUS_FILTER_NAME, condition = "status = :" + SURVEY_STATUS_FILTER_ARGUMENT),
         @Filter(name = SURVEY_DEFAULT_FILTER_NAME, condition = "status != " + SURVEY_DEFAULT_TEMPLATE_NUMBER)
@@ -65,6 +63,7 @@ public class Survey implements Serializable {
             inverseJoinColumns = {@JoinColumn(name = "contact_id")}
     )
     private Set<Contact> contacts = new HashSet<>();
+
 
     public Survey(Long id) {
         this.id = id;

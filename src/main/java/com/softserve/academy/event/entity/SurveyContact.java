@@ -1,11 +1,15 @@
 package com.softserve.academy.event.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "survey_contacts")
+@Table(name = "survey_contacts",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"survey_id", "contact_id"}))
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

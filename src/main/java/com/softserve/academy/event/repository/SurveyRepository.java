@@ -14,4 +14,5 @@ public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
     Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters);
 
+//    public void save(Set<Contact> contactSet);
 }

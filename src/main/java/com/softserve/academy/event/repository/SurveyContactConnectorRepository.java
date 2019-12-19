@@ -9,5 +9,9 @@ import java.util.Optional;
 public interface SurveyContactConnectorRepository extends BasicRepository<SurveyContact, Long> {
 
     Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId);
+
     boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException;
+
+    SurveyContact getByContactIdAndSurveyId(Long contactId, Long surveyId);
+
 }
