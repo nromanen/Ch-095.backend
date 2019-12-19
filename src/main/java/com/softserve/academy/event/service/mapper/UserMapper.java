@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 @Mapper(componentModel = "spring")
 @Service
 public interface UserMapper {
-//    User userDtoToUser(UserDto userDto);
-//    UserDto userToDto(User user);
+    User userDtoToUser(UserDto userDto);
+    UserDto userToDto(User user);
 }
