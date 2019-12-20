@@ -8,21 +8,25 @@ import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.dto.SurveyQuestionDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +50,9 @@ public class SurveyController {
     @ApiOperation(value = "Get all surveys")
     @GetMapping
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
-            @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
-            @RequestParam(required = false, name = "status") String status) {
+            @PageableDefault(sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false, name = "status") String status,
+            Principal principal) {
         return ResponseEntity.ok(
                 surveyMapper.pageToDTO(service.findAllByPageableAndStatus(pageable, status))
         );

@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,7 +45,7 @@ public class Survey implements Serializable {
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDate creationDate = LocalDate.now();
+    private Calendar creationDate = Calendar.getInstance();
 
     @Enumerated
     private SurveyStatus status = SurveyStatus.NON_ACTIVE;

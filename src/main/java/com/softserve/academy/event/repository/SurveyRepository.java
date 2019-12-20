@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
-    Page<Survey> findAll(Pageable pageable);
+    Page<Survey> findAllByPageable(Pageable pageable);
 
     Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status);
 

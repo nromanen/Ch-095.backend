@@ -5,12 +5,10 @@ import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
-import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Map;
 import java.util.Objects;
 
 import static com.softserve.academy.event.util.Constants.*;
@@ -18,8 +16,17 @@ import static com.softserve.academy.event.util.Constants.*;
 @Repository
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> implements SurveyRepository {
 
+    private final String COUNT_QUERY;
+    private final String FROM_SURVEY;
+
+    public SurveyRepositoryImpl() {
+        super();
+        COUNT_QUERY = "select count(*) from " + clazz.getName();
+        FROM_SURVEY = "from " + clazz.getName();
+    }
+
     @Override
-    public Page<Survey> findAll(Pageable pageable) {
+    public Page<Survey> findAllByPageable(Pageable pageable) {
         Session session = sessionFactory.getCurrentSession();
         return getSurveyPage(pageable, session);
     }
@@ -27,7 +34,6 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     @Override
     public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status) {
         Session session = sessionFactory.getCurrentSession();
-        session.enableFilter("asdasd");
         if (Objects.nonNull(status) && status.length() > 0) {
             session.enableFilter(SURVEY_STATUS_FILTER_NAME)
                     .setParameter(SURVEY_STATUS_FILTER_ARGUMENT, SurveyStatus.valueOf(status).getNumber());
@@ -37,28 +43,15 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
         return getSurveyPage(pageable, session);
     }
 
-//    @Override
-//    public Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters) {
-//        Session session = sessionFactory.getCurrentSession();
-//        filters.forEach((key, value) -> {
-//            Filter filter = session.enableFilter(key);
-//            value.forEach(filter::setParameter);
-//        });
-//        return getSurveyPage(pageable, session);
-//    }
-
     @SuppressWarnings("unchecked")
     private Page<Survey> getSurveyPage(Pageable pageable, Session session) {
-        Query query = session.createQuery(
-                "from " + clazz.getName() + " ORDER BY " +
-                        String.join(pageable.getSort().getDirection().name() + ", ", pageable.getSort().getFields()) +
-                        " " + pageable.getSort().getDirection().name()
-        );
+        Query query = session.createQuery(FROM_SURVEY + " ORDER BY :pagination")
+                .setParameter("pagination", pageable.getSort().getColumn() + pageable.getSort().getDirection().name());
         query.setFirstResult(pageable.getCurrentPage() * pageable.getSize());
         query.setMaxResults(pageable.getSize());
-        Query countQuery = session.createQuery("select count(*) from " + clazz.getName());
+        Query countQuery = session.createQuery(COUNT_QUERY);
         Long countResult = (Long) countQuery.uniqueResult();
-        pageable.setLastPage((int) Math.ceil((double)countResult / pageable.getSize()));
+        pageable.setLastPage((int) Math.ceil((double) countResult / pageable.getSize()));
         pageable.setCurrentPage(pageable.getCurrentPage() + 1);
         return new Page<>(query.list(), pageable);
     }

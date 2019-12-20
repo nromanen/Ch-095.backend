@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface SurveyService {
 
-    Page<Survey> findAll(Pageable pageable);
+    Page<Survey> findAllByPageable(Pageable pageable);
 
     Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status);
 

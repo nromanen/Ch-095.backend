@@ -9,9 +9,9 @@ import lombok.*;
 public class Sort {
 
     private Direction direction;
-    private String[] fields;
+    private String column;
 
-    public static Sort from(Direction direction, String[] fields) {
+    public static Sort from(Direction direction, String fields) {
         return new Sort(direction, fields);
     }
 

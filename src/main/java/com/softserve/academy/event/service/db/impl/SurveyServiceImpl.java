@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.*;
 
 @Service
@@ -38,8 +35,8 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public Page<Survey> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<Survey> findAllByPageable(Pageable pageable) {
+        return repository.findAllByPageable(pageable);
     }
 
 
