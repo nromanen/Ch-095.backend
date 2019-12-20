@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.Map;
-
 @Api(value = "/survey")
 @RestController
 @RequestMapping("survey")
@@ -65,18 +63,21 @@ public class SurveyController {
 
     @ApiOperation(value = "Сhange the title of the survey")
     @PutMapping
-    public ResponseEntity<HttpStatus> updateTitle(@RequestParam Long id, @RequestParam String title) {
-        return ResponseEntity.ok(service.updateTitle(id, title));
+    public ResponseEntity<Boolean> updateTitle(@RequestParam Long id, @RequestParam String title) {
+        service.updateTitle(id, title);
+        return ResponseEntity.ok(true);
     }
 
     @PutMapping("/status/active")
-    public ResponseEntity<HttpStatus> setStatusActive(@RequestParam Long id) {
-        return ResponseEntity.ok(service.updateStatus(id, SurveyStatus.ACTIVE));
+    public ResponseEntity<Boolean> setStatusActive(@RequestParam Long id) {
+        service.updateStatus(id, SurveyStatus.ACTIVE);
+        return ResponseEntity.ok(true);
     }
 
     @PutMapping("/status/done")
-    public ResponseEntity<HttpStatus> setStatusDone(@RequestParam Long id) {
-        return ResponseEntity.ok(service.updateStatus(id, SurveyStatus.DONE));
+    public ResponseEntity<Boolean> setStatusDone(@RequestParam Long id) {
+        service.updateStatus(id, SurveyStatus.DONE);
+        return ResponseEntity.ok(true);
     }
 
     @ApiOperation(value = "Delete a survey")
@@ -101,4 +102,5 @@ public class SurveyController {
         }
         return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, userID, surveyQuestions));
     }
+
 }

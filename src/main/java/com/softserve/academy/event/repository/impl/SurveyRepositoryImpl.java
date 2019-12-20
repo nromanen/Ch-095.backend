@@ -27,6 +27,7 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     @Override
     public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status) {
         Session session = sessionFactory.getCurrentSession();
+        session.enableFilter("asdasd");
         if (Objects.nonNull(status) && status.length() > 0) {
             session.enableFilter(SURVEY_STATUS_FILTER_NAME)
                     .setParameter(SURVEY_STATUS_FILTER_ARGUMENT, SurveyStatus.valueOf(status).getNumber());
@@ -36,15 +37,15 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
         return getSurveyPage(pageable, session);
     }
 
-    @Override
-    public Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters) {
-        Session session = sessionFactory.getCurrentSession();
-        filters.forEach((key, value) -> {
-            Filter filter = session.enableFilter(key);
-            value.forEach(filter::setParameter);
-        });
-        return getSurveyPage(pageable, session);
-    }
+//    @Override
+//    public Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters) {
+//        Session session = sessionFactory.getCurrentSession();
+//        filters.forEach((key, value) -> {
+//            Filter filter = session.enableFilter(key);
+//            value.forEach(filter::setParameter);
+//        });
+//        return getSurveyPage(pageable, session);
+//    }
 
     @SuppressWarnings("unchecked")
     private Page<Survey> getSurveyPage(Pageable pageable, Session session) {

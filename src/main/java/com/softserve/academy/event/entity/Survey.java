@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,7 +44,7 @@ public class Survey implements Serializable {
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
+    private LocalDate creationDate = LocalDate.now();
 
     @Enumerated
     private SurveyStatus status = SurveyStatus.NON_ACTIVE;
@@ -64,6 +64,8 @@ public class Survey implements Serializable {
     )
     private Set<Contact> contacts = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    private Set<SurveyQuestion> surveyQuestions = new HashSet<>();
 
     public Survey(Long id) {
         this.id = id;
