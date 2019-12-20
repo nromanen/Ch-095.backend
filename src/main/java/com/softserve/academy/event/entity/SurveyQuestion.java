@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Table(name = "survey_questions")
@@ -34,7 +33,7 @@ public class SurveyQuestion implements Serializable{
     @OrderBy
     private int index;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private SurveyQuestionType type;
 
     @Column(nullable = false, length = 10000)
