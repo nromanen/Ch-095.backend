@@ -44,8 +44,8 @@ public class Survey implements Serializable {
     private String title;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Calendar creationDate = Calendar.getInstance();
+//    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDate creationDate = LocalDate.now();
 
     @Enumerated
     private SurveyStatus status = SurveyStatus.NON_ACTIVE;
