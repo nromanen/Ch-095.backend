@@ -96,15 +96,16 @@ public class SurveyController {
         survey.setTitle(saveSurveyDTO.getTitle());
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        for(SurveyQuestionDTO surveyQuestionDTO : saveSurveyDTO.getQuestions()){
+        for (SurveyQuestionDTO surveyQuestionDTO : saveSurveyDTO.getQuestions()) {
             SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String  answers =  mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
+            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
             surveyQuestion.setAnswers(answers);
             surveyQuestions.add(surveyQuestion);
         }
         return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, id, surveyQuestions));
     }
-    private long getUserIdFromContext(Authentication authentication){
+
+    private long getUserIdFromContext(Authentication authentication) {
         UserDetails userDetail = (UserDetails) authentication.getPrincipal();
         return userService.getUserByName(userDetail.getUsername()).getId();
     }

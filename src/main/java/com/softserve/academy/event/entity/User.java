@@ -1,12 +1,16 @@
 package com.softserve.academy.event.entity;
 
 import com.softserve.academy.event.entity.enums.Roles;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @NamedQueries(
