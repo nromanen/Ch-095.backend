@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.security.Principal;
 import java.util.List;
 import java.util.*;
 
@@ -24,8 +25,8 @@ import java.util.*;
 public class SurveyServiceImpl implements SurveyService {
 
     private final SurveyRepository repository;
-    private UserRepository userRepository;
-    private QuestionRepository questionRepository;
+    private final UserRepository userRepository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
     public SurveyServiceImpl(SurveyRepository repository, UserRepository userRepository, QuestionRepository questionRepository) {
@@ -35,24 +36,12 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public Page<Survey> findAllByPageable(Pageable pageable) {
-        return repository.findAllByPageable(pageable);
+    public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status, User user) {
+        if (Objects.nonNull(status) && status.length() > 0) {
+            return repository.findAllByPageableAndStatus(pageable, status, user);
+        }
+        return repository.findAllByPageable(pageable, user);
     }
-
-
-    @Override
-    public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status) {
-        return repository.findAllByPageableAndStatus(pageable, status);
-    }
-
-//    @Override
-//    public Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters) {
-//        return repository.findAllFiltered(pageable,
-//                Objects.nonNull(filters) ? filters :
-//                        Collections.singletonMap("surveyStatusField",
-//                                Collections.singletonMap("status", SurveyStatus.TEMPLATE.getNumber()))
-//        );
-//    }
 
     @Override
     public void updateTitle(Long id, String title) {

@@ -22,13 +22,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +50,13 @@ public class SurveyController {
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
             @PageableDefault(sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, name = "status") String status,
-            Principal principal) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
+            @AuthenticationPrincipal User user) {
+        if (user == null) {
+            user = new User();
+            user.setId(1L);
+        }
         return ResponseEntity.ok(
-                surveyMapper.pageToDTO(service.findAllByPageableAndStatus(pageable, status))
+                surveyMapper.pageToDTO(service.findAllByPageableAndStatus(pageable, status, user))
         );
     }
 
@@ -103,9 +101,9 @@ public class SurveyController {
         long userID = saveSurveyDTO.getUserID();
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        for(SurveyQuestionDTO surveyQuestionDTO : saveSurveyDTO.getQuestions()){
+        for (SurveyQuestionDTO surveyQuestionDTO : saveSurveyDTO.getQuestions()) {
             SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String  answers =  mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
+            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
             surveyQuestion.setAnswers(answers);
             surveyQuestions.add(surveyQuestion);
         }

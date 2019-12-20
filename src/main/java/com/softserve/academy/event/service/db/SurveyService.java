@@ -2,20 +2,20 @@ package com.softserve.academy.event.service.db;
 
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface SurveyService {
 
-    Page<Survey> findAllByPageable(Pageable pageable);
-
-    Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status);
+    Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status, User user);
 
     void updateTitle(Long id, String title);
 

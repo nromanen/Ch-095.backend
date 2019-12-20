@@ -26,11 +26,11 @@ import static com.softserve.academy.event.util.Constants.*;
 @ToString(of = {"title"})
 @Filters({
         @Filter(name = SURVEY_STATUS_FILTER_NAME, condition = "status = :" + SURVEY_STATUS_FILTER_ARGUMENT),
-        @Filter(name = SURVEY_DEFAULT_FILTER_NAME, condition = "status != " + SURVEY_DEFAULT_TEMPLATE_NUMBER)
+        @Filter(name = SURVEY_DEFAULT_FILTER_NAME, condition = "status != " + SURVEY_DEFAULT_TEMPLATE_NUMBER),
 })
 @FilterDefs({
         @FilterDef(name = SURVEY_STATUS_FILTER_NAME, parameters = @ParamDef(name = SURVEY_STATUS_FILTER_ARGUMENT, type = "integer")),
-        @FilterDef(name = SURVEY_DEFAULT_FILTER_NAME)
+        @FilterDef(name = SURVEY_DEFAULT_FILTER_NAME),
 })
 public class Survey implements Serializable {
 
@@ -44,7 +44,6 @@ public class Survey implements Serializable {
     private String title;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-//    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate creationDate = LocalDate.now();
 
     @Enumerated
