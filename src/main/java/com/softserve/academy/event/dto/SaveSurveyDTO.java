@@ -18,7 +18,5 @@ public class SaveSurveyDTO {
 
     private String title;
 
-    private long userID;
-
     private List<SurveyQuestionDTO> questions;
 }

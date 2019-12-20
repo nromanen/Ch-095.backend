@@ -67,6 +67,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByName(String username) {
+        return userRepository.findByEmail(username).get();
+    }
+
+    @Override
     public void createVerificationToken(User user, String token) {
         VerificationToken vToken = new VerificationToken(token, user);
         tokenRepository.save(vToken);
