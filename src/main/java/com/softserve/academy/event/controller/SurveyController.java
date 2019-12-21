@@ -89,24 +89,38 @@ public class SurveyController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    /*
+     Method gets request from authenticated users - his new survey with questions for him
+     rework dto in Survey and Questions entities and send it to service for saving
+     */
     @PostMapping(value = "/createNewSurvey")
     public ResponseEntity<Survey> saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO, Authentication authentication) throws JsonProcessingException {
         long id = getUserIdFromContext(authentication);
         Survey survey = new Survey();
         survey.setTitle(saveSurveyDTO.getTitle());
-        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        for (SurveyQuestionDTO surveyQuestionDTO : saveSurveyDTO.getQuestions()) {
-            SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
-            surveyQuestion.setAnswers(answers);
-            surveyQuestions.add(surveyQuestion);
-        }
+        List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
         return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, id, surveyQuestions));
     }
 
     private long getUserIdFromContext(Authentication authentication) {
         UserDetails userDetail = (UserDetails) authentication.getPrincipal();
         return userService.getUserByName(userDetail.getUsername()).getId();
+    }
+
+    /*
+      Method gets list of Question DTO and made list of entities with correct variant of answers
+      Mapper can't make string from list, so i set it through object mapper
+      @return List<SurveyQuestion> - list of entities but without established survey
+    */
+    private List<SurveyQuestion> getQuestionsEntities(List<SurveyQuestionDTO> surveyQuestionsDTO) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
+        for (SurveyQuestionDTO surveyQuestionDTO : surveyQuestionsDTO) {
+            SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
+            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
+            surveyQuestion.setAnswers(answers);
+            surveyQuestions.add(surveyQuestion);
+        }
+        return surveyQuestions;
     }
 }
