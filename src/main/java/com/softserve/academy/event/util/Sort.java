@@ -15,6 +15,10 @@ public class Sort {
         return new Sort(direction, fields);
     }
 
+    public String sorting() {
+        return column + " " + direction.name();
+    }
+
     public enum Direction{
         ASC,
         DESC;

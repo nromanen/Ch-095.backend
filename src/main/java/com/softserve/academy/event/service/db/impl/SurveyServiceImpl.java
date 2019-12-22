@@ -43,6 +43,8 @@ public class SurveyServiceImpl implements SurveyService {
         return repository.findAllByPageable(pageable, user);
     }
 
+
+
     @Override
     public void updateTitle(Long id, String title) {
         Survey survey = repository.findFirstById(id)
