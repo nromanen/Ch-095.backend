@@ -8,6 +8,9 @@ import com.softserve.academy.event.repository.VerificationTokenRepository;
 import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +36,17 @@ public class UserServiceImpl implements UserService {
         this.tokenRepository = tokenRepository;
     }
 
+    @Override
+    public Optional<Long> getAuthenicationId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            String email = ((UserDetails)principal).getUsername();
+            Long id = userRepository.findByEmail(email).get().getId();
+            return Optional.of(id);
+        }
+       return Optional.empty();
+    }
 
     @Override
     public VerificationToken generateNewVerificationToken(String token) {

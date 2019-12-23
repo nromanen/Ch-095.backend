@@ -14,7 +14,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,12 +70,10 @@ public class LoginController {
         return  new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping(value = "/login")
+    @GetMapping(value = "/login")
     public ResponseEntity getLogin() {
-        //Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-       User user = (User)authentication.getPrincipal();
-       long id = user.getId();
+        Long id = userService.getAuthenicationId().get();
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
