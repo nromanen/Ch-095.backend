@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,11 +25,11 @@ import static com.softserve.academy.event.util.Constants.*;
 @ToString(of = {"title"})
 @Filters({
         @Filter(name = SURVEY_STATUS_FILTER_NAME, condition = "status = :" + SURVEY_STATUS_FILTER_ARGUMENT),
-        @Filter(name = SURVEY_DEFAULT_FILTER_NAME, condition = "status != " + SURVEY_DEFAULT_TEMPLATE_NUMBER)
+        @Filter(name = SURVEY_DEFAULT_FILTER_NAME, condition = "status != " + SURVEY_DEFAULT_TEMPLATE_NUMBER),
 })
 @FilterDefs({
         @FilterDef(name = SURVEY_STATUS_FILTER_NAME, parameters = @ParamDef(name = SURVEY_STATUS_FILTER_ARGUMENT, type = "integer")),
-        @FilterDef(name = SURVEY_DEFAULT_FILTER_NAME)
+        @FilterDef(name = SURVEY_DEFAULT_FILTER_NAME),
 })
 public class Survey implements Serializable {
 
@@ -43,10 +43,10 @@ public class Survey implements Serializable {
     private String title;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
+    private LocalDate creationDate = LocalDate.now();
 
     @Enumerated
+    @Column(nullable = false)
     private SurveyStatus status = SurveyStatus.NON_ACTIVE;
 
     private String imageUrl;
@@ -64,6 +64,12 @@ public class Survey implements Serializable {
     )
     private Set<Contact> contacts = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<SurveyQuestion> surveyQuestions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {
         this.id = id;

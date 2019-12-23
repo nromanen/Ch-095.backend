@@ -73,7 +73,7 @@ public class QuestionController {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        surveyContact.get().setEnable(true);
+        surveyContact.get().setCanPass(true);
         sccService.update(surveyContact.get());
         contactResponseDTO.getAnswers().stream()
                 .peek(answerDTO -> answerDTO.setContactId(contactId.get()))

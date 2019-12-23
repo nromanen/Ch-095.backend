@@ -54,7 +54,7 @@ public class SendEmailController {
             SurveyContact surveyContact = new SurveyContact();
             surveyContact.setContact(contact);
             surveyContact.setSurvey(survey.get());
-            surveyContact.setEnable(true);
+            surveyContact.setCanPass(true);
             surveyContactService.save(surveyContact);
             String codEmail = anEmail + ";" + idSurvey;
             String encodedString = baseUrl + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());

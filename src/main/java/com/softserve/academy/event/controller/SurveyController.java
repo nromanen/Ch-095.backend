@@ -8,30 +8,33 @@ import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.dto.SurveyQuestionDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
+import com.sun.media.jfxmediaimpl.HostUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.Map;
-
 @Api(value = "/survey")
 @RestController
 @RequestMapping("survey")
 @CrossOrigin(origins = "http://localhost:4200")
+@Slf4j
 public class SurveyController {
 
     private final SaveQuestionMapper saveQuestionMapper;
@@ -48,10 +51,15 @@ public class SurveyController {
     @ApiOperation(value = "Get all surveys")
     @GetMapping
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
-            @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
-            @RequestParam(required = false, name = "status") String status) {
+            @PageableDefault(sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false, name = "status") String status,
+            @AuthenticationPrincipal User user) {
+        if (user == null) { // todo change to normal piece
+            user = new User();
+            user.setId(1L);
+        }
         return ResponseEntity.ok(
-                surveyMapper.pageToDTO(service.findAllByPageableAndStatus(pageable, status))
+                service.findAllByPageableAndStatus(pageable, status, user)
         );
     }
 
@@ -65,18 +73,21 @@ public class SurveyController {
 
     @ApiOperation(value = "Сhange the title of the survey")
     @PutMapping
-    public ResponseEntity<HttpStatus> updateTitle(@RequestParam Long id, @RequestParam String title) {
-        return ResponseEntity.ok(service.updateTitle(id, title));
+    public ResponseEntity<Boolean> updateTitle(@RequestParam Long id, @RequestParam String title) {
+        service.updateTitle(id, title);
+        return ResponseEntity.ok(true);
     }
 
     @PutMapping("/status/active")
-    public ResponseEntity<HttpStatus> setStatusActive(@RequestParam Long id) {
-        return ResponseEntity.ok(service.updateStatus(id, SurveyStatus.ACTIVE));
+    public ResponseEntity<Boolean> setStatusActive(@RequestParam Long id) {
+        service.updateStatus(id, SurveyStatus.ACTIVE);
+        return ResponseEntity.ok(true);
     }
 
     @PutMapping("/status/done")
-    public ResponseEntity<HttpStatus> setStatusDone(@RequestParam Long id) {
-        return ResponseEntity.ok(service.updateStatus(id, SurveyStatus.DONE));
+    public ResponseEntity<Boolean> setStatusDone(@RequestParam Long id) {
+        service.updateStatus(id, SurveyStatus.DONE);
+        return ResponseEntity.ok(true);
     }
 
     @ApiOperation(value = "Delete a survey")
@@ -93,12 +104,13 @@ public class SurveyController {
         long userID = saveSurveyDTO.getUserID();
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        for(SurveyQuestionDTO surveyQuestionDTO : saveSurveyDTO.getQuestions()){
+        for (SurveyQuestionDTO surveyQuestionDTO : saveSurveyDTO.getQuestions()) {
             SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String  answers =  mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
+            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
             surveyQuestion.setAnswers(answers);
             surveyQuestions.add(surveyQuestion);
         }
         return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, userID, surveyQuestions));
     }
+
 }
