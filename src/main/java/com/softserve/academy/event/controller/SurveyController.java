@@ -54,12 +54,10 @@ public class SurveyController {
             @PageableDefault(sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, name = "status") String status,
             @AuthenticationPrincipal User user) {
-        if (user == null) {
+        if (user == null) { // todo change to normal piece
             user = new User();
             user.setId(1L);
         }
-        long startTime = System.currentTimeMillis();
-        log.error("Surveys Time : " + (System.currentTimeMillis() - startTime));
         return ResponseEntity.ok(
                 service.findAllByPageableAndStatus(pageable, status, user)
         );

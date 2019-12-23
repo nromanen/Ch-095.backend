@@ -5,9 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "survey_questions")
@@ -29,6 +34,10 @@ public class SurveyQuestion implements Serializable{
 
     @Column(nullable = false)
     private String question;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<SurveyAnswer> surveyAnswers = new HashSet<>();
 
     @Column
     @OrderBy

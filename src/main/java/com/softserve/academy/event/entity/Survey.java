@@ -46,6 +46,7 @@ public class Survey implements Serializable {
     private LocalDate creationDate = LocalDate.now();
 
     @Enumerated
+    @Column(nullable = false)
     private SurveyStatus status = SurveyStatus.NON_ACTIVE;
 
     private String imageUrl;
@@ -64,6 +65,7 @@ public class Survey implements Serializable {
     private Set<Contact> contacts = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<SurveyQuestion> surveyQuestions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
