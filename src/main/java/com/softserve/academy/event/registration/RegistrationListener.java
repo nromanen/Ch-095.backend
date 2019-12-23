@@ -2,13 +2,14 @@ package com.softserve.academy.event.registration;
 
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.service.db.EmailService;
-//import com.softserve.academy.event.service.UserService;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+
+//import com.softserve.academy.event.service.UserService;
 
 @Component
 public class RegistrationListener  {

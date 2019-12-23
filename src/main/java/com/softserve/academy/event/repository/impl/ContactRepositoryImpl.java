@@ -18,7 +18,18 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
                 "from " + clazz.getName() + " as c" +
                 " where c.email like \'" + email + "\'");
         List<Long> res = query.getResultList();
-        if (res.isEmpty())return Optional.empty();
+        if (res.isEmpty()) return Optional.empty();
         return Optional.ofNullable(res.get(0));
+    }
+
+    public Contact getEmailAndUserId(String email, Long userId) {
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from " + clazz.getName() + " as t " +
+                "where t.email = :email and t.user.id = :userId")
+                .setParameter("email", email)
+                .setParameter("userId", userId);
+        List<Contact> res = query.getResultList();
+        if (res.isEmpty()) return null;
+        return res.get(0);
     }
 }

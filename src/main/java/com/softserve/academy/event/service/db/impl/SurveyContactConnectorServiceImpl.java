@@ -3,6 +3,7 @@ package com.softserve.academy.event.service.db.impl;
 import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.exception.IncorrectLinkException;
 import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
+import com.softserve.academy.event.repository.ContactRepository;
 import com.softserve.academy.event.repository.SurveyContactConnectorRepository;
 import com.softserve.academy.event.service.db.SurveyContactConnectorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,12 @@ import java.util.Optional;
 public class SurveyContactConnectorServiceImpl implements SurveyContactConnectorService {
 
     private final SurveyContactConnectorRepository repository;
+    private final ContactRepository contactRepository;
 
     @Autowired
-    public SurveyContactConnectorServiceImpl(SurveyContactConnectorRepository repository){
+    public SurveyContactConnectorServiceImpl(SurveyContactConnectorRepository repository, ContactRepository contactRepository) {
         this.repository = repository;
+        this.contactRepository = contactRepository;
     }
 
     @Override

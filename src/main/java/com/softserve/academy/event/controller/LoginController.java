@@ -3,9 +3,10 @@ package com.softserve.academy.event.controller;
 import com.softserve.academy.event.dto.UserDto;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
-import com.softserve.academy.event.exception.EmailExistException;
-import com.softserve.academy.event.service.db.EmailService;
 import com.softserve.academy.event.entity.enums.TokenValidation;
+import com.softserve.academy.event.exception.EmailExistException;
+import com.softserve.academy.event.registration.RegistrationCompleteEvent;
+import com.softserve.academy.event.service.db.EmailService;
 import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.service.mapper.UserMapper;
 import com.softserve.academy.event.registration.RegistrationCompleteEvent;
@@ -18,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -42,7 +44,7 @@ public class LoginController {
         this.emailService = emailService;
     }
 
-    @PostMapping(value = "/registration")
+   @PostMapping(value = "/registration")
     public ResponseEntity registerUserAccount(@RequestBody UserDto accountDto, HttpServletRequest request) throws EmailExistException {
         UserDto registered = userMapper.userToDto(userService.newUserAccount(userMapper.userDtoToUser(accountDto)));;
         eventPublisher.publishEvent(new RegistrationCompleteEvent(userMapper.userDtoToUser(registered), request.getLocale(), getAppUrl(request)));
@@ -61,12 +63,12 @@ public class LoginController {
 
     @GetMapping(value = "/resendRegistrationToken")
     public ResponseEntity resendRegistrationToken( @RequestParam("token") String existingToken, HttpServletRequest request) {
-        VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
-        UserDto user = userMapper.userToDto(userService.getUser(newToken.getToken()));
-        String subject = "Resend registration Confirmation";
-        String confirmationUrl = getAppUrl(request) + "/registrationConfirm?token=" + newToken.getToken();
-        String message = "Thank you for registering. Please click on the below link to activate your account.";
-        emailService.sendMail(user.getEmail(), subject, message + confirmationUrl);
+       VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
+       UserDto user = userMapper.userToDto(userService.getUser(newToken.getToken()));
+       String subject = "Resend registration Confirmation";
+       String confirmationUrl = getAppUrl(request) + "/registrationConfirm?token=" + newToken.getToken();
+       String message = "Thank you for registering. Please click on the below link to activate your account.";
+       emailService.sendMail(user.getEmail(), subject, message + confirmationUrl);
         return  new ResponseEntity(HttpStatus.OK);
     }
 
@@ -80,4 +82,6 @@ public class LoginController {
     private String getAppUrl(HttpServletRequest request) {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
+
+
 }

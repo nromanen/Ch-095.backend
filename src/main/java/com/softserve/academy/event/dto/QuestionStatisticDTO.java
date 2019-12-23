@@ -2,6 +2,7 @@ package com.softserve.academy.event.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import java.io.Serializable;
 
 @Setter
