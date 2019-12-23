@@ -4,6 +4,7 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.repository.UserRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import javax.persistence.TypedQuery;
@@ -30,6 +31,14 @@ public class UserRepositoryImpl extends BasicRepositoryImpl<User, Long>  impleme
             return Optional.empty();
         }
        return Optional.of(query.getResultList().get(0));
+    }
+
+    @Override
+    public String getEmailByUserId(Long id) {
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createNamedQuery("findEmailById", User.class);
+        query.setParameter("id", id);
+        String email = query.getSingleResult().getEmail();
+        return email;
     }
 
 }

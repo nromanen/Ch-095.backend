@@ -15,6 +15,10 @@ import java.util.*;
                 @NamedQuery(
                         name = "findEmail",
                         query = "from User u where u.email= :email"
+                ),
+                @NamedQuery(
+                        name = "findEmailById",
+                        query = "from User u where u.id= :id"
                 )
         }
 )

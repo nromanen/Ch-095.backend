@@ -15,4 +15,6 @@ public interface UserService extends BasicService<User, Long> {
     void createVerificationToken(User user, String token);
 
     TokenValidation validateVerificationToken(String token);
+
+    String getEmailByUserId(Long id);
 }

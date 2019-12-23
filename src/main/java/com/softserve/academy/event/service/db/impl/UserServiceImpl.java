@@ -2,15 +2,16 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
+import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
-import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -87,6 +88,11 @@ public class UserServiceImpl implements UserService {
         user.setActive(true);
         userRepository.save(user);
         return TokenValidation.TOKEN_VALID;
+    }
+
+    @Override
+    public String getEmailByUserId(Long id) {
+        return userRepository.getEmailByUserId(id);
     }
 
     @Override

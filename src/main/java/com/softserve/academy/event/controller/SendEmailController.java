@@ -6,6 +6,7 @@ import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.service.db.*;
+import com.softserve.academy.event.util.EmailValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -41,26 +42,34 @@ public class SendEmailController {
 
     @PostMapping("/sendEmails")
     public String doSendEmails(@RequestBody EmailDTO emailDTO) {
-        String[] email = emailDTO.getEmails().split(",");
+//      String emails = emailDTO.getEmails().replaceAll(" ", "");;
+        String emails = emailDTO.getEmails().trim();
+        String[] emailsArray = emails.split(",");
+        EmailValidator.validate(emailsArray);
         String idUser = emailDTO.getUserId();
         String idSurvey = emailDTO.getSurveyId();
-        for (String anEmail : email) {
-            Optional<Survey> survey = surveyService.findFirstById(Long.valueOf(idSurvey));
+        for (String anEmail : emailsArray) {
+            Optional<Survey> survey = surveyService.findFirstById(Long.parseLong(idSurvey));
             Optional<User> user = userService.findFirstById(Long.valueOf(idUser));
+            String userEmail = userService.getEmailByUserId(Long.valueOf(idUser));
             Contact contact = new Contact();
-            contact.setUser(user.get());
-            contact.setEmail(anEmail);
-            contactService.save(contact);
+            if (user.isPresent()) {
+                contact.setUser(user.get());
+                contact.setEmail(anEmail);
+                contactService.save(contact);
+            }
             SurveyContact surveyContact = new SurveyContact();
-            surveyContact.setContact(contact);
-            surveyContact.setSurvey(survey.get());
-            surveyContact.setCanPass(true);
-            surveyContactService.save(surveyContact);
+            if (survey.isPresent()) {
+                surveyContact.setContact(contact);
+                surveyContact.setSurvey(survey.get());
+                surveyContact.setCanPass(true);
+                surveyContactService.save(surveyContact);
+            }
             String codEmail = anEmail + ";" + idSurvey;
             String encodedString = baseUrl + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
             String subject = "Survey";
-            String message = "Please, follow the link and take the survey" + " " + encodedString;
-            emailService.sendMail(anEmail, subject, message);
+            String message = "Message from " + userEmail + ": " + "<<Please, follow the link and take the survey" + " " + encodedString + " >>";
+            emailService.sendMailWithLink(userEmail, anEmail, subject, message);
         }
         return "Works, don't delete!";
     }
