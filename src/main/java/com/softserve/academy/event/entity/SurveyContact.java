@@ -27,6 +27,7 @@ public class SurveyContact implements Serializable {
     @JoinColumn(nullable = false)
     private Contact contact;
 
-    @Column(name = "enable")
-    private boolean enable;
+    @Column(name = "can_pass")
+    private boolean canPass;
+
 }

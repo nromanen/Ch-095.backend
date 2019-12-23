@@ -1,5 +1,6 @@
 package com.softserve.academy.event.service.db.impl;
 
+import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.User;
@@ -36,14 +37,12 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status, User user) {
+    public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status, User user) {
         if (Objects.nonNull(status) && status.length() > 0) {
             return repository.findAllByPageableAndStatus(pageable, status, user);
         }
         return repository.findAllByPageable(pageable, user);
     }
-
-
 
     @Override
     public void updateTitle(Long id, String title) {

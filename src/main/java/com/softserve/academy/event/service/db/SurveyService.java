@@ -1,5 +1,6 @@
 package com.softserve.academy.event.service.db;
 
+import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.User;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 public interface SurveyService {
 
-    Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status, User user);
+    Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status, User user);
 
     void updateTitle(Long id, String title);
 

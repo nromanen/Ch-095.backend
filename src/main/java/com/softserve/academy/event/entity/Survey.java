@@ -11,7 +11,6 @@ import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,6 +65,9 @@ public class Survey implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     private Set<SurveyQuestion> surveyQuestions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {
         this.id = id;

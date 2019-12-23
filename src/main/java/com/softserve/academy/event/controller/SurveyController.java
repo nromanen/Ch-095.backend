@@ -17,8 +17,10 @@ import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
+import com.sun.media.jfxmediaimpl.HostUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ import java.util.List;
 @RestController
 @RequestMapping("survey")
 @CrossOrigin(origins = "http://localhost:4200")
+@Slf4j
 public class SurveyController {
 
     private final SaveQuestionMapper saveQuestionMapper;
@@ -55,8 +58,10 @@ public class SurveyController {
             user = new User();
             user.setId(1L);
         }
+        long startTime = System.currentTimeMillis();
+        log.error("Surveys Time : " + (System.currentTimeMillis() - startTime));
         return ResponseEntity.ok(
-                surveyMapper.pageToDTO(service.findAllByPageableAndStatus(pageable, status, user))
+                service.findAllByPageableAndStatus(pageable, status, user)
         );
     }
 

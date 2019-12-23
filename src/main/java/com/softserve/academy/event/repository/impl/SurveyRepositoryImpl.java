@@ -1,5 +1,6 @@
 package com.softserve.academy.event.repository.impl;
 
+import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
@@ -25,14 +26,14 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     }
 
     @Override
-    public Page<Survey> findAllByPageable(Pageable pageable, User user) {
+    public Page<SurveyDTO> findAllByPageable(Pageable pageable, User user) {
         Session session = sessionFactory.getCurrentSession();
         session.enableFilter(SURVEY_DEFAULT_FILTER_NAME);
         return getSurveyPage(pageable, session, user);
     }
 
     @Override
-    public Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status, User user) {
+    public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status, User user) {
         Session session = sessionFactory.getCurrentSession();
         session.enableFilter(SURVEY_STATUS_FILTER_NAME)
                 .setParameter(SURVEY_STATUS_FILTER_ARGUMENT, SurveyStatus.valueOf(status).getNumber());
@@ -40,9 +41,14 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     }
 
     @SuppressWarnings("unchecked")
-    private Page<Survey> getSurveyPage(Pageable pageable, Session session, User user) {
-        Query query = session.createQuery(fromQuery + " where user = :user ORDER BY :pagination")
-                .setParameter("pagination", pageable.getSort().sorting())
+    private Page<SurveyDTO> getSurveyPage(Pageable pageable, Session session, User user) {
+        Query query = session.createQuery(
+                "select new com.softserve.academy.event.dto.SurveyDTO(" +
+                        "s.id,s.title,s.status,s.imageUrl," +
+                        "(select count(cc) from c as cc where cc.canPass = true and cc.survey = s.id), count(c)) " +
+                        "from " + clazz.getName() + " as s " +
+                        "left join s.surveyContacts c on s.id = c.survey " +
+                        "where s.user = :user group by s.id ORDER BY s." + pageable.getSort().sorting())
                 .setParameter("user", user);
         query.setFirstResult(pageable.getCurrentPage() * pageable.getSize());
         query.setMaxResults(pageable.getSize());
