@@ -22,8 +22,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -89,22 +87,13 @@ public class SurveyController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    /*
-     Method gets request from authenticated users - his new survey with questions for him
-     rework dto in Survey and Questions entities and send it to service for saving
-     */
-    @PostMapping(value = "/createNewSurvey")
-    public ResponseEntity<Survey> saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO, Authentication authentication) throws JsonProcessingException {
-        long id = getUserIdFromContext(authentication);
-        Survey survey = new Survey();
-        survey.setTitle(saveSurveyDTO.getTitle());
-        List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
-        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, id, surveyQuestions));
-    }
 
-    private long getUserIdFromContext(Authentication authentication) {
-        UserDetails userDetail = (UserDetails) authentication.getPrincipal();
-        return userService.getUserByName(userDetail.getUsername()).getId();
+    @PostMapping(value = "/createNewSurvey")
+    public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
+            Survey survey = new Survey();
+            survey.setTitle(saveSurveyDTO.getTitle());
+            List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
+            return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
     }
 
     /*

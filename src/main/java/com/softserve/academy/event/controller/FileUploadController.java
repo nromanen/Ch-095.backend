@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
-@Api
+@Api(value = "Uploading photo")
 @RestController
 public class FileUploadController {
 
