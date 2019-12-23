@@ -64,9 +64,24 @@ public class Survey implements Serializable {
     )
     private Set<Contact> contacts = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "survey_id")
+    private Set<SurveyQuestion> questions = new HashSet<>();
+
 
     public Survey(Long id) {
         this.id = id;
+    }
+
+    public void addQuestion(SurveyQuestion surveyQuestion) {
+        questions.add(surveyQuestion);
+        surveyQuestion.setSurvey(this);
+    }
+
+    public void removeComment(SurveyQuestion surveyQuestion) {
+        questions.remove(surveyQuestion);
+        surveyQuestion.setSurvey(null);
     }
 
 }

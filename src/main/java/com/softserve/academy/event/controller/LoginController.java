@@ -75,7 +75,6 @@ public class LoginController {
     @GetMapping(value = "/login")
     public ResponseEntity getLogin() {
         Long id = userService.getAuthenicationId().get();
-
         return new ResponseEntity(HttpStatus.OK);
     }
 
