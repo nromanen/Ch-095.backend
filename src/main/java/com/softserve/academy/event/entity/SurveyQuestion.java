@@ -43,7 +43,7 @@ public class SurveyQuestion implements Serializable{
     @OrderBy
     private int index;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private SurveyQuestionType type;
 
     @Column(nullable = false, length = 10000)

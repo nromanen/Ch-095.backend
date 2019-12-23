@@ -23,7 +23,6 @@ import java.util.Optional;
 
 @Api(value = "/question")
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("question")
 public class QuestionController {
 

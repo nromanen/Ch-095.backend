@@ -1,9 +1,10 @@
 package com.softserve.academy.event.entity.enums;
 
 public enum SurveyQuestionType {
-    PICTURE,
+    RADIO_PICTURE,
     TEXTAREA,
     RADIOBUTTON,
     CHECKBOX,
-    TEXTBOX;
+    TEXTBOX,
+    CHECKBOX_PICTURE;
 }
