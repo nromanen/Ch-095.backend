@@ -1,5 +1,6 @@
 package com.softserve.academy.event.exception.handler;
 
+import com.softserve.academy.event.exception.IncorrectEmailsException;
 import com.softserve.academy.event.exception.UserNotFountException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,20 +17,27 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> exceptionHandler(Exception e, WebRequest request) {
         String description = request.getDescription(false);
         log.error("Not default exception : " + e.getMessage());
-        log.error("WebRequest description  : " + description);
+        log.error(description);
         return new ResponseEntity<>(e.getMessage() + "\n" + description, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UserNotFountException.class)
     public ResponseEntity<Object> userNotFoundHandler(Exception e, WebRequest request) {
-        return defaultHandler(e, request, HttpStatus.NOT_FOUND);
+        return defaultHandler(e.getMessage(), request, HttpStatus.NOT_FOUND);
     }
 
-    private ResponseEntity<Object> defaultHandler(Exception e, WebRequest request, HttpStatus status) {
+    @ExceptionHandler(IncorrectEmailsException.class)
+    public ResponseEntity<Object> incorrectEmails(Exception e, WebRequest request) {
         String description = request.getDescription(false);
-        log.error(e.getMessage());
-        log.error("WebRequest description  : " + description);
-        return new ResponseEntity<>(e.getMessage(), status);
+        log.error(e.getMessage() + " where " + description);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    private ResponseEntity<Object> defaultHandler(String message, WebRequest request, HttpStatus status) {
+        String description = request.getDescription(false);
+        log.error(message);
+        log.error(description);
+        return new ResponseEntity<>(message, status);
     }
 
 }
