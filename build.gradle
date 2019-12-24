@@ -19,18 +19,18 @@ dependencies {
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
 
     /* SPRING */
-    compile group: 'org.springframework', name: 'spring-core', version: '5.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-context', version: '5.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-beans', version: '5.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-web', version: '5.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-orm', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-core', version: '5.2.2.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version: '5.2.2.RELEASE'
+    compile group: 'org.springframework', name: 'spring-beans', version: '5.2.2.RELEASE'
+    compile group: 'org.springframework', name: 'spring-web', version: '5.2.2.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.2.RELEASE'
+    compile group: 'org.springframework', name: 'spring-orm', version: '5.2.2.RELEASE'
     compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.2.1.RELEASE'
     // https://mvnrepository.com/artifact/org.springframework.security/spring-security-config
     compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.2.1.RELEASE'
     // https://mvnrepository.com/artifact/org.springframework.security/spring-security-web
     compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-context', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version: '5.2.2.RELEASE'
     // https://mvnrepository.com/artifact/org.springframework/spring-context-support
     compile group: 'org.springframework', name: 'spring-context-support', version: '5.2.2.RELEASE'
 
@@ -41,6 +41,7 @@ dependencies {
 
     /* SERVLET */
     providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    compile 'javax.servlet:jstl:1.2'
 
     /* DATABASE */
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.8'
@@ -83,4 +84,13 @@ dependencies {
     compile group: 'javax.mail', name: 'javax.mail-api', version: '1.6.0'
 // https://mvnrepository.com/artifact/com.sun.mail/javax.mail
     compile group: 'com.sun.mail', name: 'javax.mail', version: '1.6.0'
+
+    /* SOCIAL */
+    compile group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-oauth2-jose', version: '5.2.1.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-jwt
+    providedCompile group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.1.0.RELEASE'
+    compile "org.springframework.security:spring-security-oauth2-client"
+
+
 }

@@ -2,15 +2,15 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
+import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
-import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -22,14 +22,14 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final VerificationTokenRepository tokenRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, VerificationTokenRepository tokenRepository) {
+    public UserServiceImpl(UserRepository userRepository, /*BCryptPasswordEncoder bCryptPasswordEncoder, */VerificationTokenRepository tokenRepository) {
         this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.tokenRepository = tokenRepository;
     }
 
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = new User();
         user.setEmail(userAccount.getEmail());
-        user.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
+//        user.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         return userRepository.save(user);
     }
 

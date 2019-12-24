@@ -23,11 +23,17 @@ public class UserSocial implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long socialId;
+
     @Enumerated
     private OauthType type;
 
     @Column(unique = true, length = 128, nullable = false)
     private String email;
+
+    private String phone;
+
+    private String nickname;
 
     @ManyToOne
     private User user;

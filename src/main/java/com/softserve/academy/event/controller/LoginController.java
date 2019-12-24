@@ -2,35 +2,32 @@ package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.dto.UserDto;
 import com.softserve.academy.event.entity.VerificationToken;
-import com.softserve.academy.event.exception.EmailExistException;
-import com.softserve.academy.event.service.db.EmailService;
 import com.softserve.academy.event.entity.enums.TokenValidation;
+import com.softserve.academy.event.exception.EmailExistException;
+import com.softserve.academy.event.registration.RegistrationCompleteEvent;
+import com.softserve.academy.event.service.db.EmailService;
 import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.service.mapper.UserMapper;
-import com.softserve.academy.event.registration.RegistrationCompleteEvent;
-//import com.softserve.academy.event.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
-import java.util.Locale;
+
+//import com.softserve.academy.event.service.UserService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class LoginController {
 
     private final UserService userService;
-
     private final UserMapper userMapper;
-
     private final ApplicationEventPublisher eventPublisher;
-
-    final EmailService emailService;
-
-    final Environment env;
+    private final EmailService emailService;
+    private final Environment env;
 
     @Autowired
     public LoginController(UserService userService, UserMapper userMapper, ApplicationEventPublisher eventPublisher, EmailService emailService, Environment env) {
