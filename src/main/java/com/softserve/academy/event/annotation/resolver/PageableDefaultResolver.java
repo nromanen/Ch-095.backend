@@ -24,14 +24,14 @@ public class PageableDefaultResolver implements HandlerMethodArgumentResolver {
         PageableDefault annotation = parameter.getParameterAnnotation(PageableDefault.class);
         String size = webRequest.getParameter(annotation.params()[0]);
         String page = webRequest.getParameter(annotation.params()[1]);
-        String[] sort = webRequest.getParameterValues(annotation.params()[2]);
+        String sort = webRequest.getParameter(annotation.params()[2]);
         String direction = webRequest.getParameter(annotation.params()[3]);
         return new Pageable(
                 Objects.isNull(size) ? annotation.size() : Integer.parseInt(size),
                 Objects.isNull(page) ? annotation.page() : Integer.parseInt(page),
                 0,
                 Sort.from(Objects.isNull(direction)  ? annotation.direction() : Sort.Direction.valueOf(direction),
-                        Objects.isNull(sort) || sort.length == 0 ? annotation.sort() : sort)
+                        Objects.isNull(sort) ? annotation.sort() : sort)
         );
     }
 

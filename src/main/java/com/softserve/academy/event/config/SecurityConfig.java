@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration").permitAll()
                 .antMatchers("/testAccess/{token}", "/testAccess/check").permitAll()
-                .antMatchers("/survey/**").permitAll()
+                .antMatchers("/survey/**", "/survey").permitAll()
                 .antMatchers("/fileupload").permitAll()
                 .antMatchers("/sendEmails").permitAll()
                 .antMatchers("/statistic/**").permitAll()
