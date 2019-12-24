@@ -30,20 +30,17 @@ import java.util.List;
 @Api(value = "/survey")
 @RestController
 @RequestMapping("survey")
-@CrossOrigin(origins = "http://localhost:4200")
 public class SurveyController {
 
     private final SurveyService service;
-    private final UserService userService;
     private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyMapper surveyMapper;
 
     @Autowired
-    public SurveyController(SurveyService service, SurveyMapper surveyMapper, SaveQuestionMapper saveQuestionMapper, UserService userService) {
+    public SurveyController(SurveyService service, SurveyMapper surveyMapper, SaveQuestionMapper saveQuestionMapper) {
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
         this.surveyMapper = surveyMapper;
-        this.userService = userService;
     }
 
     @ApiOperation(value = "Get all surveys")
