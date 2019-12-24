@@ -23,10 +23,10 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
                 .setParameter("contactId", contactId)
                 .setParameter("surveyId", surveyId);
         List<Boolean> res = query.getResultList();
-        if (res.isEmpty()){
+        if (res.isEmpty()) {
             throw new IncorrectLinkException();
         }
-        if (res.get(0)){
+        if (res.get(0)) {
             return true;
         }
         throw new SurveyAlreadyPassedException();
@@ -40,8 +40,20 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
                 .setParameter("surveyId", surveyId)
                 .setParameter("contactId", contactId)
                 .getResultList();
-        if(result.isEmpty())
+        if (result.isEmpty())
             return Optional.empty();
         return Optional.of(result.get(0));
+    }
+
+    @Override
+    public SurveyContact getByContactIdAndSurveyId(Long contactId, Long surveyId) {
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from " + clazz.getName() + " as t" +
+                " where t.contact.id = :contactId and t.survey.id = :surveyId")
+                .setParameter("contactId", contactId)
+                .setParameter("surveyId", surveyId);
+        List<SurveyContact> res = query.getResultList();
+        if (res.isEmpty()) return null;
+        return res.get(0);
     }
 }

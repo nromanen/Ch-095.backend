@@ -62,4 +62,21 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
         return new Page<>(query.list(), pageable);
     }
 
+//    @Override
+//    public boolean getEventById(String surveyId) {
+//        Session session = sessionFactory.getCurrentSession();
+//        Long surveyIdd = Long.valueOf(surveyId);
+//        Query query = session.createQuery("select t.enable " +
+//                "from " + clazz.getName() + " as t" +
+//                " where t.survey = " + surveyIdd);
+//        List<Boolean> res = query.getResultList();
+//        if (res.isEmpty())return false;
+//        return res.get(0);
+//    }
+
+//    @Override
+//    public void save(Set<Contact> contactSet) {
+//        Session session = sessionFactory.getCurrentSession();
+//        session.save(contactSet);
+//    }
 }
