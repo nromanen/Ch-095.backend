@@ -5,6 +5,7 @@ import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.security.Principal;
 import java.util.List;
 import java.util.*;
 
@@ -39,31 +39,31 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status, User user) {
         if (Objects.nonNull(status) && status.length() > 0) {
-            return repository.findAllByPageableAndStatus(pageable, status, user);
+            return repository.findAllByPageableAndStatusUserId(pageable, status, user.getId());
         }
-        return repository.findAllByPageable(pageable, user);
+        return repository.findAllByPageableAndUserId(pageable, user.getId());
     }
 
     @Override
     public void updateTitle(Long id, String title) {
-        Survey survey = repository.findFirstById(id)
-                .orElseThrow(RuntimeException::new);
+        Survey survey = repository.findFirstByIdAndUserId(id, 1L) // todo change to getId
+                .orElseThrow(SurveyNotFound::new);
         survey.setTitle(title);
         repository.update(survey);
     }
 
     @Override
     public void updateStatus(Long id, SurveyStatus status) {
-        Survey survey = repository.findFirstById(id)
-                .orElseThrow(RuntimeException::new);
+        Survey survey = repository.findFirstByIdAndUserId(id, 1L) // todo change to getId
+                .orElseThrow(SurveyNotFound::new);
         survey.setStatus(status);
         repository.update(survey);
     }
 
     @Override
     public Survey duplicateSurvey(DuplicateSurveySettings settings) {
-        Survey survey = repository.findFirstById(settings.getId())
-                .orElseThrow(RuntimeException::new);
+        Survey survey = repository.findFirstByIdAndUserIdOrStatus(settings.getId(), 1L, SurveyStatus.TEMPLATE) // todo change to getId
+                .orElseThrow(SurveyNotFound::new);
         repository.detach(survey);
         survey.setId(null);
         survey.setStatus(SurveyStatus.NON_ACTIVE);
@@ -76,7 +76,11 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public void delete(Survey entity) {
-        repository.delete(entity);
+        if (repository.isExistIdAndUserId(entity.getId(), 1L)) {
+            repository.delete(entity);
+        } else {
+            throw new SurveyNotFound();
+        }
     }
 
     @Override

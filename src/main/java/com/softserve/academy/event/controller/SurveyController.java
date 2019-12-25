@@ -17,7 +17,6 @@ import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
-import com.sun.media.jfxmediaimpl.HostUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

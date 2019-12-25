@@ -22,12 +22,13 @@ public class PageableDefaultResolver implements HandlerMethodArgumentResolver {
     public Pageable resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                     NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         PageableDefault annotation = parameter.getParameterAnnotation(PageableDefault.class);
-        String size = webRequest.getParameter(annotation.params()[0]);
+        String sizeString = webRequest.getParameter(annotation.params()[0]);
+        int size = Objects.isNull(sizeString) ? annotation.size() : Integer.parseInt(sizeString);
         String page = webRequest.getParameter(annotation.params()[1]);
         String sort = webRequest.getParameter(annotation.params()[2]);
         String direction = webRequest.getParameter(annotation.params()[3]);
         return new Pageable(
-                Objects.isNull(size) ? annotation.size() : Integer.parseInt(size),
+                size > 100 ? annotation.size() : size,
                 Objects.isNull(page) ? annotation.page() : Integer.parseInt(page),
                 0,
                 Sort.from(Objects.isNull(direction)  ? annotation.direction() : Sort.Direction.valueOf(direction),
