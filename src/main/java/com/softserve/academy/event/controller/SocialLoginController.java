@@ -5,12 +5,17 @@ import com.softserve.academy.event.entity.enums.OauthType;
 import com.softserve.academy.event.service.db.UserSocialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,7 +26,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/")
@@ -43,7 +47,7 @@ public class SocialLoginController {
     }
 
     @GetMapping("/oauth_login")
-    public String getLoginPage(/*Model model*/) {
+    public ResponseEntity<Map<String, String>> getLoginPage() {
         Iterable<ClientRegistration> clientRegistrations = null;
         ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository)
                 .as(Iterable.class);
@@ -54,10 +58,8 @@ public class SocialLoginController {
         if (clientRegistrations != null) {
             clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(), authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
         }
-//        model.addAttribute("urls", oauth2AuthenticationUrls);
 
-//        return oauth2AuthenticationUrls.get("Facebook");
-        return oauth2AuthenticationUrls.get("Google");
+        return ResponseEntity.ok(oauth2AuthenticationUrls);
     }
 
     @GetMapping("/loginSuccess")
@@ -76,9 +78,19 @@ public class SocialLoginController {
         userSocial.setType(OauthType.valueOf(authentication.getAuthorizedClientRegistrationId().toUpperCase()));
         userSocial.setNickname(oAuth2User.getAttribute("name"));
         userSocial.setEmail(oAuth2User.getAttribute("email"));
-        userSocial.setSocialId(Long.parseLong(Objects.requireNonNull(oAuth2User.getAttribute("id"))));
 
-        userSocialService.save(userSocial);
+        switch (userSocial.getType()){
+            case FACEBOOK:{
+                userSocial.setSocialId(oAuth2User.getAttribute("id"));
+                break;
+            }
+            case GOOGLE:{
+                userSocial.setSocialId(oAuth2User.getAttribute("sub"));
+                break;
+            }
+        }
+
+            userSocialService.save(userSocial);
 
         OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
                 one,
@@ -103,5 +115,11 @@ public class SocialLoginController {
         }
 
         return "loginSuccess";
+    }
+
+    @GetMapping(value = "/test")
+    public Object test(){
+//        return ((DefaultOidcUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail();                        // for google
+        return ((DefaultOAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAttribute("email");    // for facebook
     }
 }

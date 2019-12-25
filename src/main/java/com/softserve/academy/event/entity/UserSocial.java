@@ -1,16 +1,18 @@
 package com.softserve.academy.event.entity;
 
 import com.softserve.academy.event.entity.enums.OauthType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+        import lombok.AllArgsConstructor;
+        import lombok.Data;
+        import lombok.EqualsAndHashCode;
+        import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.io.Serializable;
+        import javax.persistence.*;
+        import java.io.Serializable;
 
 @Entity
-@Table(name = "user_socials")
+@Table(name = "user_socials", uniqueConstraints = {
+        @UniqueConstraint(name = "userSocialUnique", columnNames = {"socialid", "type"})
+})
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,15 +25,13 @@ public class UserSocial implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long socialId;
+    private String socialId;
 
-    @Enumerated
+    @Enumerated(value = EnumType.STRING)
     private OauthType type;
 
-    @Column(unique = true, length = 128, nullable = false)
+    @Column(length = 128, nullable = false)
     private String email;
-
-    private String phone;
 
     private String nickname;
 

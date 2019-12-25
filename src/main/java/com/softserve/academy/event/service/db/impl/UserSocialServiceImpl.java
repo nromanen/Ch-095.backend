@@ -19,7 +19,7 @@ public class UserSocialServiceImpl implements UserSocialService {
     private final UserSocialRepository userSocialRepository;
 
     @Autowired
-    public UserSocialServiceImpl(UserRepository userRepository, UserSocialRepository userSocialRepository){
+    public UserSocialServiceImpl(UserRepository userRepository, UserSocialRepository userSocialRepository) {
         this.userRepository = userRepository;
         this.userSocialRepository = userSocialRepository;
     }
@@ -32,19 +32,4 @@ public class UserSocialServiceImpl implements UserSocialService {
         entity.setUser(userRepository.save(user));
         return userSocialRepository.save(entity);
     }
-
-//    private final UserRepository userRepository;
-//    private final UserSocialRepository socialRepository;
-//
-//    @Autowired
-//    public UserSocialServiceImpl(UserRepository userRepository, UserSocialRepository socialRepository){
-//        this.userRepository = userRepository;
-//        this.socialRepository = socialRepository;
-//    }
-//
-//    @Override
-//    public UserSocial save(UserSocial entity) {
-//        entity.setUser(userRepository.save(entity.getUser()));
-//        return socialRepository.save(entity);
-//    }
 }
