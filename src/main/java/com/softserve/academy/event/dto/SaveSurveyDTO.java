@@ -12,6 +12,6 @@ import java.util.List;
 public class SaveSurveyDTO {
 
     private String title;
-
+    private String surveyPhotoName;
     private List<SurveyQuestionDTO> questions;
 }

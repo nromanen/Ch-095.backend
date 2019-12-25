@@ -10,9 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.softserve.academy.event.util.Constants.*;
 
@@ -67,7 +65,7 @@ public class Survey implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "survey_id")
-    private Set<SurveyQuestion> questions = new HashSet<>();
+    private List<SurveyQuestion> questions = new ArrayList<>();
 
 
     public Survey(Long id) {
@@ -77,11 +75,6 @@ public class Survey implements Serializable {
     public void addQuestion(SurveyQuestion surveyQuestion) {
         questions.add(surveyQuestion);
         surveyQuestion.setSurvey(this);
-    }
-
-    public void removeComment(SurveyQuestion surveyQuestion) {
-        questions.remove(surveyQuestion);
-        surveyQuestion.setSurvey(null);
     }
 
 }

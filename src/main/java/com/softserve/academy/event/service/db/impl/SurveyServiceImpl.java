@@ -101,7 +101,7 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
         Long userID = userService.getAuthenicationId().get();
-        User user  = userRepository.findFirstById(userID).get();
+        User user = userRepository.findFirstById(userID).get();
         survey.setUser(user);
         surveyQuestions.stream().forEach(x->survey.addQuestion(x));
         Survey savedSurvey = repository.save(survey);

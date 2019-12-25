@@ -10,7 +10,6 @@ import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.service.db.SurveyService;
-import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
@@ -89,6 +88,7 @@ public class SurveyController {
     public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
             Survey survey = new Survey();
             survey.setTitle(saveSurveyDTO.getTitle());
+            survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
             List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
             return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
     }
