@@ -23,9 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,14 +54,9 @@ public class SurveyController {
     @GetMapping
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
             @PageableDefault(sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
-            @RequestParam(required = false, name = "status") String status,
-            @AuthenticationPrincipal User user) {
-        if (user == null) { // todo change to normal piece
-            user = new User();
-            user.setId(1L);
-        }
+            @RequestParam(required = false, name = "status") String status) {
         return ResponseEntity.ok(
-                service.findAllByPageableAndStatus(pageable, status, user)
+                service.findAllByPageableAndStatus(pageable, status)
         );
     }
 
@@ -70,7 +68,7 @@ public class SurveyController {
         );
     }
 
-    @ApiOperation(value = "Сhange the title of the survey")
+    @ApiOperation(value = "Change the title of the survey")
     @PutMapping
     public ResponseEntity<Boolean> updateTitle(@RequestParam Long id, @RequestParam String title) {
         service.updateTitle(id, title);
@@ -92,6 +90,7 @@ public class SurveyController {
     @ApiOperation(value = "Delete a survey")
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteSurvey(@RequestParam Long id) {
+        // todo delete if survey empty and disable if survey not empty
         service.delete(new Survey(id));
         return ResponseEntity.ok(HttpStatus.OK);
     }

@@ -11,13 +11,9 @@ import java.util.Optional;
 
 public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
-    Optional<Survey> findFirstByIdAndUserId(Long id, Long userId);
+    Page<SurveyDTO> findAllByPageableAndUserEmail(Pageable pageable, String userEmail);
 
-    Optional<Survey> findFirstByIdAndUserIdOrStatus(Long id, Long userId, SurveyStatus status);
-
-    Page<SurveyDTO> findAllByPageableAndUserId(Pageable pageable, Long userId);
-
-    Page<SurveyDTO> findAllByPageableAndStatusUserId(Pageable pageable, String status, Long userId);
+    Page<SurveyDTO> findAllByPageableAndStatusAndUserEmail(Pageable pageable, String status, String userEmail);
 
     boolean isExistIdAndUserId(Long id, Long userId);
 

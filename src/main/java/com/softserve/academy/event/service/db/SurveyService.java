@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public interface SurveyService {
 
-    Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status, User user);
+    Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status);
 
     void updateTitle(Long id, String title);
 

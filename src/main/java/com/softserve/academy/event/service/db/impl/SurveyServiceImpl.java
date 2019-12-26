@@ -13,7 +13,10 @@ import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,7 @@ import java.util.*;
 
 @Service
 @Transactional
+@Slf4j
 public class SurveyServiceImpl implements SurveyService {
 
     private final SurveyRepository repository;
@@ -37,33 +41,36 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status, User user) {
+    public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status) {
         if (Objects.nonNull(status) && status.length() > 0) {
-            return repository.findAllByPageableAndStatusUserId(pageable, status, user.getId());
+            return repository.findAllByPageableAndStatusAndUserEmail(pageable, status, getCurrentUserDetails().getUsername());
         }
-        return repository.findAllByPageableAndUserId(pageable, user.getId());
+        return repository.findAllByPageableAndUserEmail(pageable, getCurrentUserDetails().getUsername());
     }
 
     @Override
     public void updateTitle(Long id, String title) {
-        Survey survey = repository.findFirstByIdAndUserId(id, 1L) // todo change to getId
-                .orElseThrow(SurveyNotFound::new);
+        Survey survey = findSurveyById(id);
         survey.setTitle(title);
         repository.update(survey);
     }
 
     @Override
     public void updateStatus(Long id, SurveyStatus status) {
-        Survey survey = repository.findFirstByIdAndUserId(id, 1L) // todo change to getId
-                .orElseThrow(SurveyNotFound::new);
+        Survey survey = findSurveyById(id);
         survey.setStatus(status);
         repository.update(survey);
     }
 
     @Override
     public Survey duplicateSurvey(DuplicateSurveySettings settings) {
-        Survey survey = repository.findFirstByIdAndUserIdOrStatus(settings.getId(), 1L, SurveyStatus.TEMPLATE) // todo change to getId
+        Survey survey = repository.findFirstById(settings.getId())
                 .orElseThrow(SurveyNotFound::new);
+        if (!survey.getStatus().equals(SurveyStatus.TEMPLATE) &&
+                checkUserEmailEqualsCurrentUserEmail(survey.getUser().getEmail())) {
+            log.debug("User " + survey.getUser().getUsername() + " try change other user information. ");
+            throw new SurveyNotFound();
+        }
         repository.detach(survey);
         survey.setId(null);
         survey.setStatus(SurveyStatus.NON_ACTIVE);
@@ -74,8 +81,27 @@ public class SurveyServiceImpl implements SurveyService {
         return survey;
     }
 
+    private Survey findSurveyById(Long id) {
+        Survey survey = repository.findFirstById(id)
+                .orElseThrow(SurveyNotFound::new);
+        if (checkUserEmailEqualsCurrentUserEmail(survey.getUser().getEmail())) {
+            log.debug("User " + survey.getUser().getUsername() + " try change other user information. ");
+            throw new SurveyNotFound();
+        }
+        return survey;
+    }
+
+    private boolean checkUserEmailEqualsCurrentUserEmail(String email) {
+        return email.equals(getCurrentUserDetails().getUsername());
+    }
+
+    private UserDetails getCurrentUserDetails() {
+        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     @Override
     public void delete(Survey entity) {
+        Survey survey = findSurveyById(entity.getId());
         if (repository.isExistIdAndUserId(entity.getId(), 1L)) {
             repository.delete(entity);
         } else {
