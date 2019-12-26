@@ -5,25 +5,21 @@ import com.softserve.academy.event.entity.enums.OauthType;
 import com.softserve.academy.event.service.db.UserSocialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,22 +59,13 @@ public class SocialLoginController {
     }
 
     @GetMapping("/loginSuccess")
-    public String getLoginInfo(OAuth2AuthenticationToken authentication) {
-
-        String one = authentication.getAuthorizedClientRegistrationId();
-        String two = authentication.getName();
-
-//        OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
-//                authentication.getAuthorizedClientRegistrationId(),
-//                authentication.getName());
-
+    public String getLoginInfo(OAuth2AuthenticationToken authentication, HttpServletResponse httpServletResponse) {
         OAuth2User oAuth2User = authentication.getPrincipal();
 
         UserSocial userSocial = new UserSocial();
         userSocial.setType(OauthType.valueOf(authentication.getAuthorizedClientRegistrationId().toUpperCase()));
         userSocial.setNickname(oAuth2User.getAttribute("name"));
         userSocial.setEmail(oAuth2User.getAttribute("email"));
-
         switch (userSocial.getType()){
             case FACEBOOK:{
                 userSocial.setSocialId(oAuth2User.getAttribute("id"));
@@ -89,36 +76,23 @@ public class SocialLoginController {
                 break;
             }
         }
-
+        try {
             userSocialService.save(userSocial);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
 
-        OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
-                one,
-                two);
-
-        String userInfoEndpointUri = client.getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUri();
-
-        if (!StringUtils.isEmpty(userInfoEndpointUri)) {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
-                    .getTokenValue());
-
-            HttpEntity<String> entity = new HttpEntity<String>("", headers);
-
-            ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
-            Map userAttributes = response.getBody();
-            return "name: " + userAttributes.get("name");
+        try {
+            httpServletResponse.sendRedirect("http://localhost:4200/surveys");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return "loginSuccess";
     }
 
     @GetMapping(value = "/test")
-    public Object test(){
+    public String test(){
 //        return ((DefaultOidcUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail();                        // for google
         return ((DefaultOAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAttribute("email");    // for facebook
     }

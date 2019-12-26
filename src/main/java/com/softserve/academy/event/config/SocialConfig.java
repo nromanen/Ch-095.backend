@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackages = { "com.softserve.academy.event.service" })
+@ComponentScan(basePackages = {"com.softserve.academy.event.service"})
 @PropertySource("classpath:social.properties")
 @EnableGlobalMethodSecurity(securedEnabled = true)
 //@Order(1)
@@ -38,63 +39,6 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
         this.env = env;
     }
 
-//    private final Environment env;
-//
-//    private static List<String> clients = Arrays.asList("google", "facebook");
-//
-//    @Autowired
-//    public SocialConfig(Environment env) {
-//        this.env = env;
-//    }
-//
-//
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests()
-//                .antMatchers("/oauth_login")
-//                .permitAll()
-//                .anyRequest()
-//                .authenticated()
-//                .and()
-//                .oauth2Login()
-//                .loginPage("/oauth_login");
-//    }
-//
-//
-//    @Bean
-//    public ClientRegistrationRepository clientRegistrationRepository() {
-//        List<ClientRegistration> registrations = clients.stream()
-//                .map(this::getRegistration)
-//                .filter(Objects::nonNull)
-//                .collect(Collectors.toList());
-//
-//        return new InMemoryClientRegistrationRepository(registrations);
-//    }
-//
-//    private static String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
-//
-//    private ClientRegistration getRegistration(String client) {
-//        String clientId = env.getProperty(
-//                CLIENT_PROPERTY_KEY + client + ".client-id");
-//
-//        if (clientId == null) {
-//            return null;
-//        }
-//
-//        String clientSecret = env.getProperty(
-//                CLIENT_PROPERTY_KEY + client + ".client-secret");
-//
-//        if (client.equals("google")) {
-//            return CommonOAuth2Provider.GOOGLE.getBuilder(client)
-//                    .clientId(clientId).clientSecret(clientSecret).build();
-//        }
-//        if (client.equals("facebook")) {
-//            return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
-//                    .clientId(clientId).clientSecret(clientSecret).build();
-//        }
-//        return null;
-//    }
-//
     @Bean
     public OAuth2AuthorizedClientService authorizedClientService() {
         return new InMemoryOAuth2AuthorizedClientService(
@@ -103,9 +47,14 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http
+                .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .and()
+                .authorizeRequests()
                 .antMatchers("/oauth_login", "/loginFailure")
                 .permitAll()
+//                .antMatchers("/testAccess/{token}", "/testAccess/check")
+//                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -119,7 +68,7 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
                 .accessTokenResponseClient(accessTokenResponseClient())
                 .and()
                 .defaultSuccessUrl("/loginSuccess")
-               .failureUrl("/loginFailure");
+                .failureUrl("/loginFailure");
     }
 
     @Bean
@@ -129,29 +78,27 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
-        return accessTokenResponseClient;
+        return new DefaultAuthorizationCodeTokenResponseClient();
     }
 
 
-    // additional configuration for non-Spring Boot projects
     private static List<String> clients = Arrays.asList("facebook", "google");
 
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
         List<ClientRegistration> registrations = clients.stream()
-                .map(c -> getRegistration(c))
+                .map(this::getRegistration)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         return new InMemoryClientRegistrationRepository(registrations);
     }
 
-    private static String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
-
     private final Environment env;
 
     private ClientRegistration getRegistration(String client) {
+        String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
+
         String clientId = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-id");
 
         if (clientId == null) {
