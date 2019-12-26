@@ -33,7 +33,6 @@ public abstract class BasicRepositoryImpl<T extends Serializable, I extends Seri
                 .getResultList();
     }
 
-    @Transactional
     @Override
     public Optional<T> findFirstById(I id) {
         return Optional.ofNullable(sessionFactory.getCurrentSession().get(clazz, id));
