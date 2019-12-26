@@ -106,8 +106,8 @@ public class SurveyController {
         ObjectMapper mapper = new ObjectMapper();
         for (SurveyQuestionDTO surveyQuestionDTO : saveSurveyDTO.getQuestions()) {
             SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
-            surveyQuestion.setAnswers(answers);
+            String answers = mapper.writeValueAsString(surveyQuestionDTO.getChoiceAnswers());
+            surveyQuestion.setChoiceAnswers(answers);
             surveyQuestions.add(surveyQuestion);
         }
         return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, userID, surveyQuestions));

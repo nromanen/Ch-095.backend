@@ -6,8 +6,7 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 
-import java.security.Principal;
-import java.util.Map;
+import java.util.Optional;
 
 public interface SurveyRepository extends BasicRepository<Survey, Long> {
 

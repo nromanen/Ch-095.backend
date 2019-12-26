@@ -13,5 +13,5 @@ public class QuestionDTO {
     private boolean required;
     private SurveyQuestionType type;
     private String value;
-    private String answers;
+    private String choiceAnswers;
 }

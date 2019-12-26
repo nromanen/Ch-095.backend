@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public interface SaveQuestionMapper {
 
 //    @Mapping(target = "answers", expression = "java(surveyQuestionDTO.getAnswers().stream().forEach( x -> x = \"\\\"\"+x+\"\\\"\").t).toString()")
-    @Mapping(target = "answers", ignore = true)
+    @Mapping(target = "choiceAnswers", ignore = true)
     SurveyQuestion toEntity(SurveyQuestionDTO surveyQuestionDTO);
 }
 

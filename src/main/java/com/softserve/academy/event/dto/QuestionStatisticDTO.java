@@ -1,16 +1,20 @@
 package com.softserve.academy.event.dto;
 
+import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import lombok.Getter;
 import lombok.Setter;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
 public class QuestionStatisticDTO implements Serializable {
 
-    private int id;
     private String question;
-    private String[] answers;
+    private SurveyQuestionType type;
+    private String[] choiceAnswers;
     private int index;
+    private List<String> answers;
 
 }

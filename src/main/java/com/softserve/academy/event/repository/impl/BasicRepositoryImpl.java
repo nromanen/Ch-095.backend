@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -32,6 +33,7 @@ public abstract class BasicRepositoryImpl<T extends Serializable, I extends Seri
                 .getResultList();
     }
 
+    @Transactional
     @Override
     public Optional<T> findFirstById(I id) {
         return Optional.ofNullable(sessionFactory.getCurrentSession().get(clazz, id));

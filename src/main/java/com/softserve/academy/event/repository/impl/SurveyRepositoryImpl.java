@@ -11,6 +11,10 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
+import java.util.Optional;
+
 import static com.softserve.academy.event.util.Constants.*;
 
 @Repository
@@ -39,6 +43,7 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
                 .setParameter(SURVEY_STATUS_FILTER_ARGUMENT, SurveyStatus.valueOf(status).getNumber());
         return getSurveyPage(pageable, session, user);
     }
+
 
     @SuppressWarnings("unchecked")
     private Page<SurveyDTO> getSurveyPage(Pageable pageable, Session session, User user) {

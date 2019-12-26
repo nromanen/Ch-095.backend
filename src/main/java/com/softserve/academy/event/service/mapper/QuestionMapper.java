@@ -20,10 +20,6 @@ public interface QuestionMapper {
     QuestionDTO toDTO(SurveyQuestion surveyQuestion);
     List<QuestionDTO> listQuestionToDTO(List<SurveyQuestion> list);
 
-    @Mapping(target = "answers",
-            expression ="java(new ObjectMapper().readValue(surveyQuestion.getAnswers(),String[].class))")
-    QuestionStatisticDTO toStatisticDTO(SurveyQuestion surveyQuestion) throws JsonProcessingException;
 
-    List<QuestionStatisticDTO> listQuestionToStatisticDTO(List<SurveyQuestion> list);
 
 }

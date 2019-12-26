@@ -34,4 +34,5 @@ public class SurveyAnswer implements Serializable {
 
     @Column
     private String value;
+
 }
