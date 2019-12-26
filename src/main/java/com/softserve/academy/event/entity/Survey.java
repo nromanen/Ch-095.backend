@@ -32,12 +32,6 @@ import static com.softserve.academy.event.util.Constants.*;
         @FilterDef(name = SURVEY_STATUS_FILTER_NAME, parameters = @ParamDef(name = SURVEY_STATUS_FILTER_ARGUMENT, type = "integer")),
         @FilterDef(name = SURVEY_DEFAULT_FILTER_NAME),
 })
-@NamedQuery(name = "surveyWithQuestionsAnswers",
-        query = "from Survey s " +
-                " join s.surveyQuestions q" +
-                " join q.surveyAnswers a" +
-                " where s.id = :id"
-)
 public class Survey implements Serializable {
 
     private static final long serialVersionUID = 2943648242656547434L;
