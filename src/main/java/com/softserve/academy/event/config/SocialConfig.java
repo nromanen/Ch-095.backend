@@ -51,7 +51,7 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
                 .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
                 .and()
                 .authorizeRequests()
-                .antMatchers("/oauth_login", "/loginFailure")
+                .antMatchers("/oauth_login", "/loginFailure", "/test")
                 .permitAll()
 //                .antMatchers("/testAccess/{token}", "/testAccess/check")
 //                .permitAll()

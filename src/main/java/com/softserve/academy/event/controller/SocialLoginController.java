@@ -2,31 +2,37 @@ package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.entity.UserSocial;
 import com.softserve.academy.event.entity.enums.OauthType;
+import com.softserve.academy.event.entity.enums.Roles;
 import com.softserve.academy.event.service.db.UserSocialService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/")
 @CrossOrigin(origins = "http://localhost:4200")
 public class SocialLoginController {
+
+    private final String SECRET_KEY = "fbb5140fc1be11e87b925eed98a97a343e68b445fbb5140fc1be11e87b925eed98a97a343e68b445";
 
     private static final String authorizationRequestBaseUri = "oauth2/authorize-client";
     Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
@@ -40,6 +46,32 @@ public class SocialLoginController {
         this.userSocialService = userSocialService;
         this.clientRegistrationRepository = clientRegistrationRepository;
         this.authorizedClientService = authorizedClientService;
+    }
+
+    public String createToken(String body, List<String> roles) {
+        Claims claims = Jwts.claims().setSubject(body);
+        claims.put("roles", roles);
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + 86400000);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
+    private String parseJWT(String jwt) {
+
+        //This line will throw an exception if it is not a signed JWS (as expected)
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+                .parseClaimsJws(jwt).getBody();
+        System.out.println("ID: " + claims.getId());
+        System.out.println("Subject: " + claims.getSubject());
+        System.out.println("Issuer: " + claims.getIssuer());
+        System.out.println("Expiration: " + claims.getExpiration());
+        return claims.getSubject();
     }
 
     @GetMapping("/oauth_login")
@@ -82,8 +114,14 @@ public class SocialLoginController {
             System.out.println(e.getMessage());
         }
 
+
+
         try {
-            httpServletResponse.sendRedirect("http://localhost:4200/surveys");
+            String token = createToken(userSocial.getEmail(), Collections.singletonList(Roles.USER.toString()));
+            httpServletResponse.setHeader("userToken", token);
+            httpServletResponse.addCookie(new Cookie("userToken", token));
+            httpServletResponse.addCookie(new Cookie("user", userSocial.getEmail()));
+            httpServletResponse.sendRedirect("http://localhost:4200/");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,8 +130,19 @@ public class SocialLoginController {
     }
 
     @GetMapping(value = "/test")
-    public String test(){
-//        return ((DefaultOidcUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail();                        // for google
-        return ((DefaultOAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAttribute("email");    // for facebook
+    public String test(@RequestHeader HttpHeaders httpHeaders){
+
+        Object something = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (something instanceof DefaultOAuth2User) {
+            return ((DefaultOAuth2User)something).getAttribute("email"); // for facebook
+        }
+        if (something instanceof DefaultOidcUser) {
+            return ((DefaultOidcUser)something).getEmail();                     // for google
+        }
+//        return "unauthorized";
+
+        return parseJWT(Objects.requireNonNull(httpHeaders.get("userToken")).toString());
+//        return Objects.requireNonNull(httpHeaders.get("userToken")).toString();
     }
 }
