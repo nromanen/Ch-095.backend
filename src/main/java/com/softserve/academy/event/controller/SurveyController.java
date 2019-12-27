@@ -3,12 +3,11 @@ package com.softserve.academy.event.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.academy.event.annotation.PageableDefault;
-import com.softserve.academy.event.dto.SaveSurveyDTO;
-import com.softserve.academy.event.dto.SurveyDTO;
-import com.softserve.academy.event.dto.SurveyQuestionDTO;
+import com.softserve.academy.event.dto.*;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
@@ -31,12 +30,14 @@ import java.util.List;
 @RequestMapping("survey")
 public class SurveyController {
 
+    private final QuestionService questionService;
     private final SurveyService service;
     private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyMapper surveyMapper;
 
     @Autowired
-    public SurveyController(SurveyService service, SurveyMapper surveyMapper, SaveQuestionMapper saveQuestionMapper) {
+    public SurveyController(QuestionService questionService, SurveyService service, SurveyMapper surveyMapper, SaveQuestionMapper saveQuestionMapper) {
+        this.questionService = questionService;
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
         this.surveyMapper = surveyMapper;
@@ -108,5 +109,25 @@ public class SurveyController {
             surveyQuestions.add(surveyQuestion);
         }
         return surveyQuestions;
+    }
+
+    @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
+    @GetMapping(value = "/edit")
+    public ResponseEntity loadForEditSurvey(Long surveyId){
+        List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
+        List<EditSurveyQuestionDTO> questionsDTO = saveQuestionMapper.toDTO(questions);
+        EditSurveyDTO saveSurveyDTO = new EditSurveyDTO(questionsDTO);
+        saveSurveyDTO.setTitle(service.findFirstById(surveyId).get().getTitle());
+        saveSurveyDTO.setSurveyPhotoName(service.findFirstById(surveyId).get().getImageUrl());
+        if(questionsDTO.isEmpty())
+            return new ResponseEntity(saveSurveyDTO, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(saveSurveyDTO, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
+    @PutMapping(value = "/")
+    public ResponseEntity saveEditedSurvey(Long surveyId){
+
+            return new ResponseEntity( HttpStatus.BAD_REQUEST);
     }
 }
