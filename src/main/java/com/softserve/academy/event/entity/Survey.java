@@ -68,7 +68,7 @@ public class Survey implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<SurveyQuestion> surveyQuestions = new HashSet<>();
-
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     private Set<SurveyContact> surveyContacts = new HashSet<>();
 

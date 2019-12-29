@@ -1,10 +1,14 @@
 package com.softserve.academy.event.service.db;
 
-import com.softserve.academy.event.dto.SurveyStatisticDTO;
+import com.softserve.academy.event.dto.SurveyEachStatisticDTO;
+import com.softserve.academy.event.dto.SurveyGeneralStatisticDTO;
 
 import java.util.Optional;
 
 public interface StatisticService {
 
-    Optional<SurveyStatisticDTO> getSurveyWithQuestionsAnswers(Long surveyId);
+    Optional<SurveyGeneralStatisticDTO> getGeneralStatistic(Long surveyId);
+
+    Optional<SurveyEachStatisticDTO> getEachStatistic(Long surveyId);
+
 }
