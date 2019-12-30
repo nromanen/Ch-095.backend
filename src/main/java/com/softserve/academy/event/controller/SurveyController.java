@@ -2,6 +2,7 @@ package com.softserve.academy.event.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.softserve.academy.event.annotation.PageableDefault;
 import com.softserve.academy.event.dto.*;
 import com.softserve.academy.event.entity.Survey;
@@ -87,47 +88,44 @@ public class SurveyController {
 
     @PostMapping(value = "/createNewSurvey")
     public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
-            Survey survey = new Survey();
-            survey.setTitle(saveSurveyDTO.getTitle());
-            survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
-            List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
-            return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
+        Survey survey = new Survey();
+        survey.setTitle(saveSurveyDTO.getTitle());
+        survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
+        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
+        for (SurveyQuestionDTO x : saveSurveyDTO.getQuestions()) {
+            surveyQuestions.add(saveQuestionMapper.toEntity(x));
+        }
+        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
     }
 
-    /*
-      Method gets list of Question DTO and made list of entities with correct variant of answers
-      Mapper can't make string from list, so i set it through object mapper
-      @return List<SurveyQuestion> - list of entities but without established survey
-    */
-    private List<SurveyQuestion> getQuestionsEntities(List<SurveyQuestionDTO> surveyQuestionsDTO) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
-        for (SurveyQuestionDTO surveyQuestionDTO : surveyQuestionsDTO) {
-            SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
-            surveyQuestion.setAnswers(answers);
-            surveyQuestions.add(surveyQuestion);
-        }
-        return surveyQuestions;
-    }
 
     @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
-    @GetMapping(value = "/edit")
-    public ResponseEntity loadForEditSurvey(Long surveyId){
+    @GetMapping(value = "/edit/{id}")
+    public ResponseEntity loadForEditSurvey(@PathVariable(name = "id") Long surveyId) throws JsonProcessingException {
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
-        List<EditSurveyQuestionDTO> questionsDTO = saveQuestionMapper.toDTO(questions);
-        EditSurveyDTO saveSurveyDTO = new EditSurveyDTO(questionsDTO);
-        saveSurveyDTO.setTitle(service.findFirstById(surveyId).get().getTitle());
-        saveSurveyDTO.setSurveyPhotoName(service.findFirstById(surveyId).get().getImageUrl());
-        if(questionsDTO.isEmpty())
+        List<SurveyQuestionDTO> questionsDTO = new ArrayList<>();
+        for (SurveyQuestion x : questions) {
+            questionsDTO.add(saveQuestionMapper.toDTO(x));
+        }
+        SaveSurveyDTO saveSurveyDTO = new SaveSurveyDTO(questionsDTO);
+        Survey survey = service.findFirstById(surveyId).get();
+        saveSurveyDTO.setTitle(survey.getTitle());
+        saveSurveyDTO.setSurveyPhotoName(survey.getImageUrl());
+        if (questionsDTO.isEmpty())
             return new ResponseEntity(saveSurveyDTO, HttpStatus.BAD_REQUEST);
         return new ResponseEntity(saveSurveyDTO, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
-    @PutMapping(value = "/")
-    public ResponseEntity saveEditedSurvey(Long surveyId){
 
-            return new ResponseEntity( HttpStatus.BAD_REQUEST);
+    @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
+    @PostMapping(value = "/update/{id}")
+    public ResponseEntity updateSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO, @PathVariable("id") String id) throws JsonProcessingException {
+        List<SurveyQuestion> questions = new ArrayList<>();
+        for (SurveyQuestionDTO x : saveSurveyDTO.getQuestions()) {
+            questions.add(saveQuestionMapper.toEntity(x));
+        }
+//        Long surveyId = Long.parseLong(editSurveyDTO.getSurveyId());
+        return ResponseEntity.ok(service.editSurvey(Long.parseLong(id), questions));
+//        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 }

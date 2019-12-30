@@ -26,13 +26,15 @@ public class SurveyServiceImpl implements SurveyService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final SurveyRepository repository;
+    private final QuestionRepository questionRepository;
 
 
     @Autowired
-    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository, UserService userService) {
+    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository, UserService userService, QuestionRepository questionRepository) {
         this.userRepository = userRepository;
         this.repository = repository;
         this.userService = userService;
+        this.questionRepository = questionRepository;
     }
 
     @Override
@@ -100,11 +102,23 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
-        Long userID = userService.getAuthenicationId().get();
-        User user = userRepository.findFirstById(userID).get();
+//        Long userID = userService.getAuthenicationId().get();
+        User user = userRepository.findFirstById(1L).get();
         survey.setUser(user);
         surveyQuestions.stream().forEach(x->survey.addQuestion(x));
         Survey savedSurvey = repository.save(survey);
         return savedSurvey;
     }
+
+    public Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions){
+        Survey survey = repository.findFirstById(surveyId).get();
+        surveyQuestions.stream().forEach(x-> x.setSurvey(survey));
+        survey.setQuestions(surveyQuestions);
+        repository.update(survey);
+//        surveyQuestions.stream().forEach(x -> questionRepository.delete(x));
+//        repository.delete(survey);
+        return survey;
+    }
+
+
 }
