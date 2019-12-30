@@ -71,6 +71,16 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
                 .failureUrl("/loginFailure");
     }
 
+//    @Bean
+//    public CorsConfigurationSource corsConfig() {
+//        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration = corsConfiguration.applyPermitDefaultValues();
+//        corsConfiguration.addAllowedHeader("");
+//        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+//        return urlBasedCorsConfigurationSource;
+//    }
+
     @Bean
     public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
         return new HttpSessionOAuth2AuthorizationRequestRepository();
