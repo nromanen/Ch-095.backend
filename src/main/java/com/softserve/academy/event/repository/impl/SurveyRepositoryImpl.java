@@ -57,13 +57,4 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
         return new Page<>(query.list(), pageable);
     }
 
-    @Override
-    public boolean isExistIdAndUserId(Long id, Long userId) {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery(countQuery + " where id = :id and user.id = :userId")
-                .setParameter("id", id)
-                .setParameter("userId", userId);
-        return ((Long) query.getSingleResult()) > 0;
-    }
-
 }

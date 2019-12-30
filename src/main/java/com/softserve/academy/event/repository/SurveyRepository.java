@@ -11,7 +11,4 @@ public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
     Page<SurveyDTO> findAllByPageableAndStatusAndUserEmail(Pageable pageable, String status, String userEmail);
 
-    boolean isExistIdAndUserId(Long id, Long userId);
-
-//    public void save(Set<Contact> contactSet);
 }

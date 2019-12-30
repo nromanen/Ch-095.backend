@@ -85,7 +85,6 @@ public class SurveyController {
     @ApiOperation(value = "Delete a survey")
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteSurvey(@RequestParam Long id) {
-        // todo delete if survey empty and disable if survey not empty
         service.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
