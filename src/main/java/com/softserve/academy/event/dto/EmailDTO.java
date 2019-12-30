@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class EmailDTO {
 
-    private String emails;
+    private String[] emailsArray;
     private String userId;
     private String surveyId;
 
