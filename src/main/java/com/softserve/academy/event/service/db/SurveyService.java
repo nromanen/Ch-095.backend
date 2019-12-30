@@ -3,15 +3,12 @@ package com.softserve.academy.event.service.db;
 import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
-import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface SurveyService {
@@ -24,7 +21,7 @@ public interface SurveyService {
 
     Survey duplicateSurvey(DuplicateSurveySettings settings);
 
-    void delete(Survey entity);
+    void delete(Long id);
 
     Optional<Survey> findFirstById(long surveyId);
 

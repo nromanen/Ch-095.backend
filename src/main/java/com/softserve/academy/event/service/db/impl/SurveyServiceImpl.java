@@ -6,9 +6,10 @@ import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
+import com.softserve.academy.event.exception.UnauthorizedException;
 import com.softserve.academy.event.repository.QuestionRepository;
-import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
+import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
@@ -20,9 +21,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -67,7 +69,7 @@ public class SurveyServiceImpl implements SurveyService {
         Survey survey = repository.findFirstById(settings.getId())
                 .orElseThrow(SurveyNotFound::new);
         if (!survey.getStatus().equals(SurveyStatus.TEMPLATE) &&
-                checkUserEmailEqualsCurrentUserEmail(survey.getUser().getEmail())) {
+                checkUserEmailNotEqualsCurrentUserEmail(survey.getUser().getEmail())) {
             log.debug("User " + survey.getUser().getUsername() + " try change other user information. ");
             throw new SurveyNotFound();
         }
@@ -84,28 +86,34 @@ public class SurveyServiceImpl implements SurveyService {
     private Survey findSurveyById(Long id) {
         Survey survey = repository.findFirstById(id)
                 .orElseThrow(SurveyNotFound::new);
-        if (checkUserEmailEqualsCurrentUserEmail(survey.getUser().getEmail())) {
+        if (checkUserEmailNotEqualsCurrentUserEmail(survey.getUser().getEmail())) {
             log.debug("User " + survey.getUser().getUsername() + " try change other user information. ");
             throw new SurveyNotFound();
         }
         return survey;
     }
 
-    private boolean checkUserEmailEqualsCurrentUserEmail(String email) {
-        return email.equals(getCurrentUserDetails().getUsername());
+    private boolean checkUserEmailNotEqualsCurrentUserEmail(String email) {
+        return !email.equals(getCurrentUserDetails().getUsername());
     }
 
     private UserDetails getCurrentUserDetails() {
-        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userDetails instanceof UserDetails){
+            return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } else {
+            throw new UnauthorizedException();
+        }
     }
 
     @Override
-    public void delete(Survey entity) {
-        Survey survey = findSurveyById(entity.getId());
-        if (repository.isExistIdAndUserId(entity.getId(), 1L)) {
-            repository.delete(entity);
+    public void delete(Long id) {
+        Survey survey = findSurveyById(id);
+        if (survey.isActive()) {
+            survey.setActive(false);
+            repository.update(survey);
         } else {
-            throw new SurveyNotFound();
+            repository.delete(survey);
         }
     }
 
@@ -124,4 +132,5 @@ public class SurveyServiceImpl implements SurveyService {
         return savedSurvey;
 
     }
+
 }

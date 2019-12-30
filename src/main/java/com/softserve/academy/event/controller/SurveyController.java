@@ -8,7 +8,6 @@ import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.dto.SurveyQuestionDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
-import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
@@ -23,12 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +86,7 @@ public class SurveyController {
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteSurvey(@RequestParam Long id) {
         // todo delete if survey empty and disable if survey not empty
-        service.delete(new Survey(id));
+        service.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

@@ -2,7 +2,6 @@ package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.Survey;
-import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.util.Page;
@@ -10,8 +9,6 @@ import com.softserve.academy.event.util.Pageable;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 import static com.softserve.academy.event.util.Constants.*;
 
@@ -48,7 +45,8 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
                         "(select count(cc) from c as cc where cc.canPass = true and cc.survey = s.id), count(c)) " +
                         "from " + clazz.getName() + " as s " +
                         "left join s.surveyContacts c on s.id = c.survey " +
-                        "where s.user.email = :userEmail group by s.id ORDER BY s." + pageable.getSort().sorting())
+                        "where s.user.email = :userEmail and s.active = true " +
+                        "group by s.id order by s." + pageable.getSort().sorting())
                 .setParameter("userEmail", userEmail);
         query.setFirstResult(pageable.getCurrentPage() * pageable.getSize());
         query.setMaxResults(pageable.getSize());
