@@ -10,8 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
-import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
@@ -24,6 +22,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -39,16 +38,24 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
         this.env = env;
     }
 
-    @Bean
-    public OAuth2AuthorizedClientService authorizedClientService() {
-        return new InMemoryOAuth2AuthorizedClientService(
-                clientRegistrationRepository());
+//    @Bean
+//    public OAuth2AuthorizedClientService authorizedClientService() {
+//        return new InMemoryOAuth2AuthorizedClientService(
+//                clientRegistrationRepository());
+//    }
+
+    private CorsConfiguration corsConfiguration() {
+        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+        return configuration;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .cors().configurationSource(request -> corsConfiguration())
                 .and()
                 .authorizeRequests()
                 .antMatchers("/oauth_login", "/loginFailure", "/test")
@@ -58,6 +65,7 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
+                .csrf().disable()
                 .oauth2Login()
                 .loginPage("/oauth_login")
                 .authorizationEndpoint()

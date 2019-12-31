@@ -14,7 +14,6 @@ import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -41,13 +40,13 @@ public class SocialLoginController {
 
     private final UserSocialService userSocialService;
     private final ClientRegistrationRepository clientRegistrationRepository;
-    private final OAuth2AuthorizedClientService authorizedClientService;
+//    private final OAuth2AuthorizedClientService authorizedClientService;
 
     @Autowired
-    public SocialLoginController(ClientRegistrationRepository clientRegistrationRepository, OAuth2AuthorizedClientService authorizedClientService, UserSocialService userSocialService) {
+    public SocialLoginController(ClientRegistrationRepository clientRegistrationRepository/*, OAuth2AuthorizedClientService authorizedClientService*/, UserSocialService userSocialService) {
         this.userSocialService = userSocialService;
         this.clientRegistrationRepository = clientRegistrationRepository;
-        this.authorizedClientService = authorizedClientService;
+//        this.authorizedClientService = authorizedClientService;
     }
 
     public String createToken(String body, List<String> roles) {
