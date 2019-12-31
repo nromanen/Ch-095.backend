@@ -30,7 +30,6 @@ import java.util.List;
 @Api(value = "/survey")
 @RestController
 @RequestMapping("survey")
-@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
 public class SurveyController {
 

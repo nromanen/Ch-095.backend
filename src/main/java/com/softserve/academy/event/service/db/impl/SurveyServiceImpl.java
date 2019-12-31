@@ -99,7 +99,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     private UserDetails getCurrentUserDetails() {
         Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userDetails instanceof UserDetails){
+        if (userDetails instanceof UserDetails) {
             return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         } else {
             throw new UnauthorizedException();
