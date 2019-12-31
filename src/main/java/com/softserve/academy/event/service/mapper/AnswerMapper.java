@@ -6,10 +6,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Service;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = AnswerMapperResolver.class)
 @Service
 public interface AnswerMapper {
 
+    @Mapping(target = "id", ignore = true)
     SurveyAnswer toEntity(AnswerDTO answerDTO);
-
 }

@@ -10,15 +10,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Component;
 
 import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:email.properties")
-@ComponentScan(basePackages = { "com.softserve.academy.event.service"})
-public class EmailConfig
-{
+@ComponentScan(basePackages = {"com.softserve.academy.event.service"})
+public class EmailConfig {
     @Value("${email.host}")
     private String host;
 
@@ -91,8 +89,7 @@ public class EmailConfig
     }
 
     @Bean
-    public SimpleMailMessage emailTemplate()
-    {
+    public SimpleMailMessage emailTemplate() {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo("somebody@gmail.com");
         message.setFrom("admin@gmail.com");

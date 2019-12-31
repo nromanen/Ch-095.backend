@@ -38,7 +38,7 @@ public class LoginController {
         this.env = env;
     }
 
-    @PostMapping(value = "/registration")
+   @PostMapping(value = "/registration")
     public ResponseEntity registerUserAccount(@RequestBody UserDto accountDto, HttpServletRequest request) throws EmailExistException {
         UserDto registered = userMapper.userToDto(userService.newUserAccount(userMapper.userDtoToUser(accountDto)));;
         eventPublisher.publishEvent(new RegistrationCompleteEvent(userMapper.userDtoToUser(registered), request.getLocale(), getAppUrl(request)));
@@ -57,12 +57,12 @@ public class LoginController {
 
     @GetMapping(value = "/resendRegistrationToken")
     public ResponseEntity resendRegistrationToken( @RequestParam("token") String existingToken, HttpServletRequest request) {
-        VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
-        UserDto user = userMapper.userToDto(userService.getUser(newToken.getToken()));
-        String subject = "Resend registration Confirmation";
-        String confirmationUrl = getAppUrl(request) + "/registrationConfirm?token=" + newToken.getToken();
-        String message = "Thank you for registering. Please click on the below link to activate your account.";
-        emailService.sendMail(user.getEmail(), subject, message + confirmationUrl);
+       VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
+       UserDto user = userMapper.userToDto(userService.getUser(newToken.getToken()));
+       String subject = "Resend registration Confirmation";
+       String confirmationUrl = getAppUrl(request) + "/registrationConfirm?token=" + newToken.getToken();
+       String message = "Thank you for registering. Please click on the below link to activate your account.";
+       emailService.sendMail(user.getEmail(), subject, message + confirmationUrl);
         return  new ResponseEntity(HttpStatus.OK);
     }
 

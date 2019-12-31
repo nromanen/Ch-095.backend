@@ -17,8 +17,13 @@ public class ContactServiceImpl implements ContactService {
     private final ContactRepository repository;
 
     @Autowired
-    public ContactServiceImpl(ContactRepository repository){
+    public ContactServiceImpl(ContactRepository repository) {
         this.repository = repository;
+    }
+
+    @Override
+    public Optional<Long> getIdByEmail(String email) {
+        return repository.getIdByEmail(email);
     }
 
     @Override
@@ -51,8 +56,4 @@ public class ContactServiceImpl implements ContactService {
         repository.detach(entity);
     }
 
-    @Override
-    public Optional<Long> getIdByEmail(String email) {
-        return repository.getIdByEmail(email);
-    }
 }
