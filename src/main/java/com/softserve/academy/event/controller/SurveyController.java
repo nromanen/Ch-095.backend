@@ -11,13 +11,13 @@ import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import com.softserve.academy.event.util.Sort;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.Map;
-
 @Api(value = "/survey")
 @RestController
 @RequestMapping("survey")
-@CrossOrigin(origins = "http://localhost:4200")
 public class SurveyController {
 
     private final SaveQuestionMapper saveQuestionMapper;

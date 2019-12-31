@@ -2,7 +2,6 @@ package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.repository.UserRepository;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
