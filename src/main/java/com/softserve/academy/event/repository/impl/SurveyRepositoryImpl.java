@@ -23,7 +23,7 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
 
     public SurveyRepositoryImpl() {
         super();
-        countQuery = "select count(*) from " + clazz.getName();
+        countQuery = "select count(*) from " + clazz.getName() + " where user.email = :userEmail";
     }
 
     @Override
@@ -55,7 +55,7 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
                 .setParameter("userEmail", userEmail);
         query.setFirstResult(pageable.getCurrentPage() * pageable.getSize());
         query.setMaxResults(pageable.getSize());
-        Long countResult = (Long) session.createQuery(countQuery + " where user.email = :userEmail")
+        Long countResult = (Long) session.createQuery(countQuery)
                 .setParameter("userEmail", userEmail).uniqueResult();
         pageable.setLastPage((int) Math.ceil((double) countResult / pageable.getSize()));
         pageable.setCurrentPage(pageable.getCurrentPage() + 1);

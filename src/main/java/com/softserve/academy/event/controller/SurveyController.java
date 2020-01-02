@@ -33,8 +33,8 @@ import java.util.List;
 @Slf4j
 public class SurveyController {
 
-    private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyService service;
+    private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyMapper surveyMapper;
 
     @Autowired
@@ -97,7 +97,7 @@ public class SurveyController {
         return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
     }
 
-    /*
+    /**
       Method gets list of Question DTO and made list of entities with correct variant of answers
       Mapper can't make string from list, so i set it through object mapper
       @return List<SurveyQuestion> - list of entities but without established survey
