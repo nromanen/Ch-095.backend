@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.*;
 
 
@@ -43,8 +44,7 @@ public class User implements Serializable {
     private boolean active;
 
     @Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
+    private LocalDate creationDate = LocalDate.now();
 
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.USER;
