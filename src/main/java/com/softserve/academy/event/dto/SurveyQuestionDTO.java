@@ -21,7 +21,7 @@ public class SurveyQuestionDTO {
 
     private String type;
 
-    private List<String> answers;
+    private List<String> choiceAnswers;
 
     private boolean required;
 

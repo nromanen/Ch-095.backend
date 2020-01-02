@@ -30,6 +30,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SurveyNotFound.class)
     public ResponseEntity<Object> surveyNotFoundHandler(Exception e, WebRequest request) {
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 

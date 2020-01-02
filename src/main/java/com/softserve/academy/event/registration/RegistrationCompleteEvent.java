@@ -4,6 +4,7 @@ import com.softserve.academy.event.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
+
 import java.util.Locale;
 
 @Getter

@@ -7,10 +7,10 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UnauthorizedException;
-import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.service.db.SurveyService;
+import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -31,14 +31,16 @@ import java.util.Optional;
 @Slf4j
 public class SurveyServiceImpl implements SurveyService {
 
-    private final SurveyRepository repository;
     private final UserRepository userRepository;
+    private final UserService userService;
+    private final SurveyRepository repository;
     private final QuestionRepository questionRepository;
 
     @Autowired
-    public SurveyServiceImpl(SurveyRepository repository, UserRepository userRepository, QuestionRepository questionRepository) {
-        this.repository = repository;
+    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,UserService userService, QuestionRepository questionRepository) {
         this.userRepository = userRepository;
+        this.userService = userService;
+        this.repository = repository;
         this.questionRepository = questionRepository;
     }
 
@@ -49,6 +51,7 @@ public class SurveyServiceImpl implements SurveyService {
         }
         return repository.findAllByPageableAndUserEmail(pageable, getCurrentUserDetails().getUsername());
     }
+
 
     @Override
     public void updateTitle(Long id, String title) {
@@ -123,14 +126,12 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public Survey saveSurveyWithQuestions(Survey survey, long id, List<SurveyQuestion> surveyQuestions) {
-        User user = userRepository.findFirstById(id).get();
+    public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
+        Long userID = userService.getAuthenicationId().orElseThrow(RuntimeException::new);
+        User user = userRepository.findFirstById(userID).orElseThrow(RuntimeException::new);
         survey.setUser(user);
-        Survey savedSurvey = repository.save(survey);
-        surveyQuestions.forEach((x) -> x.setSurvey(savedSurvey));
-        surveyQuestions.forEach(questionRepository::save);
-        return savedSurvey;
-
+        surveyQuestions.forEach(survey::addQuestion);
+        return repository.save(survey);
     }
 
 }

@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<Long> getAuthenticationId() {
+    public Optional<Long> getAuthenicationId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User newUserAccount(User userAccount) throws EmailExistException {
         if (emailExists(userAccount.getEmail())) {
-            throw new EmailExistException("There is an account with  email " + userAccount.getEmail() + " exist");
+            throw new EmailExistException("There is an account with that email address: " + userAccount.getEmail());
         }
         User user = new User();
         user.setEmail(userAccount.getEmail());
