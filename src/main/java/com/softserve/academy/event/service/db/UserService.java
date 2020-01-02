@@ -7,19 +7,16 @@ import com.softserve.academy.event.entity.enums.TokenValidation;
 import java.util.Optional;
 
 public interface UserService extends BasicService<User, Long> {
-
-    Optional<Long> getAuthenicationId();
-
-    VerificationToken generateNewVerificationToken(String token);
+    Optional<Long> getAuthenticationId();
+    VerificationToken updateTokenExpiration(String token);
 
     User newUserAccount(User account);
 
     User getUser(String verificationToken);
+    String getToken(User user);
 
-    User getUserByName(String username);
 
-    void createVerificationToken(User user, String token);
+    VerificationToken createVerificationToken(User user);
 
     TokenValidation validateVerificationToken(String token);
-
 }

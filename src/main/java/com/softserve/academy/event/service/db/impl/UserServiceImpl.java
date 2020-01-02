@@ -2,11 +2,10 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
-import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.exception.EmailExistException;
-import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
+import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<Long> getAuthenicationId() {
+    public Optional<Long> getAuthenticationId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
@@ -50,11 +48,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public VerificationToken generateNewVerificationToken(String token) {
+    public VerificationToken updateTokenExpiration(String token) {
         VerificationToken verificationToken = tokenRepository.findByToken(token);
         verificationToken.updateToken(UUID.randomUUID().toString());
-        verificationToken = tokenRepository.save(verificationToken);
-        return verificationToken;
+        return tokenRepository.save(verificationToken);
+       // return verificationToken;
     }
 
     @Override
@@ -83,9 +81,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createVerificationToken(User user, String token) {
+    public VerificationToken createVerificationToken(User user) {
+        String token = UUID.randomUUID().toString();
         VerificationToken vToken = new VerificationToken(token, user);
-        tokenRepository.save(vToken);
+        return tokenRepository.save(vToken);
     }
 
     @Override
