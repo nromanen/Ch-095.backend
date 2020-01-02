@@ -34,12 +34,14 @@ public class SurveyServiceImpl implements SurveyService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final SurveyRepository repository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
-    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository, UserService userService) {
+    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,UserService userService, QuestionRepository questionRepository) {
         this.userRepository = userRepository;
-        this.repository = repository;
         this.userService = userService;
+        this.repository = repository;
+        this.questionRepository = questionRepository;
     }
 
     @Override
@@ -49,6 +51,7 @@ public class SurveyServiceImpl implements SurveyService {
         }
         return repository.findAllByPageableAndUserEmail(pageable, getCurrentUserDetails().getUsername());
     }
+
 
     @Override
     public void updateTitle(Long id, String title) {

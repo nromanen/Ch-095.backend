@@ -7,5 +7,4 @@ import java.util.Map;
 
 public interface AnswerService extends BasicService<SurveyAnswer, Long> {
 
-    Map<String, Integer> createStatisticAnswersMap(Long questionId) throws JsonProcessingException;
 }

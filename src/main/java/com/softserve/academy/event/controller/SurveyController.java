@@ -88,14 +88,13 @@ public class SurveyController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-
     @PostMapping(value = "/createNewSurvey")
     public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
-            Survey survey = new Survey();
-            survey.setTitle(saveSurveyDTO.getTitle());
-            survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
-            List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
-            return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
+        Survey survey = new Survey();
+        survey.setTitle(saveSurveyDTO.getTitle());
+        survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
+        List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
+        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
     }
 
     /**
@@ -108,11 +107,10 @@ public class SurveyController {
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         for (SurveyQuestionDTO surveyQuestionDTO : surveyQuestionsDTO) {
             SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
-            surveyQuestion.setAnswers(answers);
+            String answers = mapper.writeValueAsString(surveyQuestionDTO.getChoiceAnswers());
+            surveyQuestion.setChoiceAnswers(answers);
             surveyQuestions.add(surveyQuestion);
         }
         return surveyQuestions;
     }
-
 }

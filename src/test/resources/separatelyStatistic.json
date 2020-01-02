@@ -1,0 +1,50 @@
+[
+  {
+    "email": "test2@gmail.com",
+    "questionDTOS": [
+      {
+        "question": "What would you improve if you could?",
+        "type": "TEXTAREA",
+        "choiceAnswers": [],
+        "index": 2,
+        "answer": []
+      },
+      {
+        "question": "How often do you use the product or service?",
+        "type": "RADIOBUTTON",
+        "choiceAnswers": [
+          "Every day",
+          "Rarely",
+          "Never"
+        ],
+        "index": 1,
+        "answer": []
+      }
+    ]
+  },
+  {
+    "email": "test@gmail.com",
+    "questionDTOS": [
+      {
+        "question": "How often do you use the product or service?",
+        "type": "RADIOBUTTON",
+        "choiceAnswers": [
+          "Every day",
+          "Rarely",
+          "Never"
+        ],
+        "index": 1,
+        "answer": []
+      },
+      {
+        "question": "What would you improve if you could?",
+        "type": "TEXTAREA",
+        "choiceAnswers": [],
+        "index": 2,
+        "answer": []
+      }
+    ]
+  }
+]
+
+

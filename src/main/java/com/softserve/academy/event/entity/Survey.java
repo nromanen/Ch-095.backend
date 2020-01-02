@@ -10,10 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.*;
 
 import static com.softserve.academy.event.util.Constants.*;
 
@@ -64,14 +64,14 @@ public class Survey implements Serializable {
     )
     private Set<Contact> contacts = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
-    private Set<SurveyContact> surveyContacts = new HashSet<>();
-
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "survey_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {
         this.id = id;

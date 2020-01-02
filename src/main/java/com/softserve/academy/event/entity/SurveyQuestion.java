@@ -1,5 +1,6 @@
 package com.softserve.academy.event.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -48,7 +49,8 @@ public class SurveyQuestion implements Serializable{
     private SurveyQuestionType type;
 
     @Column(nullable = false, length = 10000)
-    private String answers;
+    private String choiceAnswers;
 
     private boolean required;
+
 }
