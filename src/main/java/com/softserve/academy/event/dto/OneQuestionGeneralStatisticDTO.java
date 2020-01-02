@@ -3,8 +3,8 @@ package com.softserve.academy.event.dto;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 @Setter

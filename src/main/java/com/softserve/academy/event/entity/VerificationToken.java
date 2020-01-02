@@ -12,20 +12,16 @@ import java.util.Date;
 
 
 
-@NamedQueries(
-        {
-                @NamedQuery(
-                        name = "findToken",
-                        query = "from VerificationToken v where v.token= :token"
-                )
-        }
+@NamedQuery(
+        name = "findToken",
+        query = "from VerificationToken v where v.token= :token"
 )
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 public class VerificationToken implements Serializable {
+
     private static final int EXPIRATION = 60 *24;
 
     @Id

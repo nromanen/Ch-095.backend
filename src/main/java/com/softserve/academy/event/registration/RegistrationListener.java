@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-//import com.softserve.academy.event.service.UserService;
-
 @Component
 public class RegistrationListener  {
 

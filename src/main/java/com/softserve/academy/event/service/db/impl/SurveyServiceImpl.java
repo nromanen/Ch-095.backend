@@ -34,14 +34,12 @@ public class SurveyServiceImpl implements SurveyService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final SurveyRepository repository;
-    private final QuestionRepository questionRepository;
 
     @Autowired
-    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,UserService userService, QuestionRepository questionRepository) {
+    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,UserService userService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.repository = repository;
-        this.questionRepository = questionRepository;
     }
 
     @Override

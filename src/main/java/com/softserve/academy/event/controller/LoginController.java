@@ -1,23 +1,16 @@
 package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.dto.UserDto;
-import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.entity.enums.TokenValidation;
-import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.registration.RegistrationCompleteEvent;
 import com.softserve.academy.event.service.db.EmailService;
 import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.service.mapper.UserMapper;
-import com.softserve.academy.event.registration.RegistrationCompleteEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,8 +38,8 @@ public class LoginController {
     }
 
    @PostMapping(value = "/registration")
-    public ResponseEntity registerUserAccount(@RequestBody UserDto accountDto, HttpServletRequest request) throws EmailExistException {
-        UserDto registered = userMapper.userToDto(userService.newUserAccount(userMapper.userDtoToUser(accountDto)));;
+    public ResponseEntity registerUserAccount(@RequestBody UserDto accountDto, HttpServletRequest request) {
+        UserDto registered = userMapper.userToDto(userService.newUserAccount(userMapper.userDtoToUser(accountDto)));
         eventPublisher.publishEvent(new RegistrationCompleteEvent(userMapper.userDtoToUser(registered), request.getLocale(), getAppUrl(request)));
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -74,7 +67,6 @@ public class LoginController {
 
     @GetMapping(value = "/login")
     public ResponseEntity getLogin() {
-        Long id = userService.getAuthenicationId().get();
         return new ResponseEntity(HttpStatus.OK);
     }
 

@@ -8,22 +8,15 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.time.LocalDate;
-import java.util.*;
 
 
-@NamedQueries(
-        {
-                @NamedQuery(
-                        name = "findEmail",
-                        query = "from User u where u.email= :email"
-                )
-        }
+@NamedQuery(
+        name = "findEmail",
+        query = "from User u where u.email= :email"
 )
-
 @Entity
 @Table(name = "users")
 @EqualsAndHashCode(of = {"id"})
