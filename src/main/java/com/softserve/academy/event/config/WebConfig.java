@@ -43,15 +43,6 @@ public class WebConfig implements WebMvcConfigurer {
         return resolver;
     }
 
-    @Bean
-    public InternalResourceViewResolver setupViewResolver() {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setSuffix(".jsp");
-        resolver.setViewClass(JstlView.class);
-
-        return resolver;
-    }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
@@ -63,6 +54,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins(environment.getProperty("app.frontend.url"));
+        registry.addMapping("/**").allowedOrigins(environment.getProperty("app.frontend.url")).allowCredentials(true);
     }
 }
