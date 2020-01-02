@@ -7,6 +7,7 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UnauthorizedException;
+import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.service.db.SurveyService;
@@ -127,7 +128,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
-        Long userID = userService.getAuthenicationId().orElseThrow(RuntimeException::new);
+        Long userID = userService.getAuthenticationId().orElseThrow(RuntimeException::new);
         User user = userRepository.findFirstById(userID).orElseThrow(RuntimeException::new);
         survey.setUser(user);
         surveyQuestions.forEach(survey::addQuestion);

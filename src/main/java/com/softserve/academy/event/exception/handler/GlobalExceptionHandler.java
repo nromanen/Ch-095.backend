@@ -3,7 +3,6 @@ package com.softserve.academy.event.exception.handler;
 import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UnauthorizedException;
-import com.softserve.academy.event.exception.UserNotFountException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +20,6 @@ public class GlobalExceptionHandler {
         log.error("Not default exception : " + e.getMessage());
         log.error("WebRequest description  : " + description);
         return new ResponseEntity<>(e.getMessage() + "\n" + description, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(UserNotFountException.class)
-    public ResponseEntity<Object> userNotFoundHandler(Exception e, WebRequest request) {
-        return handler(e, request, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(SurveyNotFound.class)

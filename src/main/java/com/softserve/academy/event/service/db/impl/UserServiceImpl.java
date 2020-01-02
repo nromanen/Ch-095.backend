@@ -8,7 +8,6 @@ import com.softserve.academy.event.repository.VerificationTokenRepository;
 import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<Long> getAuthenicationId() {
+    public Optional<Long> getAuthenticationId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {

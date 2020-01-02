@@ -76,8 +76,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .failureHandler(myFailureHandler)
                 //.and()
                 //.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-//               .and()
-//                .csrf().disable();
                 .and()
                 .csrf()
                     .ignoringAntMatchers("/registration")
