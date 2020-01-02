@@ -1,6 +1,7 @@
 package com.softserve.academy.event.service.db;
 
 import com.softserve.academy.event.dto.EditSurveyDTO;
+import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
@@ -11,24 +12,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface SurveyService {
 
-    Page<Survey> findAll(Pageable pageable);
+    Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status);
 
-    Page<Survey> findAllByPageableAndStatus(Pageable pageable, String status);
+    void updateTitle(Long id, String title);
 
-    Page<Survey> findAllFiltered(Pageable pageable, Map<String, Map<String, Object>> filters);
-
-    HttpStatus updateTitle(Long id, String title);
-
-    HttpStatus updateStatus(Long id, SurveyStatus status);
+    void updateStatus(Long id, SurveyStatus status);
 
     Survey duplicateSurvey(DuplicateSurveySettings settings);
 
-    void delete(Survey entity);
+    void delete(Long id);
 
     Optional<Survey> findFirstById(long surveyId);
 
@@ -36,4 +32,3 @@ public interface SurveyService {
 
     Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions);
 }
-

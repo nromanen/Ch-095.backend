@@ -11,6 +11,9 @@ import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.softserve.academy.event.util.Constants.*;
 
@@ -41,13 +44,16 @@ public class Survey implements Serializable {
     private String title;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
+    private LocalDate creationDate = LocalDate.now();
 
     @Enumerated
+    @Column(nullable = false)
     private SurveyStatus status = SurveyStatus.NON_ACTIVE;
 
     private String imageUrl;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean active = true;
 
     @JsonIgnore
     @ManyToOne
@@ -65,15 +71,18 @@ public class Survey implements Serializable {
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "survey_id")
-    private List<SurveyQuestion> questions = new ArrayList<>();
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {
         this.id = id;
     }
 
     public void addQuestion(SurveyQuestion surveyQuestion) {
-        questions.add(surveyQuestion);
+        surveyQuestions.add(surveyQuestion);
         surveyQuestion.setSurvey(this);
     }
 

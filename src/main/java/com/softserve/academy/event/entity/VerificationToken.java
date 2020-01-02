@@ -38,6 +38,7 @@ public class VerificationToken implements Serializable {
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
+    // todo change to local date!
     private Date expiryDate;
 
     public VerificationToken(final String token) {
