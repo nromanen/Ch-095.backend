@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<Long> getAuthenicationId() {
+    public Optional<Long> getAuthenticationId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
@@ -49,17 +49,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public VerificationToken generateNewVerificationToken(String token) {
+    public VerificationToken updateTokenExpiration(String token) {
         VerificationToken verificationToken = tokenRepository.findByToken(token);
         verificationToken.updateToken(UUID.randomUUID().toString());
-        verificationToken = tokenRepository.save(verificationToken);
-        return verificationToken;
+        return tokenRepository.save(verificationToken);
+       // return verificationToken;
     }
 
     @Override
     public User newUserAccount(User userAccount) throws EmailExistException {
         if (emailExists(userAccount.getEmail())) {
-            throw new EmailExistException("There is an account with that email address: " + userAccount.getEmail());
+            throw new EmailExistException("There is an account with  email " + userAccount.getEmail() + " exist");
         }
         User user = new User();
         user.setEmail(userAccount.getEmail());
@@ -81,9 +81,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createVerificationToken(User user, String token) {
+    public String getToken(User user) {
+        return tokenRepository.findByUser(user).getToken();
+    }
+
+    @Override
+    public VerificationToken createVerificationToken(User user) {
+        String token = UUID.randomUUID().toString();
         VerificationToken vToken = new VerificationToken(token, user);
-        tokenRepository.save(vToken);
+        return tokenRepository.save(vToken);
     }
 
     @Override

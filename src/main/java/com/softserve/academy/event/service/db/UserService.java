@@ -8,14 +8,16 @@ import com.softserve.academy.event.exception.EmailExistException;
 import java.util.Optional;
 
 public interface UserService extends BasicService<User, Long> {
-    Optional<Long> getAuthenicationId();
-    VerificationToken generateNewVerificationToken(String token);
+    Optional<Long> getAuthenticationId();
+    VerificationToken updateTokenExpiration(String token);
 
     User newUserAccount(User account) throws EmailExistException;
 
     User getUser(String verificationToken);
+    String getToken(User user);
 
-    void createVerificationToken(User user, String token);
+
+    VerificationToken createVerificationToken(User user);
 
     TokenValidation validateVerificationToken(String token);
 }

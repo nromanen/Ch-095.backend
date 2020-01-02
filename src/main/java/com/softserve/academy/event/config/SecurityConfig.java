@@ -1,11 +1,14 @@
 package com.softserve.academy.event.config;
 
+import com.google.common.collect.ImmutableList;
 import com.softserve.academy.event.service.MyAuthenticationEntryPoint;
 import com.softserve.academy.event.service.MySavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,11 +20,22 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackages = { "com.softserve.academy.event.service" })
+@PropertySource("classpath:application.properties")
+@ComponentScan(basePackages = { "com.softserve.academy.event.service", "com.softserve.academy.event.registration" })
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${app.frontend.url}")
+    private String frontUrl;
 
     private final UserDetailsService userDetailsService;
 
@@ -41,6 +55,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+               // .cors()
+                .cors().configurationSource(request -> corsConfiguration())
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(myAuthenticationEntryPoint)
                 .and()
@@ -48,12 +65,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration").permitAll()
-                .antMatchers("/testAccess/{token}", "/testAccess/check").permitAll()
-                .antMatchers("/survey/**", "/survey").permitAll()
-                .antMatchers("/fileupload").permitAll()
-                .antMatchers("/sendEmails").permitAll()
-                .antMatchers("/statistic/**").permitAll()
-                .antMatchers("/question").permitAll()
+//                .antMatchers("/testAccess/{token}", "/testAccess/check").permitAll()
+//                .antMatchers("/survey/**", "/survey").permitAll()
+//                .antMatchers("/fileupload").permitAll()
+//                .antMatchers("/sendEmails").permitAll()
+//                .antMatchers("/statistic/**").permitAll()
+//                .antMatchers("/question").permitAll()
                 .anyRequest().authenticated()
                // .antMatchers("/login").hasAnyRole("ADMIN", "USER")
                 .and()
@@ -61,8 +78,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(mySuccessHandler)
                 .failureHandler(myFailureHandler)
                 .and()
-                .csrf().disable();
+                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+//               .and()
+//                .csrf().disable();
     }
+
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -96,6 +116,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/configuration/security",
                 "/swagger-ui.html",
                 "/webjars/**");
+    }
+
+    private CorsConfiguration corsConfiguration() {
+        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+        configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+        return configuration;
     }
 
 }
