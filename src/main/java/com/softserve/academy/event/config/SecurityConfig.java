@@ -3,9 +3,11 @@ package com.softserve.academy.event.config;
 import com.softserve.academy.event.service.MyAuthenticationEntryPoint;
 import com.softserve.academy.event.service.MySavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -16,18 +18,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.web.cors.CorsConfiguration;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.Arrays;
 import java.util.Collections;
+
 
 @Configuration
 @EnableWebSecurity
@@ -73,22 +69,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration").permitAll()
-//                .antMatchers("/testAccess/{token}", "/testAccess/check").permitAll()
-//                .antMatchers("/survey/**", "/survey").permitAll()
-//                .antMatchers("/fileupload").permitAll()
-//                .antMatchers("/sendEmails").permitAll()
-//                .antMatchers("/statistic/**").permitAll()
-//                .antMatchers("/question").permitAll()
                 .anyRequest().authenticated()
-               // .antMatchers("/login").hasAnyRole("ADMIN", "USER")
                 .and()
                 .formLogin()
-                .successHandler(mySuccessHandler)
-                .failureHandler(myFailureHandler)
-                .and()
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+                    .successHandler(mySuccessHandler)
+                    .failureHandler(myFailureHandler)
+                //.and()
+                //.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 //               .and()
 //                .csrf().disable();
+                .and()
+                .csrf()
+                    .ignoringAntMatchers("/registration")
+                    .csrfTokenRepository(getCsrfTokenRepository());
+    }
+    private CsrfTokenRepository getCsrfTokenRepository() {
+        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        tokenRepository.setCookiePath("/");
+        return tokenRepository;
     }
 
     @Bean

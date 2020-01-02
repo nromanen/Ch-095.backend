@@ -8,16 +8,12 @@ import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.service.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:4200")
 public class LoginController {
 
     private final UserService userService;
