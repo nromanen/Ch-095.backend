@@ -111,23 +111,4 @@ public class SurveyController {
         return surveyQuestions;
     }
 
-    @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
-    @GetMapping(value = "/edit")
-    public ResponseEntity loadForEditSurvey(Long surveyId){
-        List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
-        List<EditSurveyQuestionDTO> questionsDTO = saveQuestionMapper.toDTO(questions);
-        EditSurveyDTO saveSurveyDTO = new EditSurveyDTO(questionsDTO);
-        saveSurveyDTO.setTitle(service.findFirstById(surveyId).get().getTitle());
-        saveSurveyDTO.setSurveyPhotoName(service.findFirstById(surveyId).get().getImageUrl());
-        if(questionsDTO.isEmpty())
-            return new ResponseEntity(saveSurveyDTO, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(saveSurveyDTO, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
-    @PutMapping(value = "/")
-    public ResponseEntity saveEditedSurvey(Long surveyId){
-
-            return new ResponseEntity( HttpStatus.BAD_REQUEST);
-    }
 }
