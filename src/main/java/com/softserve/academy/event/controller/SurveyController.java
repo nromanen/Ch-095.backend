@@ -1,8 +1,6 @@
 package com.softserve.academy.event.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.softserve.academy.event.annotation.PageableDefault;
 import com.softserve.academy.event.dto.SaveSurveyDTO;
 import com.softserve.academy.event.dto.SurveyDTO;
@@ -10,6 +8,7 @@ import com.softserve.academy.event.dto.SurveyQuestionDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
@@ -37,12 +36,14 @@ public class SurveyController {
     private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyService service;
     private final SurveyMapper surveyMapper;
+    private final QuestionService questionService;
 
     @Autowired
-    public SurveyController(SurveyService service, SurveyMapper surveyMapper, SaveQuestionMapper saveQuestionMapper) {
+    public SurveyController(SurveyService service, SurveyMapper surveyMapper, SaveQuestionMapper saveQuestionMapper, QuestionService questionService) {
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
         this.surveyMapper = surveyMapper;
+        this.questionService = questionService;
     }
 
     @ApiOperation(value = "Get all surveys")
@@ -94,26 +95,13 @@ public class SurveyController {
         Survey survey = new Survey();
         survey.setTitle(saveSurveyDTO.getTitle());
         survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
-        List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
-        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
-    }
-
-    /*
-      Method gets list of Question DTO and made list of entities with correct variant of answers
-      Mapper can't make string from list, so i set it through object mapper
-      @return List<SurveyQuestion> - list of entities but without established survey
-    */
-    private List<SurveyQuestion> getQuestionsEntities(List<SurveyQuestionDTO> surveyQuestionsDTO) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Survey survey = new Survey();
-        survey.setTitle(saveSurveyDTO.getTitle());
-        survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         for (SurveyQuestionDTO x : saveSurveyDTO.getQuestions()) {
             surveyQuestions.add(saveQuestionMapper.toEntity(x));
         }
-        return surveyQuestions;
+        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
     }
+
 
 
     @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)

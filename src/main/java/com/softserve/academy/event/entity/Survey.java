@@ -69,8 +69,7 @@ public class Survey implements Serializable {
     private Set<Contact> contacts = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "survey_id")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
 

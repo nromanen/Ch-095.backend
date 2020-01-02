@@ -36,11 +36,9 @@ public class SurveyServiceImpl implements SurveyService {
     private final UserService userService;
     private final SurveyRepository repository;
     private final QuestionRepository questionRepository;
-    private final QuestionRepository questionRepository;
 
 
     @Autowired
-    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,UserService userService, QuestionRepository questionRepository) {
     public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository, UserService userService, QuestionRepository questionRepository) {
         this.userRepository = userRepository;
         this.userService = userService;
@@ -134,20 +132,15 @@ public class SurveyServiceImpl implements SurveyService {
 //        Long userID = userService.getAuthenicationId().get();
         User user = userRepository.findFirstById(1L).get();
         survey.setUser(user);
-        surveyQuestions.stream().forEach(x->survey.addQuestion(x));
-        Survey savedSurvey = repository.save(survey);
-        return savedSurvey;
+        surveyQuestions.stream().forEach(x -> survey.addQuestion(x));
+        return repository.save(survey);
     }
 
-    public Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions){
+    public Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions) {
         Survey survey = repository.findFirstById(surveyId).get();
-        surveyQuestions.stream().forEach(x-> x.setSurvey(survey));
-        survey.setQuestions(surveyQuestions);
-        repository.update(survey);
-//        surveyQuestions.stream().forEach(x -> questionRepository.delete(x));
-//        repository.delete(survey);
+        surveyQuestions.stream().forEach(x -> x.setSurvey(survey));
+        List<SurveyQuestion> questions = survey.getSurveyQuestions();
+        questions.remove(0);
         return survey;
     }
-
-
 }

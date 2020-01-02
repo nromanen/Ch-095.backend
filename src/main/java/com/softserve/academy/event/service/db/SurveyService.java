@@ -1,6 +1,5 @@
 package com.softserve.academy.event.service.db;
 
-import com.softserve.academy.event.dto.EditSurveyDTO;
 import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
@@ -8,8 +7,6 @@ import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,3 +29,4 @@ public interface SurveyService {
 
     Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions);
 }
+
