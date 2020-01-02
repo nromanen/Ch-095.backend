@@ -38,12 +38,6 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
         this.env = env;
     }
 
-//    @Bean
-//    public OAuth2AuthorizedClientService authorizedClientService() {
-//        return new InMemoryOAuth2AuthorizedClientService(
-//                clientRegistrationRepository());
-//    }
-
     private CorsConfiguration corsConfiguration() {
         CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
@@ -79,16 +73,6 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
                 .failureUrl("/loginFailure");
     }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfig() {
-//        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration = corsConfiguration.applyPermitDefaultValues();
-//        corsConfiguration.addAllowedHeader("");
-//        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-//        return urlBasedCorsConfigurationSource;
-//    }
-
     @Bean
     public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
         return new HttpSessionOAuth2AuthorizationRequestRepository();
@@ -98,7 +82,6 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
         return new DefaultAuthorizationCodeTokenResponseClient();
     }
-
 
     private static List<String> clients = Arrays.asList("facebook", "google");
 
