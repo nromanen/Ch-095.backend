@@ -62,7 +62,6 @@ public class LoginController {
 
     @GetMapping(value = "/login")
     public ResponseEntity getLogin() {
-        Long id = userService.getAuthenticationId().get();
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -72,4 +71,6 @@ public class LoginController {
         String message = "Thank you for registration. Please click on the below link to activate your account.";
         emailService.sendMail(email,subject,message + confirmationUrl);
     }
+
+
 }

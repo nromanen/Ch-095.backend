@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
         if (principal instanceof UserDetails) {
             String email = ((UserDetails)principal).getUsername();
-            Long id = userRepository.findByEmail(email).get().getId();
+            Long id = userRepository.findByEmail(email).orElseThrow(UserNotFound::new).getId();
             return Optional.of(id);
         }
        return Optional.empty();
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User newUserAccount(User userAccount) throws EmailExistException {
+    public User newUserAccount(User userAccount) {
         if (emailExists(userAccount.getEmail())) {
             throw new EmailExistException("There is an account with that email address: " + userAccount.getEmail());
         }
@@ -67,11 +67,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean emailExists(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            return true;
-        }
-        return false;
+        return userRepository.findByEmail(email).isPresent();
     }
 
     @Override
@@ -80,8 +76,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getToken(User user) {
-        return tokenRepository.findByUser(user).getToken();
+    public User getUserByName(String username) {
+        return userRepository.findByEmail(username).orElseThrow(UserNotFound::new);
     }
 
     @Override

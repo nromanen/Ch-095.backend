@@ -30,7 +30,8 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class VerificationToken implements Serializable {
-    private static final int EXPIRATION = 2;
+
+    private static final int EXPIRATION = 60 *24;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -11,7 +11,4 @@ public class EmailDTO {
     private String userId;
     private String surveyId;
 
-    public EmailDTO() {
-    }
-
 }
