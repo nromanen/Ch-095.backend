@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.*;
 
 import static com.softserve.academy.event.util.Constants.*;
 
@@ -25,11 +26,11 @@ import static com.softserve.academy.event.util.Constants.*;
 @ToString(of = {"title"})
 @Filters({
         @Filter(name = SURVEY_STATUS_FILTER_NAME, condition = "status = :" + SURVEY_STATUS_FILTER_ARGUMENT),
-        @Filter(name = SURVEY_DEFAULT_FILTER_NAME, condition = "status != " + SURVEY_DEFAULT_TEMPLATE_NUMBER),
+        @Filter(name = SURVEY_DEFAULT_FILTER_NAME, condition = "status != " + SURVEY_DEFAULT_TEMPLATE_NUMBER)
 })
 @FilterDefs({
         @FilterDef(name = SURVEY_STATUS_FILTER_NAME, parameters = @ParamDef(name = SURVEY_STATUS_FILTER_ARGUMENT, type = "integer")),
-        @FilterDef(name = SURVEY_DEFAULT_FILTER_NAME),
+        @FilterDef(name = SURVEY_DEFAULT_FILTER_NAME)
 })
 public class Survey implements Serializable {
 
@@ -68,14 +69,22 @@ public class Survey implements Serializable {
     private Set<Contact> contacts = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<SurveyQuestion> surveyQuestions = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     private Set<SurveyContact> surveyContacts = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "survey_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
+
 
     public Survey(Long id) {
         this.id = id;
+    }
+
+    public void addQuestion(SurveyQuestion surveyQuestion) {
+        surveyQuestions.add(surveyQuestion);
+        surveyQuestion.setSurvey(this);
     }
 
 }
