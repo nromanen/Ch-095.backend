@@ -1,6 +1,5 @@
 package com.softserve.academy.event.exception.handler;
 
-import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.exception.UserNotFountException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFountException.class)
     public ResponseEntity<Object> userNotFoundHandler(Exception e, WebRequest request) {
-        return defaultHandler(e, request, HttpStatus.NOT_FOUND);
+        return handler(e, request, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SurveyNotFound.class)
+    public ResponseEntity<Object> surveyNotFoundHandler(Exception e, WebRequest request) {
+
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(EmailExistException.class)
@@ -33,8 +38,15 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<Object> defaultHandler(Exception e, WebRequest request, HttpStatus status) {
         String description = request.getDescription(false);
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Object> unauthorizedHandler(Exception e, WebRequest request) {
+
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    private ResponseEntity<Object> handler(Exception e, WebRequest request, HttpStatus status) {
         log.error(e.getMessage());
-        log.error("WebRequest description  : " + description);
+        log.error(request.getDescription(false));
         return new ResponseEntity<>(e.getMessage(), status);
     }
 

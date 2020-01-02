@@ -51,6 +51,9 @@ public class Survey implements Serializable {
 
     private String imageUrl;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean active = true;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(nullable = false)
