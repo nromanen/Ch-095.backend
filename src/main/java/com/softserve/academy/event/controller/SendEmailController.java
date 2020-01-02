@@ -5,6 +5,8 @@ import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.User;
+import com.softserve.academy.event.exception.SurveyNotFound;
+import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -45,15 +47,15 @@ public class SendEmailController {
         String idUser = emailDTO.getUserId();
         String idSurvey = emailDTO.getSurveyId();
         for (String anEmail : email) {
-            Optional<Survey> survey = surveyService.findFirstById(Long.valueOf(idSurvey));
+            Optional<Survey> survey = surveyService.findFirstById(Long.parseLong(idSurvey));
             Optional<User> user = userService.findFirstById(Long.valueOf(idUser));
             Contact contact = new Contact();
-            contact.setUser(user.get());
+            contact.setUser(user.orElseThrow(UserNotFound::new));
             contact.setEmail(anEmail);
             contactService.save(contact);
             SurveyContact surveyContact = new SurveyContact();
             surveyContact.setContact(contact);
-            surveyContact.setSurvey(survey.get());
+            surveyContact.setSurvey(survey.orElseThrow(SurveyNotFound::new));
             surveyContact.setCanPass(true);
             surveyContactService.save(surveyContact);
             String codEmail = anEmail + ";" + idSurvey;

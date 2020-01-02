@@ -20,7 +20,6 @@ public class RegistrationCompleteEvent extends ApplicationEvent {
         this.user = user;
         this.locale = locale;
         this.appUrl = appUrl;
-       ;
-
     }
+
 }

@@ -4,11 +4,11 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.exception.EmailExistException;
+import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
         if (principal instanceof UserDetails) {
             String email = ((UserDetails)principal).getUsername();
-            Long id = userRepository.findByEmail(email).get().getId();
+            Long id = userRepository.findByEmail(email).orElseThrow(UserNotFound::new).getId();
             return Optional.of(id);
         }
        return Optional.empty();
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User newUserAccount(User userAccount) throws EmailExistException {
+    public User newUserAccount(User userAccount) {
         if (emailExists(userAccount.getEmail())) {
             throw new EmailExistException("There is an account with that email address: " + userAccount.getEmail());
         }
@@ -69,11 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean emailExists(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            return true;
-        }
-        return false;
+        return userRepository.findByEmail(email).isPresent();
     }
 
     @Override
@@ -83,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByName(String username) {
-        return userRepository.findByEmail(username).get();
+        return userRepository.findByEmail(username).orElseThrow(UserNotFound::new);
     }
 
     @Override
