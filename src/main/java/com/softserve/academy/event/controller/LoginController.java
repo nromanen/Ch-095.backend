@@ -33,7 +33,7 @@ public class LoginController {
 
     private final ApplicationEventPublisher eventPublisher;
 
-    final EmailService emailService;
+    private final EmailService emailService;
 
 
     @Autowired
