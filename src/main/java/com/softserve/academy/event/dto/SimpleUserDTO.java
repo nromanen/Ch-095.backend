@@ -5,6 +5,7 @@ import com.softserve.academy.event.entity.enums.Roles;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -15,7 +16,7 @@ public class SimpleUserDTO {
     private String email;
     private String password;
     private boolean active;
-    private Date creationDate;
+    private LocalDate creationDate;
     private Roles role;
 
     private SimpleUserDTO() {

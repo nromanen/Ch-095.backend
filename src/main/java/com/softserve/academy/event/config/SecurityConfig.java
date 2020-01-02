@@ -3,11 +3,12 @@ package com.softserve.academy.event.config;
 import com.softserve.academy.event.service.MyAuthenticationEntryPoint;
 import com.softserve.academy.event.service.MySavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,10 +20,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 @Configuration
 @EnableWebSecurity
+@PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = { "com.softserve.academy.event.service" })
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${app.frontend.url}")
+    private String frontUrl;
 
     private final UserDetailsService userDetailsService;
 
@@ -39,6 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.mySuccessHandler = mySuccessHandler;
     }
 
+    private CorsConfiguration corsConfiguration() {
+        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+        configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+        return configuration;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -52,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration").permitAll()
                 .antMatchers("/testAccess/{token}", "/testAccess/check").permitAll()
-                .antMatchers("/survey/**").permitAll()
+                .antMatchers("/survey/**", "/survey").permitAll()
                 .antMatchers("/fileupload").permitAll()
                 .antMatchers("/sendEmails").permitAll()
                 .antMatchers("/statistic/**").permitAll()
@@ -78,7 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());

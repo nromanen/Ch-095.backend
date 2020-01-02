@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 
 @NamedQueries(
@@ -47,8 +49,7 @@ public class User implements Serializable {
     private boolean active;
 
     @Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
+    private LocalDate creationDate = LocalDate.now();
 
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.USER;
