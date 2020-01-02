@@ -17,7 +17,7 @@ import java.util.List;
 public interface SaveQuestionMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "answers", ignore = true)
+    @Mapping(target = "choiceAnswers", ignore = true)
     SurveyQuestion toEntity(SurveyQuestionDTO surveyQuestionDTO);
 
     List<EditSurveyQuestionDTO> toDTO(List<SurveyQuestion> surveyQuestions);
