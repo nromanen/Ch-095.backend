@@ -9,5 +9,5 @@ public class AnswerDTO {
 
     private Long questionId;
     private Long contactId;
-    private String value;
+    private Object answers;
 }
