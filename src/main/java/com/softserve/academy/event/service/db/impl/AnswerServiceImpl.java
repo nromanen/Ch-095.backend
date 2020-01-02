@@ -56,26 +56,5 @@ public class AnswerServiceImpl implements AnswerService {
         answerRepository.detach(entity);
     }
 
-    @Override
-    public Map<String, Integer> createStatisticAnswersMap(Long questionId) throws JsonProcessingException
-                            ,QuestionNotFoundException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<SurveyAnswer> answers = answerRepository.findByQuestionId(questionId);
-        List<String> answersType = Arrays.asList(mapper.readValue(
-                questionRepository.findFirstById(questionId).orElseThrow(
-                        () -> new QuestionNotFoundException("No question with id = " + questionId ))
-                        .getAnswers(),String[].class));
 
-        Map<String,Integer> statisticMap = new HashMap<>();
-        answersType.forEach(answer -> {
-            statisticMap.put(answer,0);
-        });
-
-        answers.forEach(surveyAnswer -> {
-            statisticMap.put(surveyAnswer.getValue()
-                    ,1 + statisticMap.get(surveyAnswer.getValue()));
-        });
-
-        return statisticMap;
-    }
 }

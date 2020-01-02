@@ -107,8 +107,8 @@ public class SurveyController {
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         for (SurveyQuestionDTO surveyQuestionDTO : surveyQuestionsDTO) {
             SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
-            surveyQuestion.setAnswers(answers);
+            String answers = mapper.writeValueAsString(surveyQuestionDTO.getChoiceAnswers());
+            surveyQuestion.setChoiceAnswers(answers);
             surveyQuestions.add(surveyQuestion);
         }
         return surveyQuestions;
