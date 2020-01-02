@@ -1,22 +1,19 @@
 package com.softserve.academy.event.service.db.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softserve.academy.event.dto.SurveyEachStatisticDTO;
-import com.softserve.academy.event.dto.SurveyGeneralStatisticDTO;
+import com.softserve.academy.event.dto.QuestionsGeneralStatisticDTO;
+import com.softserve.academy.event.dto.QuestionsSeparatelyStatisticDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.service.db.StatisticService;
-import com.softserve.academy.event.service.mapper.StatisticMapper;
+import com.softserve.academy.event.service.mapper.GeneralStatisticMapper;
+import com.softserve.academy.event.service.mapper.SeparatelyStatisticMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 
 @Service
@@ -24,25 +21,37 @@ import java.util.stream.Collectors;
 public class StatisticServiceImpl implements StatisticService {
 
     private SurveyRepository surveyRepository;
-    private StatisticMapper statisticMapper;
+    private GeneralStatisticMapper generalStatisticMapper;
+    private SeparatelyStatisticMapper separatelyStatisticMapper;
 
-    public StatisticServiceImpl(SurveyRepository surveyRepository, StatisticMapper statisticMapper) {
+    @Autowired
+    public void setSurveyRepository(SurveyRepository surveyRepository) {
         this.surveyRepository = surveyRepository;
-        this.statisticMapper = statisticMapper;
+    }
+
+    @Autowired
+    public void setGeneralStatisticMapper(GeneralStatisticMapper generalStatisticMapper) {
+        this.generalStatisticMapper = generalStatisticMapper;
+    }
+
+    @Autowired
+    public void setSeparatelyStatisticMapper(SeparatelyStatisticMapper separatelyStatisticMapper) {
+        this.separatelyStatisticMapper = separatelyStatisticMapper;
     }
 
     @Override
     @Transactional
-    public Optional<SurveyGeneralStatisticDTO> getGeneralStatistic(Long id) {
+    public Optional<QuestionsGeneralStatisticDTO> getGeneralStatistic(Long id) {
         log.info("call with id = " + id);
         Optional<Survey> surveyOptional = surveyRepository.findFirstById(id);
-        return surveyOptional.map(survey -> statisticMapper.toSurveyGeneralDTO(survey));
+        return surveyOptional.map(survey -> generalStatisticMapper.toQuestionsDTO(survey));
     }
 
+    @Override
     @Transactional
-    public Optional<SurveyEachStatisticDTO> getEachStatistic(Long id) {
+    public Optional<Set<QuestionsSeparatelyStatisticDTO>> getSeparatelyStatistic(Long id) {
         log.info("call with id = " + id);
         Optional<Survey> surveyOptional = surveyRepository.findFirstById(id);
-        return surveyOptional.map(survey -> statisticMapper.toSurveyEachDTO(survey));
+        return surveyOptional.map(survey -> separatelyStatisticMapper.toSetQuestionsDTO(survey));
     }
 }

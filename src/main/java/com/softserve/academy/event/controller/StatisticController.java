@@ -1,7 +1,7 @@
 package com.softserve.academy.event.controller;
 
-import com.softserve.academy.event.dto.SurveyEachStatisticDTO;
-import com.softserve.academy.event.dto.SurveyGeneralStatisticDTO;
+import com.softserve.academy.event.dto.QuestionsSeparatelyStatisticDTO;
+import com.softserve.academy.event.dto.QuestionsGeneralStatisticDTO;
 import com.softserve.academy.event.service.db.StatisticService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ public class StatisticController {
     }
 
     @GetMapping("/general")
-    public ResponseEntity<SurveyGeneralStatisticDTO> getGeneralStatistic(
+    public ResponseEntity<QuestionsGeneralStatisticDTO> getGeneralStatistic(
             @RequestParam(name = "surveyId") long surveyId)  {
         log.info("call with surveyId = " + surveyId);
-        Optional<SurveyGeneralStatisticDTO> surveyDTO= statisticService.getGeneralStatistic(surveyId);
+        Optional<QuestionsGeneralStatisticDTO> surveyDTO= statisticService.getGeneralStatistic(surveyId);
         return surveyDTO.map(value -> {
-            log.info("return " + HttpStatus.OK +"for surveyId = " + surveyId);
+            log.info("return " + HttpStatus.OK +" for surveyId = " + surveyId);
             return new ResponseEntity<>(value, HttpStatus.OK);
         }).orElseGet(() -> {
             log.info("return " + HttpStatus.BAD_REQUEST +"for surveyId = " + surveyId);
@@ -37,11 +37,11 @@ public class StatisticController {
 
     }
 
-    @GetMapping("/each")
-    public ResponseEntity<SurveyEachStatisticDTO> getQuestions(
+    @GetMapping("/separately")
+    public ResponseEntity<Set<QuestionsSeparatelyStatisticDTO>> getSeparatelyStatistic(
             @RequestParam(name = "surveyId") long surveyId)  {
         log.info("call with surveyId = " + surveyId);
-        Optional<SurveyEachStatisticDTO> surveyDTO= statisticService.getEachStatistic(surveyId);
+        Optional<Set<QuestionsSeparatelyStatisticDTO>> surveyDTO= statisticService.getSeparatelyStatistic(surveyId);
         return surveyDTO.map(value -> {
             log.info("return " + HttpStatus.OK +"for surveyId = " + surveyId);
             return new ResponseEntity<>(value, HttpStatus.OK);

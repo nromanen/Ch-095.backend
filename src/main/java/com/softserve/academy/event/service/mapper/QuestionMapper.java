@@ -1,9 +1,7 @@
 package com.softserve.academy.event.service.mapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.academy.event.dto.QuestionDTO;
-import com.softserve.academy.event.dto.QuestionStatisticDTO;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

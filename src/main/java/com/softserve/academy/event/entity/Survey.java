@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import lombok.*;
 import org.hibernate.annotations.*;
-import org.hibernate.annotations.NamedQuery;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.softserve.academy.event.util.Constants.*;
@@ -67,7 +67,7 @@ public class Survey implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<SurveyQuestion> surveyQuestions = new HashSet<>();
+    private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     private Set<SurveyContact> surveyContacts = new HashSet<>();
