@@ -20,7 +20,6 @@ import java.util.Optional;
 
 @RestController
 @PropertySource("classpath:application.properties")
-@CrossOrigin(origins = "http://localhost:4200")
 public class SendEmailController {
 
     @Value("${app.frontend.url}")

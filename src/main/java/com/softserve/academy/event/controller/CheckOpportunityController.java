@@ -19,7 +19,6 @@ import java.util.Optional;
 @Api(value = "/testAccess")
 @RestController
 @RequestMapping(value = "/testAccess")
-@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
 public class CheckOpportunityController {
     private final SurveyContactConnectorService surveyContactConnectorService;

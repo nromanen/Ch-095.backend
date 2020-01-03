@@ -3,6 +3,7 @@ package com.softserve.academy.event.service.db.impl;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.exception.EmailExistException;
+import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
 import com.softserve.academy.event.entity.enums.TokenValidation;
@@ -52,7 +53,6 @@ public class UserServiceImpl implements UserService {
         VerificationToken verificationToken = tokenRepository.findByToken(token);
         verificationToken.updateToken(UUID.randomUUID().toString());
         return tokenRepository.save(verificationToken);
-       // return verificationToken;
     }
 
     @Override
@@ -68,16 +68,6 @@ public class UserServiceImpl implements UserService {
 
     private boolean emailExists(String email) {
         return userRepository.findByEmail(email).isPresent();
-    }
-
-    @Override
-    public User getUser(String verificationToken) {
-        return tokenRepository.findByToken(verificationToken).getUser();
-    }
-
-    @Override
-    public User getUserByName(String username) {
-        return userRepository.findByEmail(username).orElseThrow(UserNotFound::new);
     }
 
     @Override
