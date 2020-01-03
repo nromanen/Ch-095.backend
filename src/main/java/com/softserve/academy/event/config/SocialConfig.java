@@ -54,8 +54,8 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/oauth_login", "/loginFailure", "/test")
                 .permitAll()
-//                .antMatchers("/testAccess/{token}", "/testAccess/check")
-//                .permitAll()
+                .antMatchers("/testAccess/{token}", "/testAccess/check")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -70,7 +70,13 @@ public class SocialConfig extends WebSecurityConfigurerAdapter {
                 .accessTokenResponseClient(accessTokenResponseClient())
                 .and()
                 .defaultSuccessUrl("/loginSuccess")
-                .failureUrl("/loginFailure");
+                .failureUrl("/loginFailure")
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/oauth_login")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID");
     }
 
     @Bean

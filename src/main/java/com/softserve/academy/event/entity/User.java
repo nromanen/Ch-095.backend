@@ -3,6 +3,7 @@ package com.softserve.academy.event.entity;
 import com.softserve.academy.event.entity.enums.Roles;
 
 import lombok.*;
+
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
@@ -43,14 +44,11 @@ public class User implements Serializable {
 
     private boolean active;
 
-    @Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDate creationDate = LocalDate.now();
 
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.USER;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<UserSocial> userSocials = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Contact> contacts = new HashSet<>();
@@ -61,6 +59,7 @@ public class User implements Serializable {
     public User() {
         this.active = false;
     }
+
     public User(String email, String password) {
         this.email = email;
         this.password = password;
@@ -71,9 +70,11 @@ public class User implements Serializable {
     public String getPassword() {
         return password;
     }
+
     public String getUsername() {
         return email;
     }
+
     public Roles getRole() {
         return role;
     }

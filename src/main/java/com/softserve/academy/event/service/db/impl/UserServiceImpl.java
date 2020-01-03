@@ -2,19 +2,19 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
+import com.softserve.academy.event.entity.enums.Roles;
 import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 @Transactional
@@ -123,5 +123,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User newSocialUser(OAuth2User oAuth2User) {
+        String email = oAuth2User.getAttribute("email");
+
+        if (!emailExists(email)){
+            User user = new User();
+            user.setRole(Roles.USER);
+            user.setActive(true);
+            user.setEmail(email);
+            user.setContacts(new HashSet<>());
+            user.setCreationDate(LocalDate.now());
+            user.setPassword("somePassword");
+            user.setSurveys(new HashSet<>());
+
+            return save(user);
+        }
+        return findByEmail(email).orElseThrow(NoSuchElementException::new);
     }
 }
