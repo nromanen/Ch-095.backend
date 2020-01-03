@@ -7,7 +7,6 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UnauthorizedException;
-import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.service.db.SurveyService;
@@ -68,8 +67,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public Survey duplicateSurvey(DuplicateSurveySettings settings) {
-        Survey survey = repository.findFirstById(settings.getId())
-                .orElseThrow(SurveyNotFound::new);
+        Survey survey = repository.eagerFindFirstById(settings.getId());
         if (!survey.getStatus().equals(SurveyStatus.TEMPLATE) &&
                 checkUserEmailNotEqualsCurrentUserEmail(survey.getUser().getEmail())) {
             log.debug("User " + survey.getUser().getUsername() + " try change other user information. ");
@@ -80,7 +78,9 @@ public class SurveyServiceImpl implements SurveyService {
         survey.setStatus(SurveyStatus.NON_ACTIVE);
         if (settings.isClearContacts()) {
             survey.setContacts(new HashSet<>());
+            survey.setSurveyContacts(new HashSet<>());
         }
+        survey.getSurveyQuestions().forEach(e -> e.setSurveyAnswers(new HashSet<>()));
         repository.save(survey);
         return survey;
     }
