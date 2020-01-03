@@ -4,6 +4,7 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.exception.EmailExistException;
+import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
 import com.softserve.academy.event.service.db.UserService;
@@ -76,10 +77,10 @@ public class UserServiceImpl implements UserService {
         return tokenRepository.findByToken(verificationToken).getUser();
     }
 
-    @Override
-    public User getUserByName(String username) {
-        return userRepository.findByEmail(username).orElseThrow(UserNotFound::new);
-    }
+//    @Override
+//    public User getUserByName(String username) {
+//        return userRepository.findByEmail(username).orElseThrow(UserNotFound::new);
+//    }
 
     @Override
     public VerificationToken createVerificationToken(User user) {

@@ -4,6 +4,8 @@ import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.User;
+import com.softserve.academy.event.exception.SurveyNotFound;
+import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,18 +52,14 @@ public class EmailServiceImpl implements EmailService {
         Optional<User> user = userService.findFirstById(Long.valueOf(idUser));
         String userEmail = userService.getEmailByUserId(Long.valueOf(idUser));
         Contact contact = new Contact();
-        if (user.isPresent()) {
-            contact.setUser(user.get());
-            contact.setEmail(anEmail);
-            contactService.save(contact);
-        }
+        contact.setUser(user.orElseThrow(UserNotFound::new));
+        contact.setEmail(anEmail);
+        contactService.save(contact);
         SurveyContact surveyContact = new SurveyContact();
-        if (survey.isPresent()) {
-            surveyContact.setContact(contact);
-            surveyContact.setSurvey(survey.get());
-            surveyContact.setCanPass(true);
-            surveyContactService.save(surveyContact);
-        }
+        surveyContact.setContact(contact);
+        surveyContact.setSurvey(survey.orElseThrow(SurveyNotFound::new));
+        surveyContact.setCanPass(true);
+        surveyContactService.save(surveyContact);
         String codEmail = anEmail + ";" + idSurvey;
         String encodedString = baseUrl + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
         String subject = "Survey";
