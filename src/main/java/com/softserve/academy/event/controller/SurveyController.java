@@ -1,13 +1,17 @@
 package com.softserve.academy.event.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.softserve.academy.event.annotation.PageableDefault;
+import com.softserve.academy.event.dto.EditSurveyDTO;
 import com.softserve.academy.event.dto.SaveSurveyDTO;
 import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.dto.SurveyQuestionDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
@@ -22,10 +26,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.Multipart;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 @Api(value = "/survey")
 @RestController
@@ -103,22 +113,47 @@ public class SurveyController {
     }
 
 
-
     @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
     @GetMapping(value = "/edit/{id}")
-    public ResponseEntity loadForEditSurvey(@PathVariable(name = "id") Long surveyId) throws JsonProcessingException {
+    public ResponseEntity loadForEditSurvey(@PathVariable(name = "id") Long surveyId) throws IOException {
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
         List<SurveyQuestionDTO> questionsDTO = new ArrayList<>();
         for (SurveyQuestion x : questions) {
             questionsDTO.add(saveQuestionMapper.toDTO(x));
         }
-        SaveSurveyDTO saveSurveyDTO = new SaveSurveyDTO(questionsDTO);
-        Survey survey = service.findFirstById(surveyId).get();
-        saveSurveyDTO.setTitle(survey.getTitle());
-        saveSurveyDTO.setSurveyPhotoName(survey.getImageUrl());
+        EditSurveyDTO editSurveyDTO = new EditSurveyDTO(questionsDTO);
+        Survey survey = service.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
+        editSurveyDTO = setSurveysTitleAndPhotoName(survey, editSurveyDTO);
+        editSurveyDTO = setSurveysPhotos(survey, editSurveyDTO);
         if (questionsDTO.isEmpty())
-            return new ResponseEntity(saveSurveyDTO, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(saveSurveyDTO, HttpStatus.OK);
+            return new ResponseEntity(editSurveyDTO, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(editSurveyDTO, HttpStatus.OK);
+    }
+
+    private EditSurveyDTO setSurveysTitleAndPhotoName(Survey survey, EditSurveyDTO editSurveyDTO) {
+        editSurveyDTO.setTitle(survey.getTitle());
+        editSurveyDTO.setSurveyPhotoName(survey.getImageUrl());
+        return editSurveyDTO;
+    }
+
+    private EditSurveyDTO setSurveysPhotos(Survey survey, EditSurveyDTO editSurveyDTO) throws IOException {
+        Properties properties = new Properties();
+        InputStream propertiesFile = FileUploadController.class.getClassLoader().getResourceAsStream("application.properties");
+        properties.load(propertiesFile);
+
+        List<String> nameOfPictures = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (SurveyQuestion question : survey.getSurveyQuestions()) {
+            if (question.getType().toString().equals("RADIO_PICTURE") || question.getType().toString().equals("CHECKBOX_PICTURE")) {
+                nameOfPictures.addAll(Arrays.asList(objectMapper.readValue(question.getAnswers(),String[].class)));
+            }
+        }
+        List<File> files = new ArrayList<>();
+        for (String pictureName : nameOfPictures) {
+            files.add(new File(properties.getProperty("image.upload.dir") + File.separator + pictureName));
+        }
+        editSurveyDTO.setFiles(files);
+        return editSurveyDTO;
     }
 
 
@@ -129,8 +164,6 @@ public class SurveyController {
         for (SurveyQuestionDTO x : saveSurveyDTO.getQuestions()) {
             questions.add(saveQuestionMapper.toEntity(x));
         }
-//        Long surveyId = Long.parseLong(editSurveyDTO.getSurveyId());
         return ResponseEntity.ok(service.editSurvey(Long.parseLong(id), questions));
-//        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 }

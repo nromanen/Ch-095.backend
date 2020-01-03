@@ -22,10 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -138,9 +135,9 @@ public class SurveyServiceImpl implements SurveyService {
 
     public Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions) {
         Survey survey = repository.findFirstById(surveyId).get();
-        surveyQuestions.stream().forEach(x -> x.setSurvey(survey));
-        List<SurveyQuestion> questions = survey.getSurveyQuestions();
-        questions.remove(0);
+        survey.getSurveyQuestions().clear();
+        surveyQuestions.forEach(survey::addQuestion);
+        repository.update(survey);
         return survey;
     }
 }
