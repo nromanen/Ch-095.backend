@@ -12,8 +12,6 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 import static com.softserve.academy.event.util.Constants.*;
 
 @Repository

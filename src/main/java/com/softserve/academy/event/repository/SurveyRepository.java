@@ -5,8 +5,6 @@ import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 
-import java.util.Optional;
-
 public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
     Survey eagerFindFirstById(Long id);
