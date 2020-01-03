@@ -17,7 +17,6 @@ import java.util.Properties;
 
 @Api(value = "Uploading photo")
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 public class FileUploadController {
 
     @ApiOperation(value = "Upload a picture to the server")

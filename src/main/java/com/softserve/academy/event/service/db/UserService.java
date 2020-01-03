@@ -8,13 +8,10 @@ import java.util.Optional;
 
 public interface UserService extends BasicService<User, Long> {
     Optional<Long> getAuthenticationId();
+
     VerificationToken updateTokenExpiration(String token);
 
     User newUserAccount(User account);
-
-    User getUser(String verificationToken);
-    String getToken(User user);
-
 
     VerificationToken createVerificationToken(User user);
 
