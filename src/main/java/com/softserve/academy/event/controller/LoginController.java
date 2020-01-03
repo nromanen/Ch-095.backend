@@ -20,7 +20,7 @@ public class LoginController {
 
     private final UserMapper userMapper;
 
-    final EmailService emailService;
+    private final EmailService emailService;
 
 
     @Autowired
