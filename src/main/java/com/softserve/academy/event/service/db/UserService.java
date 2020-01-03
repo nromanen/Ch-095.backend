@@ -3,7 +3,6 @@ package com.softserve.academy.event.service.db;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.entity.enums.TokenValidation;
-
 import java.util.Optional;
 
 public interface UserService extends BasicService<User, Long> {
@@ -12,10 +11,6 @@ public interface UserService extends BasicService<User, Long> {
     VerificationToken updateTokenExpiration(String token);
 
     User newUserAccount(User account);
-
-    User getUser(String verificationToken);
-
-//    String getToken(User user);
 
     VerificationToken createVerificationToken(User user);
 
