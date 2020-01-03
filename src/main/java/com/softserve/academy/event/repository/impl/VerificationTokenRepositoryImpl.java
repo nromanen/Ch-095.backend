@@ -1,10 +1,12 @@
 package com.softserve.academy.event.repository.impl;
 
+import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +30,16 @@ public class VerificationTokenRepositoryImpl implements VerificationTokenReposit
             return null;
         }
         return vToken.get(0);
+    }
+    @Override
+    public VerificationToken findByUser(User user) {
+        TypedQuery<VerificationToken> query = sessionFactory.getCurrentSession().createNamedQuery("findUser", VerificationToken.class);
+        query.setParameter("user", user);
+        List<VerificationToken> uToken = query.getResultList();
+        if (uToken.isEmpty()) {
+            return null;
+        }
+        return uToken.get(0);
     }
 
     @Override

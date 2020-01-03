@@ -1,0 +1,45 @@
+[{
+  "title": "Survey #1",
+  "questionDTOS": [
+    {
+      "question": "Select an existing type of join?",
+      "type": "RADIOBUTTON",
+      "choiceAnswers": [
+        "Back",
+        "Left",
+        "Сenter",
+        "Front"
+      ],
+      "index": 3,
+      "answers": [
+        [
+          "Back",
+          "Front",
+          "Left",
+          "Left"
+        ]
+      ]
+    },
+    {
+      "question": "Which of the following programming languages do you know?",
+      "type": "CHECKBOX",
+      "choiceAnswers": [
+        "Java",
+        "Javascript",
+        ".Net",
+        "C++",
+        "Ruby"
+      ],
+      "index": 2,
+      "answers": [
+        [
+          "Ruby",
+          "C++",
+          "Java",
+          "Java"
+        ]
+      ]
+    }
+  ]
+}
+  ]

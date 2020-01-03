@@ -8,6 +8,8 @@ import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,17 +36,28 @@ public class UserServiceImpl implements UserService {
         this.tokenRepository = tokenRepository;
     }
 
-
     @Override
-    public VerificationToken generateNewVerificationToken(String token) {
-        VerificationToken verificationToken = tokenRepository.findByToken(token);
-        verificationToken.updateToken(UUID.randomUUID().toString());
-        verificationToken = tokenRepository.save(verificationToken);
-        return verificationToken;
+    public Optional<Long> getAuthenticationId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            String email = ((UserDetails)principal).getUsername();
+            Long id = userRepository.findByEmail(email).orElseThrow(UserNotFound::new).getId();
+            return Optional.of(id);
+        }
+       return Optional.empty();
     }
 
     @Override
-    public User newUserAccount(User userAccount) throws EmailExistException {
+    public VerificationToken updateTokenExpiration(String token) {
+        VerificationToken verificationToken = tokenRepository.findByToken(token);
+        verificationToken.updateToken(UUID.randomUUID().toString());
+        return tokenRepository.save(verificationToken);
+       // return verificationToken;
+    }
+
+    @Override
+    public User newUserAccount(User userAccount) {
         if (emailExists(userAccount.getEmail())) {
             throw new EmailExistException("There is an account with that email address: " + userAccount.getEmail());
         }
@@ -55,11 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean emailExists(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            return true;
-        }
-        return false;
+        return userRepository.findByEmail(email).isPresent();
     }
 
     @Override
@@ -68,9 +77,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createVerificationToken(User user, String token) {
+    public User getUserByName(String username) {
+        return userRepository.findByEmail(username).orElseThrow(UserNotFound::new);
+    }
+
+    @Override
+    public VerificationToken createVerificationToken(User user) {
+        String token = UUID.randomUUID().toString();
         VerificationToken vToken = new VerificationToken(token, user);
-        tokenRepository.save(vToken);
+        return tokenRepository.save(vToken);
     }
 
     @Override

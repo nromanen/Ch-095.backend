@@ -25,6 +25,5 @@ public interface SurveyService {
 
     Optional<Survey> findFirstById(long surveyId);
 
-    Survey saveSurveyWithQuestions(Survey survey, long id, List<SurveyQuestion> surveyQuestions);
-
+    Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions);
 }

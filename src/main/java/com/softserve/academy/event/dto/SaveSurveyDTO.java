@@ -2,6 +2,7 @@ package com.softserve.academy.event.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -12,8 +13,10 @@ import java.util.List;
 public class SaveSurveyDTO {
 
     private String title;
-
-    private long userID;
-
+    private String surveyPhotoName;
     private List<SurveyQuestionDTO> questions;
+
+    public SaveSurveyDTO(List<SurveyQuestionDTO> questions){
+        this.questions = questions;
+    }
 }
