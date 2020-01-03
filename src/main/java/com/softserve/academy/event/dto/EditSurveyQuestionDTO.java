@@ -6,12 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class SurveyQuestionDTO {
+public class EditSurveyQuestionDTO {
     private int index;
 
     @JsonIgnore
@@ -24,5 +26,7 @@ public class SurveyQuestionDTO {
     private List<String> choiceAnswers;
 
     private boolean required;
+
+    private List<File> files = new ArrayList<>();
 
 }

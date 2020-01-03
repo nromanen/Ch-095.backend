@@ -15,10 +15,9 @@ public class EditSurveyDTO  {
 
     private String title;
     private String surveyPhotoName;
-    private List<SurveyQuestionDTO> questions;
-    private List<File> files;
+    private List<EditSurveyQuestionDTO> questions;
 
-    public EditSurveyDTO(List<SurveyQuestionDTO> questions){
+    public EditSurveyDTO(List<EditSurveyQuestionDTO> questions){
         this.questions = questions;
     }
 }

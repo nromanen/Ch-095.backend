@@ -24,7 +24,7 @@ public class FileUploadController {
 
 
     @ApiOperation(value = "Upload a picture to the server")
-    @PostMapping(value = "pictureUpload", headers=("content-type=multipart/*"))
+    @PostMapping(value = "fileupload", headers=("content-type=multipart/*"))
     public ResponseEntity upload(@RequestParam("file") List<MultipartFile> inputFiles) {
         Properties properties = new Properties();
         for(MultipartFile inputFile : inputFiles ) {
