@@ -4,7 +4,7 @@ import com.softserve.academy.event.dto.EmailDTO;
 import com.softserve.academy.event.exception.IncorrectEmailsException;
 import com.softserve.academy.event.service.db.EmailService;
 import com.softserve.academy.event.util.EmailValidator;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

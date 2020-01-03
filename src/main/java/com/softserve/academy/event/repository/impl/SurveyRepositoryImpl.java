@@ -3,9 +3,11 @@ package com.softserve.academy.event.repository.impl;
 import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
@@ -19,7 +21,19 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
 
     public SurveyRepositoryImpl() {
         super();
-        countQuery = "select count(*) from " + clazz.getName() + " where user.email = :userEmail";
+        countQuery = "select count(*) from " + clazz.getName() + " where user.email = :userEmail and active = true ";
+    }
+
+    @Override
+    public Survey eagerFindFirstById(Long id) {
+        Survey survey = super.findFirstById(id).orElseThrow(SurveyNotFound::new);
+        Hibernate.initialize(survey.getContacts());
+        Hibernate.initialize(survey.getSurveyContacts());
+        Hibernate.initialize(survey.getSurveyQuestions());
+        if (!survey.getSurveyQuestions().isEmpty()) {
+            Hibernate.initialize(survey.getSurveyQuestions().get(0).getSurveyAnswers());
+        }
+        return survey;
     }
 
     @Override
@@ -36,7 +50,6 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
                 .setParameter(SURVEY_STATUS_FILTER_ARGUMENT, SurveyStatus.valueOf(status).getNumber());
         return getSurveyPage(pageable, session, userEmail);
     }
-
 
     @SuppressWarnings("unchecked")
     private Page<SurveyDTO> getSurveyPage(Pageable pageable, Session session, String userEmail) {
