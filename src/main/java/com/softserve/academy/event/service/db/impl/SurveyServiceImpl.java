@@ -76,9 +76,14 @@ public class SurveyServiceImpl implements SurveyService {
         survey.setId(null);
         survey.setStatus(SurveyStatus.NON_ACTIVE);
         if (settings.isClearContacts()) {
-            survey.setContacts(new HashSet<>());
             survey.setSurveyContacts(new HashSet<>());
+        } else {
+            survey.getSurveyContacts().forEach(e -> {
+                e.setId(null);
+                e.setSurvey(survey);
+            });
         }
+        survey.setContacts(new HashSet<>());
         survey.getSurveyQuestions().forEach(e -> e.setSurveyAnswers(new HashSet<>()));
         repository.save(survey);
         return survey;
