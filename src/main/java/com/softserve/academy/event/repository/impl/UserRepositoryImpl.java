@@ -26,8 +26,7 @@ public class UserRepositoryImpl extends BasicRepositoryImpl<User, Long>  impleme
     public String getEmailByUserId(Long id) {
         TypedQuery<User> query = sessionFactory.getCurrentSession().createNamedQuery("findEmailById", User.class);
         query.setParameter("id", id);
-        String email = query.getSingleResult().getEmail();
-        return email;
+        return query.getSingleResult().getEmail();
     }
 
 }

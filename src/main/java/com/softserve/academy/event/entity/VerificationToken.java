@@ -12,19 +12,14 @@ import java.util.Date;
 
 
 
-@NamedQueries(
-        {
-                @NamedQuery(
-                        name = "findToken",
-                        query = "from VerificationToken v where v.token= :token"
-                ),
-                @NamedQuery(
-                        name = "findUser",
-                        query = "from VerificationToken u where u.user= :user"
-                )
-        }
+@NamedQuery(
+        name = "findToken",
+        query = "from VerificationToken v where v.token= :token"
 )
-
+@NamedQuery(
+        name = "findUser",
+        query = "from VerificationToken u where u.user= :user"
+)
 @Entity
 @Getter
 @Setter

@@ -46,6 +46,8 @@ public class QuestionController {
     @ApiOperation(value = "Get a survey form for contact", notes = "Checks an e-mail, Id(survey) and builds a form", response = SurveyContactDTO.class)
     @GetMapping
     public ResponseEntity<SurveyContactDTO> startSurvey(Long surveyId, String contactEmail){
+        if (!contactService.canPass(surveyId, contactEmail))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
         List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questions);
         SurveyContactDTO dto = new SurveyContactDTO();
@@ -56,7 +58,6 @@ public class QuestionController {
             return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
-
 
     @ApiOperation(value = "Save answers to the database")
     @PostMapping
