@@ -47,7 +47,7 @@ public class SurveyController {
     @ApiOperation(value = "Get all surveys")
     @GetMapping
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
-            @PageableDefault(sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @PageableDefault(minSize = 4, sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, name = "status") String status) {
         return ResponseEntity.ok(
                 service.findAllByPageableAndStatus(pageable, status)
@@ -98,10 +98,11 @@ public class SurveyController {
     }
 
     /**
-      Method gets list of Question DTO and made list of entities with correct variant of answers
-      Mapper can't make string from list, so i set it through object mapper
-      @return List<SurveyQuestion> - list of entities but without established survey
-    */
+     * Method gets list of Question DTO and made list of entities with correct variant of answers
+     * Mapper can't make string from list, so i set it through object mapper
+     *
+     * @return List<SurveyQuestion> - list of entities but without established survey
+     */
     private List<SurveyQuestion> getQuestionsEntities(List<SurveyQuestionDTO> surveyQuestionsDTO) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
