@@ -57,6 +57,7 @@ public class Survey implements Serializable {
     @JoinColumn(nullable = false)
     private User user;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "survey_contacts",

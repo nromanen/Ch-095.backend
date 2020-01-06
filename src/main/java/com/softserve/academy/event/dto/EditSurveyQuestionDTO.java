@@ -5,8 +5,8 @@ import com.softserve.academy.event.entity.Survey;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +27,6 @@ public class EditSurveyQuestionDTO {
 
     private boolean required;
 
-    private List<File> files = new ArrayList<>();
+    private List<MultipartFile> files = new ArrayList<>();
 
 }

@@ -7,6 +7,8 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UnauthorizedException;
+import com.softserve.academy.event.exception.UserNotFound;
+import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.service.db.SurveyService;
@@ -126,17 +128,16 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
         Long userID = userService.getAuthenticationId().orElseThrow(RuntimeException::new);
-        User user = userRepository.findFirstById(userID).orElseThrow(RuntimeException::new);
+        User user = userRepository.findFirstById(userID).orElseThrow(UserNotFound::new);
         survey.setUser(user);
         surveyQuestions.forEach(survey::addQuestion);
         return repository.save(survey);
     }
 
     public Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions) {
-        Survey survey = repository.findFirstById(surveyId).get();
+        Survey survey = repository.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
         survey.getSurveyQuestions().clear();
         surveyQuestions.forEach(survey::addQuestion);
-        repository.update(survey);
-        return survey;
+        return repository.update(survey);
     }
 }
