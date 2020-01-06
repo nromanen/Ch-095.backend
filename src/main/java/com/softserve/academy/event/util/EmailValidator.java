@@ -18,6 +18,8 @@ public class EmailValidator {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
+    private EmailValidator(){}
+
     public static void validate(String[] list) {
         Set<ConstraintViolation<EmailAddress>> violations = new HashSet<>();
         for (EmailAddress address : Arrays.stream(list).map(EmailAddress::new).collect(Collectors.toList())) {
