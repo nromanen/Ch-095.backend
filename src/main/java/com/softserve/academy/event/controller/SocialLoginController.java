@@ -10,12 +10,13 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class SocialLoginController {
         userService.newSocialUser(authentication.getPrincipal());
 
         try {
-            httpServletResponse.sendRedirect("http://localhost:4200/surveys");
+            httpServletResponse.sendRedirect("http://localhost:4200/login");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,7 +79,26 @@ public class SocialLoginController {
         } else if (something instanceof DefaultOAuth2User) {
             return ((DefaultOAuth2User)something).getAttribute("email"); // for facebook
         } else {
-            return something.toString();
+            return null;
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response, SessionStatus sessionStatus) {
+        HttpSession session = request.getSession(false);
+        if (request.isRequestedSessionIdValid() && session != null) {
+            session.invalidate();
+        }
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            cookie.setMaxAge(0);
+            cookie.setValue(null);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        }
+
+        SecurityContextHolder.getContext().setAuthentication(null);
+        sessionStatus.setComplete();
+        return "";
     }
 }
