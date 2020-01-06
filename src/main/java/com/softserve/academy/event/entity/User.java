@@ -13,17 +13,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-@NamedQueries(
-        {
-                @NamedQuery(
-                        name = "findEmail",
-                        query = "from User u where u.email= :email"
-                ),
-                @NamedQuery(
-                        name = "findEmailById",
-                        query = "from User u where u.id= :id"
-                )
-        }
+@NamedQuery(
+        name = "findEmail",
+        query = "from User u where u.email= :email"
+)
+@NamedQuery(
+        name = "findEmailById",
+        query = "from User u where u.id= :id"
 )
 @Entity
 @Table(name = "users")

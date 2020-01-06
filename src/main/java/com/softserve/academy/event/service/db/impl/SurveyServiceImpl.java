@@ -52,7 +52,6 @@ public class SurveyServiceImpl implements SurveyService {
         return repository.findAllByPageableAndUserEmail(pageable, getCurrentUserEmail());
     }
 
-
     @Override
     public void updateTitle(Long id, String title) {
         Survey survey = findSurveyById(id);
