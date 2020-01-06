@@ -8,11 +8,9 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.time.LocalDate;
-import java.util.*;
 
 
 @NamedQueries(
@@ -20,10 +18,13 @@ import java.util.*;
                 @NamedQuery(
                         name = "findEmail",
                         query = "from User u where u.email= :email"
+                ),
+                @NamedQuery(
+                        name = "findEmailById",
+                        query = "from User u where u.id= :id"
                 )
         }
 )
-
 @Entity
 @Table(name = "users")
 @EqualsAndHashCode(of = {"id"})
@@ -32,7 +33,7 @@ import java.util.*;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 8894016998310477567L;
-    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 
     @Id

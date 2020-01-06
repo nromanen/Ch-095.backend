@@ -12,15 +12,13 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 
 import java.util.List;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"com.softserve.academy.event.config", "com.softserve.academy.event.controller",
-        "com.softserve.academy.event.service", "com.softserve.academy.event.exception.handler", "com.softserve.academy.event.registration"})
+        "com.softserve.academy.event.service", "com.softserve.academy.event.exception.handler"})
 public class WebConfig implements WebMvcConfigurer {
 
     private final Environment environment;

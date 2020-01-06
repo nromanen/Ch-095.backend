@@ -16,10 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,14 +30,14 @@ public class QuestionController {
     private final QuestionService questionService;
     private final QuestionMapper questionMapper;
     private final AnswerService answerService;
-    private final SurveyContactConnectorService sccService;
+    private final SurveyContactConnectorService surveyContactConnectorService;
     private final AnswerMapper answerMapper;
 
     @Autowired
-    public QuestionController(AnswerMapper answerMapper, ContactService contactService, QuestionService questionService, QuestionMapper questionMapper, AnswerService answerService, SurveyContactConnectorService sccService) {
+    public QuestionController(AnswerMapper answerMapper, ContactService contactService, QuestionService questionService, QuestionMapper questionMapper, AnswerService answerService, SurveyContactConnectorService surveyContactConnectorService) {
         this.questionService = questionService;
         this.answerService = answerService;
-        this.sccService = sccService;
+        this.surveyContactConnectorService = surveyContactConnectorService;
         this.contactService = contactService;
         this.questionMapper = questionMapper;
         this.answerMapper = answerMapper;
@@ -63,7 +60,7 @@ public class QuestionController {
 
     @ApiOperation(value = "Save answers to the database")
     @PostMapping
-    public ResponseEntity<String> addAnswers(ContactResponseDTO contactResponseDTO){
+    public ResponseEntity<String> addAnswers(@RequestBody ContactResponseDTO contactResponseDTO){
         String result;
         Optional<Long> contactId = contactService.getIdByEmail(contactResponseDTO.getContactEmail());
         if(!contactId.isPresent()) {
@@ -71,14 +68,14 @@ public class QuestionController {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         Optional <SurveyContact> surveyContact =
-                sccService.findByContactAndSurvey(contactId.get(), contactResponseDTO.getSurveyId());
+                surveyContactConnectorService.findByContactAndSurvey(contactId.get(), contactResponseDTO.getSurveyId());
         if(!surveyContact.isPresent()){
             result = "mail is not in the invite list";
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        surveyContact.get().setCanPass(true);
-        sccService.update(surveyContact.get());
+        surveyContact.get().setCanPass(false);
+        surveyContactConnectorService.update(surveyContact.get());
         contactResponseDTO.getAnswers().stream()
                 .peek(answerDTO -> answerDTO.setContactId(contactId.get()))
                 .map(answerMapper::toEntity)

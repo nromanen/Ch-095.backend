@@ -19,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SurveyQuestion implements Serializable{
+public class SurveyQuestion implements Serializable {
 
     private static final long serialVersionUID = -2673922858877977323L;
 
@@ -45,7 +45,7 @@ public class SurveyQuestion implements Serializable{
     @Enumerated(EnumType.STRING)
     private SurveyQuestionType type;
 
-    @Column(name = "answers",nullable = false, length = 10000)
+    @Column(name = "answers", nullable = false, length = 10000)
     private String choiceAnswers;
 
     private boolean required;

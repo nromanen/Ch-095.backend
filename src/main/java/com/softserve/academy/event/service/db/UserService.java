@@ -3,21 +3,18 @@ package com.softserve.academy.event.service.db;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.entity.enums.TokenValidation;
-import com.softserve.academy.event.exception.EmailExistException;
-
 import java.util.Optional;
 
 public interface UserService extends BasicService<User, Long> {
-    Optional<Long> getAuthenicationId();
-    VerificationToken generateNewVerificationToken(String token);
+    Optional<Long> getAuthenticationId();
 
-    User newUserAccount(User account) throws EmailExistException;
+    VerificationToken updateTokenExpiration(String token);
 
-    User getUser(String verificationToken);
+    User newUserAccount(User account);
 
-    User getUserByName(String username);
-
-    void createVerificationToken(User user, String token);
+    VerificationToken createVerificationToken(User user);
 
     TokenValidation validateVerificationToken(String token);
+
+    String getEmailByUserId(Long id);
 }

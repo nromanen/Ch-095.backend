@@ -17,6 +17,7 @@ import java.util.Properties;
 @PropertySource("classpath:email.properties")
 @ComponentScan(basePackages = {"com.softserve.academy.event.service"})
 public class EmailConfig {
+
     @Value("${email.host}")
     private String host;
 

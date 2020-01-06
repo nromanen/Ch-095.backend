@@ -7,8 +7,6 @@ import com.softserve.academy.event.dto.*;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
-import com.softserve.academy.event.exception.SurveyNotFound;
-import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
@@ -105,6 +103,22 @@ public class SurveyController {
             surveyQuestions.add(saveQuestionMapper.toEntity(x));
         }
         return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
+        List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
+        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
+    }
+
+    /**
+      Method gets list of Question DTO and made list of entities with correct variant of answers
+      Mapper can't make string from list, so i set it through object mapper
+      @return List<SurveyQuestion> - list of entities but without established survey
+    */
+    private List<SurveyQuestion> getQuestionsEntities(List<SurveyQuestionDTO> surveyQuestionsDTO) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        for (SurveyQuestionDTO surveyQuestionDTO : surveyQuestionsDTO) {
+            SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
+            String answers = mapper.writeValueAsString(surveyQuestionDTO.getChoiceAnswers());
+            surveyQuestion.setChoiceAnswers(answers);
+            surveyQuestions.add(surveyQuestion);
     }
 
 

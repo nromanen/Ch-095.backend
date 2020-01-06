@@ -10,9 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.softserve.academy.event.util.Constants.*;
@@ -24,14 +25,10 @@ import static com.softserve.academy.event.util.Constants.*;
 @AllArgsConstructor
 @Data
 @ToString(of = {"title"})
-@Filters({
-        @Filter(name = SURVEY_STATUS_FILTER_NAME, condition = "status = :" + SURVEY_STATUS_FILTER_ARGUMENT),
-        @Filter(name = SURVEY_DEFAULT_FILTER_NAME, condition = "status != " + SURVEY_DEFAULT_TEMPLATE_NUMBER)
-})
-@FilterDefs({
-        @FilterDef(name = SURVEY_STATUS_FILTER_NAME, parameters = @ParamDef(name = SURVEY_STATUS_FILTER_ARGUMENT, type = "integer")),
-        @FilterDef(name = SURVEY_DEFAULT_FILTER_NAME)
-})
+@Filter(name = SURVEY_STATUS_FILTER_NAME, condition = "status = :" + SURVEY_STATUS_FILTER_ARGUMENT)
+@Filter(name = SURVEY_DEFAULT_FILTER_NAME, condition = "status != " + SURVEY_DEFAULT_TEMPLATE_NUMBER)
+@FilterDef(name = SURVEY_STATUS_FILTER_NAME, parameters = @ParamDef(name = SURVEY_STATUS_FILTER_ARGUMENT, type = "integer"))
+@FilterDef(name = SURVEY_DEFAULT_FILTER_NAME)
 public class Survey implements Serializable {
 
     private static final long serialVersionUID = 2943648242656547434L;
@@ -44,7 +41,7 @@ public class Survey implements Serializable {
     private String title;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDate creationDate = LocalDate.now();
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @Enumerated
     @Column(nullable = false)
