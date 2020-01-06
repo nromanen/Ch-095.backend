@@ -4,17 +4,27 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.entity.enums.Roles;
 import com.softserve.academy.event.entity.enums.TokenValidation;
+import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.exception.EmailExistException;
+import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
+
+import java.util.Calendar;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -22,28 +32,38 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final VerificationTokenRepository tokenRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, /*BCryptPasswordEncoder bCryptPasswordEncoder, */VerificationTokenRepository tokenRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, VerificationTokenRepository tokenRepository) {
         this.userRepository = userRepository;
-//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.tokenRepository = tokenRepository;
     }
 
-
     @Override
-    public VerificationToken generateNewVerificationToken(String token) {
-        VerificationToken verificationToken = tokenRepository.findByToken(token);
-        verificationToken.updateToken(UUID.randomUUID().toString());
-        verificationToken = tokenRepository.save(verificationToken);
-        return verificationToken;
+    public Optional<Long> getAuthenticationId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            String email = ((UserDetails)principal).getUsername();
+            Long id = userRepository.findByEmail(email).orElseThrow(UserNotFound::new).getId();
+            return Optional.of(id);
+        }
+       return Optional.empty();
     }
 
     @Override
-    public User newUserAccount(User userAccount) throws EmailExistException {
+    public VerificationToken updateTokenExpiration(String token) {
+        VerificationToken verificationToken = tokenRepository.findByToken(token);
+        verificationToken.updateToken(UUID.randomUUID().toString());
+        return tokenRepository.save(verificationToken);
+    }
+
+    @Override
+    public User newUserAccount(User userAccount) {
         if (emailExists(userAccount.getEmail())) {
             throw new EmailExistException("There is an account with that email address: " + userAccount.getEmail());
         }
@@ -54,22 +74,14 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean emailExists(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            return true;
-        }
-        return false;
+        return userRepository.findByEmail(email).isPresent();
     }
 
     @Override
-    public User getUser(String verificationToken) {
-        return tokenRepository.findByToken(verificationToken).getUser();
-    }
-
-    @Override
-    public void createVerificationToken(User user, String token) {
+    public VerificationToken createVerificationToken(User user) {
+        String token = UUID.randomUUID().toString();
         VerificationToken vToken = new VerificationToken(token, user);
-        tokenRepository.save(vToken);
+        return tokenRepository.save(vToken);
     }
 
     @Override
@@ -87,6 +99,11 @@ public class UserServiceImpl implements UserService {
         user.setActive(true);
         userRepository.save(user);
         return TokenValidation.TOKEN_VALID;
+    }
+
+    @Override
+    public String getEmailByUserId(Long id) {
+        return userRepository.getEmailByUserId(id);
     }
 
     @Override

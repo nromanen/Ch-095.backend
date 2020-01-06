@@ -1,8 +1,9 @@
 package com.softserve.academy.event.exception.handler;
 
+import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UnauthorizedException;
-import com.softserve.academy.event.exception.UserNotFountException;
+import com.softserve.academy.event.exception.UserNotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,12 @@ public class GlobalExceptionHandler {
         String description = request.getDescription(false);
         log.error("Not default exception : " + e.getMessage());
         log.error("WebRequest description  : " + description);
-        return new ResponseEntity<>(e.getMessage() + "\n" + description, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(e.getMessage() + "\n" + description, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UserNotFountException.class)
+    @ExceptionHandler(UserNotFound.class)
     public ResponseEntity<Object> userNotFoundHandler(Exception e, WebRequest request) {
-        return handler(e, request, HttpStatus.NOT_FOUND);
+        return handler(e,request,HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(SurveyNotFound.class)
@@ -33,9 +34,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(EmailExistException.class)
+    public ResponseEntity<Object> emailExistHandler(Exception e, WebRequest request) {
+        return handler(e, request, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> unauthorizedHandler(Exception e, WebRequest request) {
-
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 

@@ -9,17 +9,19 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Optional;
 
 public interface UserService extends BasicService<User, Long> {
-    VerificationToken generateNewVerificationToken(String token);
+    Optional<Long> getAuthenticationId();
 
-    User newUserAccount(User account) throws EmailExistException;
+    VerificationToken updateTokenExpiration(String token);
 
-    User getUser(String verificationToken);
+    User newUserAccount(User account);
 
-    void createVerificationToken(User user, String token);
+    VerificationToken createVerificationToken(User user);
 
     TokenValidation validateVerificationToken(String token);
 
     Optional<User> findByEmail(String email);
 
     User newSocialUser(OAuth2User oAuth2User);
+
+    String getEmailByUserId(Long id);
 }

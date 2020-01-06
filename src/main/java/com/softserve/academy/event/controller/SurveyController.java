@@ -33,8 +33,8 @@ import java.util.List;
 @Slf4j
 public class SurveyController {
 
-    private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyService service;
+    private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyMapper surveyMapper;
 
     @Autowired
@@ -89,19 +89,28 @@ public class SurveyController {
     }
 
     @PostMapping(value = "/createNewSurvey")
-    public ResponseEntity<Survey> saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
+    public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
         Survey survey = new Survey();
         survey.setTitle(saveSurveyDTO.getTitle());
-        long userID = saveSurveyDTO.getUserID();
-        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        for (SurveyQuestionDTO surveyQuestionDTO : saveSurveyDTO.getQuestions()) {
-            SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String answers = mapper.writeValueAsString(surveyQuestionDTO.getAnswers());
-            surveyQuestion.setAnswers(answers);
-            surveyQuestions.add(surveyQuestion);
-        }
-        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, userID, surveyQuestions));
+        survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
+        List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
+        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
     }
 
+    /**
+      Method gets list of Question DTO and made list of entities with correct variant of answers
+      Mapper can't make string from list, so i set it through object mapper
+      @return List<SurveyQuestion> - list of entities but without established survey
+    */
+    private List<SurveyQuestion> getQuestionsEntities(List<SurveyQuestionDTO> surveyQuestionsDTO) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
+        for (SurveyQuestionDTO surveyQuestionDTO : surveyQuestionsDTO) {
+            SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
+            String answers = mapper.writeValueAsString(surveyQuestionDTO.getChoiceAnswers());
+            surveyQuestion.setChoiceAnswers(answers);
+            surveyQuestions.add(surveyQuestion);
+        }
+        return surveyQuestions;
+    }
 }

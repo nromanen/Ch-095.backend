@@ -32,6 +32,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,6 @@ import java.util.stream.Stream;
 
 @Configuration
 @EnableWebSecurity
-//@PropertySource("classpath:social.properties")
 @PropertySource({"classpath:application.properties", "classpath:social.properties"})
 @ComponentScan(basePackages = { "com.softserve.academy.event.service" })
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -88,11 +88,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration", "/logout", "/login").permitAll()
                 .antMatchers("/oauth_login", "/loginSuccess", "/loginFailure", "/test").permitAll()
                 .antMatchers("/testAccess/{token}", "/testAccess/check").permitAll()
+                .antMatchers("/question", "/testAccess/{token}", "/testAccess/check").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .successHandler(mySuccessHandler)
-                .failureHandler(myFailureHandler)
+                    .successHandler(mySuccessHandler)
+                    .failureHandler(myFailureHandler)
                 .and()
 
                 .oauth2Login()
@@ -109,14 +110,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 .csrf()
-                .ignoringAntMatchers("/registration")
-                .csrfTokenRepository(getCsrfTokenRepository())
+                    .ignoringAntMatchers("/registration")
+                    .csrfTokenRepository(getCsrfTokenRepository())
 
                 .and()
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("http://localhost:4200/login")
-//                .logoutSuccessUrl("/login")
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID", "XSRF-TOKEN")

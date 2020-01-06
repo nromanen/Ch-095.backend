@@ -11,7 +11,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SurveyQuestion implements Serializable{
+public class SurveyQuestion implements Serializable {
 
     private static final long serialVersionUID = -2673922858877977323L;
 
@@ -46,8 +45,9 @@ public class SurveyQuestion implements Serializable{
     @Enumerated(EnumType.STRING)
     private SurveyQuestionType type;
 
-    @Column(nullable = false, length = 10000)
-    private String answers;
+    @Column(name = "answers", nullable = false, length = 10000)
+    private String choiceAnswers;
 
     private boolean required;
+
 }

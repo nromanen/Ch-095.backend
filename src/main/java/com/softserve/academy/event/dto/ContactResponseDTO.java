@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ContactResponseDTO {
+public class ContactResponseDTO{
 
     private Long surveyId;
     private String contactEmail;

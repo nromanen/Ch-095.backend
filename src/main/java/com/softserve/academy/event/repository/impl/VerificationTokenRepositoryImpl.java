@@ -29,7 +29,6 @@ public class VerificationTokenRepositoryImpl implements VerificationTokenReposit
         }
         return vToken.get(0);
     }
-
     @Override
     public Optional<VerificationToken> findFirstById(Long id) {
         return Optional.empty();

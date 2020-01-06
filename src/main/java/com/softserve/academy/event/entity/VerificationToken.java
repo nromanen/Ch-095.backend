@@ -3,6 +3,7 @@ package com.softserve.academy.event.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -11,20 +12,20 @@ import java.util.Date;
 
 
 
-@NamedQueries(
-        {
-                @NamedQuery(
-                        name = "findToken",
-                        query = "from VerificationToken v where v.token= :token"
-                )
-        }
+@NamedQuery(
+        name = "findToken",
+        query = "from VerificationToken v where v.token= :token"
 )
-
+@NamedQuery(
+        name = "findUser",
+        query = "from VerificationToken u where u.user= :user"
+)
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 public class VerificationToken implements Serializable {
+
     private static final int EXPIRATION = 60 *24;
 
     @Id
