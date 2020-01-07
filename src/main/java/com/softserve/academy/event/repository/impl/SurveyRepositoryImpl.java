@@ -28,7 +28,6 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     public Survey eagerFindFirstById(Long id) {
         Survey survey = super.findFirstById(id)
                 .orElseThrow(SurveyNotFound::new);
-        Hibernate.initialize(survey.getContacts());
         Hibernate.initialize(survey.getSurveyContacts());
         Hibernate.initialize(survey.getSurveyQuestions());
         return survey;
