@@ -56,13 +56,12 @@ class StatisticControllerTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-
+        statisticService =
+                webApplicationContext.getBean("statisticService",StatisticService.class);
 
     }
 
-    @Autowired
     private StatisticService statisticService;
-
 
     @ParameterizedTest
     @MethodSource("sourceGetGeneralStatistic")
@@ -73,7 +72,6 @@ class StatisticControllerTest {
                 .andExpect(jsonPath("$.questionDTOS",
                         hasSize(1)))
                 .andExpect(jsonPath("$.title", is(questionsDTO.getTitle())));
-
     }
 
     @Test
@@ -83,7 +81,6 @@ class StatisticControllerTest {
                 .andExpect(status().isBadRequest());
 
     }
-
 
     static Stream<QuestionsGeneralStatisticDTO> sourceGetGeneralStatistic()  {
         List<QuestionsGeneralStatisticDTO> data =  new ArrayList<>();
@@ -145,7 +142,7 @@ class StatisticControllerTest {
 
     }
 
-
+    
     static Stream<Set<QuestionsSeparatelyStatisticDTO>> sourceGetSeparatelyStatistic() {
         List<Set<QuestionsSeparatelyStatisticDTO>> data = new ArrayList<>();
 

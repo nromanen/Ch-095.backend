@@ -7,7 +7,6 @@ import com.softserve.academy.event.dto.QuestionsSeparatelyStatisticDTO;
 import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
-import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Service;
@@ -34,11 +33,11 @@ public interface SeparatelyStatisticMapper {
     }
 
     @Mapping(target = "questionDTOS",
-            expression = "java(toSetQuestionDTO(survey.getSurveyQuestions(),contact))")
+            expression = "java(toSetOneQuestionDTO(survey.getSurveyQuestions(),contact))")
     @Mapping(target = "email", expression = "java(contact.getEmail())")
     QuestionsSeparatelyStatisticDTO toQuestionsDTO(Contact contact, Survey survey);
 
-    default Set<OneQuestionSeparatelyStatisticDTO> toSetQuestionDTO(
+    default Set<OneQuestionSeparatelyStatisticDTO> toSetOneQuestionDTO(
             List<SurveyQuestion> surveyQuestions, Contact contact) {
         if (surveyQuestions == null || contact == null) {
             return new HashSet<>();
@@ -48,7 +47,7 @@ public interface SeparatelyStatisticMapper {
 
         for (SurveyQuestion surveyQuestion : surveyQuestions) {
             try {
-                hashSet.add(toQuestionDTO(surveyQuestion, contact));
+                hashSet.add(toOneQuestionDTO(surveyQuestion, contact));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -60,7 +59,7 @@ public interface SeparatelyStatisticMapper {
             "surveyQuestion.getChoiceAnswers(),String[].class))")
     @Mapping(target = "answer",
             expression = "java(transformationToAnswer(surveyQuestion,contact))")
-    OneQuestionSeparatelyStatisticDTO toQuestionDTO(SurveyQuestion surveyQuestion, Contact contact)
+    OneQuestionSeparatelyStatisticDTO toOneQuestionDTO(SurveyQuestion surveyQuestion, Contact contact)
             throws JsonProcessingException;
 
     default List<String> transformationToAnswer
