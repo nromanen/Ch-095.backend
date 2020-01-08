@@ -38,15 +38,6 @@ public class EmailServiceImpl implements EmailService {
         this.userService = userService;
     }
 
-    private void sendMailWithLink(String userEmail, String to, String subject, String message) {
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setFrom(userEmail);
-        email.setTo(to);
-        email.setSubject(subject);
-        email.setText(message);
-        javaMailSender.send(email);
-    }
-
     public void sendEmailForUser(String idUser, String idSurvey, String anEmail) {
         Optional<Survey> survey = surveyService.findFirstById(Long.parseLong(idSurvey));
         Optional<User> user = userService.findFirstById(Long.valueOf(idUser));
@@ -64,7 +55,7 @@ public class EmailServiceImpl implements EmailService {
         String encodedString = baseUrl + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
         String subject = "Survey";
         String message = "Message from " + userEmail + ": " + "<<Please, follow the link and take the survey" + " " + encodedString + " >>";
-        sendMailWithLink(userEmail, anEmail, subject, message);
+        sendMail(anEmail, subject, message);
     }
 
     @Override
