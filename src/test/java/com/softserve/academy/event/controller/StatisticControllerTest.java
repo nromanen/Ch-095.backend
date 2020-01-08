@@ -1,6 +1,5 @@
 package com.softserve.academy.event.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.academy.event.dto.OneQuestionGeneralStatisticDTO;
 import com.softserve.academy.event.dto.OneQuestionSeparatelyStatisticDTO;
 import com.softserve.academy.event.dto.QuestionsGeneralStatisticDTO;
@@ -8,6 +7,7 @@ import com.softserve.academy.event.dto.QuestionsSeparatelyStatisticDTO;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import com.softserve.academy.event.service.db.StatisticService;
 
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.context.annotation.*;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -28,13 +28,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringJUnitWebConfig({StatisticControllerTest.Config.class,ApplicationInitializer.class})
+@SpringJUnitWebConfig({StatisticControllerTest.Config.class, ApplicationInitializerTest.class})
 class StatisticControllerTest {
 
     @Configuration
@@ -56,34 +55,35 @@ class StatisticControllerTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-
-
     }
 
     @Autowired
     private StatisticService statisticService;
 
-
     @ParameterizedTest
     @MethodSource("sourceGetGeneralStatistic")
     void getGeneralStatistic(QuestionsGeneralStatisticDTO questionsDTO) throws Exception {
-        when(statisticService.getGeneralStatistic(1L)).thenReturn(Optional.of(questionsDTO));
+        when(statisticService.getGeneralStatistic(1L)).thenReturn(questionsDTO);
+        when(statisticService.isSurveyBelongsUser(1L)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.get("/statistic/general?surveyId=1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.questionDTOS",
                         hasSize(1)))
-                .andExpect(jsonPath("$.title", is(questionsDTO.getTitle())));
-
+                .andExpect(jsonPath("$.title", is(questionsDTO.getTitle())))
+                .andExpect(jsonPath("$.questionDTOS",hasSize(not(0))));
     }
 
     @Test
     void getGeneralStatisticNegative() throws Exception {
-        when(statisticService.getGeneralStatistic(1L)).thenReturn(Optional.empty());
+        when(statisticService.getGeneralStatistic(1L))
+                .thenReturn(new QuestionsGeneralStatisticDTO());
+        when(statisticService.isSurveyBelongsUser(1L)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.get("/statistic/general?surveyId=1"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title",isEmptyOrNullString()))
+                .andExpect(jsonPath("$.questionDTOS", isEmptyOrNullString()));
 
     }
-
 
     static Stream<QuestionsGeneralStatisticDTO> sourceGetGeneralStatistic()  {
         List<QuestionsGeneralStatisticDTO> data =  new ArrayList<>();
@@ -128,24 +128,29 @@ class StatisticControllerTest {
     @ParameterizedTest
     @MethodSource("sourceGetSeparatelyStatistic")
     void getSeparatelyStatistic(Set<QuestionsSeparatelyStatisticDTO> setQuestionsDTO) throws Exception {
-        when(statisticService.getSeparatelyStatistic(1L)).thenReturn(Optional.of(setQuestionsDTO));
+        when(statisticService.getSeparatelyStatistic(1L)).thenReturn(setQuestionsDTO);
+        when(statisticService.isSurveyBelongsUser(1L)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.get("/statistic/separately?surveyId=1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",hasSize(2)))
+                .andExpect(jsonPath("$[0].questionDTOS",hasSize(not(0))))
                 .andExpect(jsonPath("$[0].email",
                         is(setQuestionsDTO.iterator().next().getEmail())));
+
 
     }
 
     @Test
     void getSeparatelyStatisticNegative() throws Exception {
-        when(statisticService.getSeparatelyStatistic(1L)).thenReturn(Optional.empty());
+        when(statisticService.getSeparatelyStatistic(1L)).thenReturn(new HashSet<>());
+        when(statisticService.isSurveyBelongsUser(1L)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.get("/statistic/separately?surveyId=1"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",hasSize(0)));
 
     }
 
-
+    
     static Stream<Set<QuestionsSeparatelyStatisticDTO>> sourceGetSeparatelyStatistic() {
         List<Set<QuestionsSeparatelyStatisticDTO>> data = new ArrayList<>();
 

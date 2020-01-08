@@ -57,14 +57,6 @@ public class Survey implements Serializable {
     @JoinColumn(nullable = false)
     private User user;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "survey_contacts",
-            joinColumns = {@JoinColumn(name = "survey_id")},
-            inverseJoinColumns = {@JoinColumn(name = "contact_id")}
-    )
-    private Set<Contact> contacts = new HashSet<>();
-
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "survey_id")
