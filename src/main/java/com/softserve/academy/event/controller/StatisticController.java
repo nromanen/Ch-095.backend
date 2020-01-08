@@ -31,15 +31,10 @@ public class StatisticController {
         log.info("call with surveyId = " + surveyId);
 
         if(statisticService.isSurveyBelongsUser(surveyId)){
-            Optional<QuestionsGeneralStatisticDTO> surveyDTO =
+            QuestionsGeneralStatisticDTO surveyDTO =
                     statisticService.getGeneralStatistic(surveyId);
-            return surveyDTO.map(value -> {
-                log.info(String.format(RETURN_ID, HttpStatus.OK, surveyId));
-                return new ResponseEntity<>(value, HttpStatus.OK);
-            }).orElseGet(() -> {
-                log.info(String.format(RETURN_ID, HttpStatus.BAD_REQUEST, surveyId));
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            });
+            log.info(String.format(RETURN_ID, HttpStatus.OK, surveyId));
+            return new ResponseEntity<>(surveyDTO,HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -52,15 +47,10 @@ public class StatisticController {
         log.info("call with surveyId = " + surveyId);
 
         if(statisticService.isSurveyBelongsUser(surveyId)){
-            Optional<Set<QuestionsSeparatelyStatisticDTO>> surveyDTO =
+            Set<QuestionsSeparatelyStatisticDTO> surveyDTO =
                     statisticService.getSeparatelyStatistic(surveyId);
-            return surveyDTO.map(value -> {
-                log.info(String.format(RETURN_ID, HttpStatus.OK, surveyId));
-                return new ResponseEntity<>(value, HttpStatus.OK);
-            }).orElseGet(() -> {
-                log.info(String.format(RETURN_ID, HttpStatus.BAD_REQUEST, surveyId));
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            });
+            log.info(String.format(RETURN_ID, HttpStatus.OK, surveyId));
+            return new ResponseEntity<>(surveyDTO,HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

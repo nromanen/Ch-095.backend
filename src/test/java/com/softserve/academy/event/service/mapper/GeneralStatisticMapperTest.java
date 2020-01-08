@@ -3,10 +3,7 @@ package com.softserve.academy.event.service.mapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.softserve.academy.event.dto.OneQuestionGeneralStatisticDTO;
 import com.softserve.academy.event.dto.QuestionsGeneralStatisticDTO;
-import com.softserve.academy.event.entity.Contact;
-import com.softserve.academy.event.entity.Survey;
-import com.softserve.academy.event.entity.SurveyAnswer;
-import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.*;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GeneralStatisticMapperTest {
 
-
     private GeneralStatisticMapper generalStatisticMapper;
     private static Survey survey;
 
@@ -33,14 +29,16 @@ class GeneralStatisticMapperTest {
     static void initializeDTO(){
         survey = new Survey();
         survey.setTitle("Survey #1");
-        List<Contact> contacts = new ArrayList<>();
-
+        Set<SurveyContact> contacts = new HashSet<>();
+        SurveyContact surveyContact = new SurveyContact();
         Contact contact = new Contact();
         contact.setId(1L);
         contact.setEmail("test1@gmail.com");
-        contacts.add(contact);
+        surveyContact.setContact(contact);
+        surveyContact.setSurvey(survey);
+        contacts.add(surveyContact);
 
-        survey.setContacts(new HashSet<>(contacts));
+        survey.setSurveyContacts(contacts);
         List<SurveyQuestion> questionList = new ArrayList<>();
         SurveyQuestion question = new SurveyQuestion();
         question.setChoiceAnswers("[]");
@@ -49,10 +47,10 @@ class GeneralStatisticMapperTest {
         question.setQuestion("What's your name?");
         Set<SurveyAnswer> answerSet = new HashSet<>();
 
-
+        Iterator<SurveyContact> contactIterator = contacts.iterator();
         SurveyAnswer surveyAnswer = new SurveyAnswer();
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contacts.get(0));
+        surveyAnswer.setContact(contactIterator.next().getContact());
         surveyAnswer.setValue("[\"Vlad\"]");
         answerSet.add(surveyAnswer);
 
@@ -69,9 +67,10 @@ class GeneralStatisticMapperTest {
         answerSet = new HashSet<>();
 
 
+        contactIterator = contacts.iterator();
         surveyAnswer = new SurveyAnswer();
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contacts.get(0));
+        surveyAnswer.setContact(contactIterator.next().getContact());
         surveyAnswer.setValue("[\"1 p.m.\"]");
         answerSet.add(surveyAnswer);
 
@@ -88,14 +87,14 @@ class GeneralStatisticMapperTest {
 
     @ParameterizedTest
     @MethodSource("sourceToQuestionsDTO")
-    void toQuestionsDTO(Survey survey,QuestionsGeneralStatisticDTO expected) {
+    void toQuestionsDTO(Survey survey,QuestionsGeneralStatisticDTO expected) throws JsonProcessingException {
         QuestionsGeneralStatisticDTO actual =
                 generalStatisticMapper.toQuestionsDTO(survey);
         assertEquals(actual,expected);
     }
 
     @Test
-    void toQuestionsDTOWithoutQuestions(){
+    void toQuestionsDTOWithoutQuestions() throws JsonProcessingException {
         Survey survey = new Survey();
         survey.setTitle("Survey #1");
         QuestionsGeneralStatisticDTO dto =
@@ -130,7 +129,7 @@ class GeneralStatisticMapperTest {
         question.setChoiceAnswers("adsdsa");
         surveyQuestions.add(question);
         survey.setSurveyQuestions(surveyQuestions);
-        assertThrows(RuntimeException.class,() -> generalStatisticMapper.toQuestionsDTO(survey));
+        assertThrows(JsonProcessingException.class,() -> generalStatisticMapper.toQuestionsDTO(survey));
     }
 
     static Stream<Arguments> sourceToQuestionsDTO(){
@@ -196,9 +195,9 @@ class GeneralStatisticMapperTest {
 
         List<Arguments> arguments = new ArrayList<>();
         AtomicInteger i= new AtomicInteger();
-        survey.getSurveyQuestions().forEach(value ->{
-            arguments.add(Arguments.of(value,expected.get(i.getAndIncrement())));
-        });
+        survey.getSurveyQuestions().forEach(value ->
+            arguments.add(Arguments.of(value,expected.get(i.getAndIncrement())))
+        );
 
         return arguments.stream();
     }
@@ -206,7 +205,7 @@ class GeneralStatisticMapperTest {
     @ParameterizedTest
     @MethodSource("sourceListOneQuestionToDTO")
     void listOneQuestionToDTO(List<SurveyQuestion> surveyQuestions,
-                              List<OneQuestionGeneralStatisticDTO> expected) {
+                              List<OneQuestionGeneralStatisticDTO> expected) throws JsonProcessingException {
         List<OneQuestionGeneralStatisticDTO> actual =
                 generalStatisticMapper.listOneQuestionToDTO(surveyQuestions);
 

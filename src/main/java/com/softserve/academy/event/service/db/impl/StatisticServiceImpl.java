@@ -1,5 +1,6 @@
 package com.softserve.academy.event.service.db.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.softserve.academy.event.dto.QuestionsGeneralStatisticDTO;
 import com.softserve.academy.event.dto.QuestionsSeparatelyStatisticDTO;
 import com.softserve.academy.event.entity.Survey;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,18 +46,34 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     @Transactional
-    public Optional<QuestionsGeneralStatisticDTO> getGeneralStatistic(Long id) {
+    public QuestionsGeneralStatisticDTO getGeneralStatistic(Long id) {
         log.info("call with id = " + id);
         Optional<Survey> surveyOptional = surveyRepository.findFirstById(id);
-        return surveyOptional.map(survey -> generalStatisticMapper.toQuestionsDTO(survey));
+        if(surveyOptional.isPresent()){
+            try {
+                return generalStatisticMapper.toQuestionsDTO(surveyOptional.get());
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage());
+                return new QuestionsGeneralStatisticDTO();
+            }
+        }
+        else {return new QuestionsGeneralStatisticDTO();}
     }
 
     @Override
     @Transactional
-    public Optional<Set<QuestionsSeparatelyStatisticDTO>> getSeparatelyStatistic(Long id) {
+    public Set<QuestionsSeparatelyStatisticDTO> getSeparatelyStatistic(Long id) {
         log.info("call with id = " + id);
         Optional<Survey> surveyOptional = surveyRepository.findFirstById(id);
-        return surveyOptional.map(survey -> separatelyStatisticMapper.toSetQuestionsDTO(survey));
+        if(surveyOptional.isPresent()){
+            try {
+                return separatelyStatisticMapper.toSetQuestionsDTO(surveyOptional.get());
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage());
+                return new HashSet<>();
+            }
+        }
+        else {return new HashSet<>();}
     }
 
     @Override

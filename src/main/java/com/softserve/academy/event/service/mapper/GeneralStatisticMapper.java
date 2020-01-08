@@ -17,14 +17,17 @@ import java.util.stream.Collectors;
 public interface GeneralStatisticMapper {
 
     @Mapping(target = "questionDTOS", source = "surveyQuestions")
-    QuestionsGeneralStatisticDTO toQuestionsDTO(Survey survey);
+    QuestionsGeneralStatisticDTO toQuestionsDTO(Survey survey)
+            throws JsonProcessingException;
 
     @Mapping(target = "choiceAnswers", expression = "java(new ObjectMapper().readValue(" +
             "surveyQuestion.getChoiceAnswers(),String[].class))")
     @Mapping(target = "answers", expression = "java(transformationToAnswers(surveyQuestion))")
-    OneQuestionGeneralStatisticDTO toOneQuestionDTO(SurveyQuestion surveyQuestion) throws JsonProcessingException;
+    OneQuestionGeneralStatisticDTO toOneQuestionDTO(SurveyQuestion surveyQuestion)
+            throws JsonProcessingException;
 
-    List<OneQuestionGeneralStatisticDTO> listOneQuestionToDTO(List<SurveyQuestion> surveyQuestions);
+    List<OneQuestionGeneralStatisticDTO> listOneQuestionToDTO(List<SurveyQuestion> surveyQuestions)
+            throws JsonProcessingException;
 
     default List<List<String>> transformationToAnswers(SurveyQuestion surveyQuestion) {
         return surveyQuestion.getSurveyAnswers().stream().map(surveyAnswer -> {

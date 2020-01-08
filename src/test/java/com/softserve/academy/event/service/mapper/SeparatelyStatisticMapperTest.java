@@ -3,10 +3,7 @@ package com.softserve.academy.event.service.mapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.softserve.academy.event.dto.OneQuestionSeparatelyStatisticDTO;
 import com.softserve.academy.event.dto.QuestionsSeparatelyStatisticDTO;
-import com.softserve.academy.event.entity.Contact;
-import com.softserve.academy.event.entity.Survey;
-import com.softserve.academy.event.entity.SurveyAnswer;
-import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.*;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,14 +27,17 @@ class SeparatelyStatisticMapperTest {
     @BeforeAll
     static void initializeDTO(){
         survey = new Survey();
-        List<Contact> contacts = new ArrayList<>();
-
+        survey.setTitle("Survey #1");
+        Set<SurveyContact> contacts = new HashSet<>();
+        SurveyContact surveyContact = new SurveyContact();
         Contact contact = new Contact();
         contact.setId(1L);
         contact.setEmail("test1@gmail.com");
-        contacts.add(contact);
+        surveyContact.setContact(contact);
+        surveyContact.setSurvey(survey);
+        contacts.add(surveyContact);
 
-        survey.setContacts(new HashSet<>(contacts));
+        survey.setSurveyContacts(contacts);
         List<SurveyQuestion> questionList = new ArrayList<>();
         SurveyQuestion question = new SurveyQuestion();
         question.setChoiceAnswers("[]");
@@ -46,10 +46,10 @@ class SeparatelyStatisticMapperTest {
         question.setQuestion("What's your name?");
         Set<SurveyAnswer> answerSet = new HashSet<>();
 
-
+        Iterator<SurveyContact> contactIterator = contacts.iterator();
         SurveyAnswer surveyAnswer = new SurveyAnswer();
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contacts.get(0));
+        surveyAnswer.setContact(contactIterator.next().getContact());
         surveyAnswer.setValue("[\"Vlad\"]");
         answerSet.add(surveyAnswer);
 
@@ -66,9 +66,10 @@ class SeparatelyStatisticMapperTest {
         answerSet = new HashSet<>();
 
 
+        contactIterator = contacts.iterator();
         surveyAnswer = new SurveyAnswer();
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contacts.get(0));
+        surveyAnswer.setContact(contactIterator.next().getContact());
         surveyAnswer.setValue("[\"1 p.m.\"]");
         answerSet.add(surveyAnswer);
 
@@ -86,7 +87,7 @@ class SeparatelyStatisticMapperTest {
 
     @ParameterizedTest
     @MethodSource("sourceToSetQuestionsDTO")
-    void toSetQuestionsDTO(Survey survey,Set<QuestionsSeparatelyStatisticDTO> expected) {
+    void toSetQuestionsDTO(Survey survey,Set<QuestionsSeparatelyStatisticDTO> expected) throws JsonProcessingException {
 
         Set<QuestionsSeparatelyStatisticDTO> dto =
                 separatelyStatisticMapper.toSetQuestionsDTO(survey);
@@ -95,7 +96,7 @@ class SeparatelyStatisticMapperTest {
     }
 
     @Test
-    void toQuestionsDTOWithoutQuestions(){
+    void toQuestionsDTOWithoutQuestions() throws JsonProcessingException {
         Survey survey = new Survey();
         survey.setTitle("Survey #1");
         Set<QuestionsSeparatelyStatisticDTO> dto =
@@ -106,10 +107,13 @@ class SeparatelyStatisticMapperTest {
     @Test
     void toQuestionsDTOWithoutAnswers(){
         Survey survey = new Survey();
+        Set<SurveyContact> surveyContacts = new HashSet<>();
+        SurveyContact surveyContact = new SurveyContact();
         Contact contact = new Contact();
-        Set<Contact> contacts = new HashSet<>();
-        contacts.add(contact);
-        survey.setContacts(contacts);
+        surveyContact.setSurvey(survey);
+        surveyContact.setContact(contact);
+        surveyContacts.add(surveyContact);
+        survey.setSurveyContacts(surveyContacts);
         survey.setTitle("Survey #1");
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         SurveyQuestion question = new SurveyQuestion();
@@ -125,12 +129,15 @@ class SeparatelyStatisticMapperTest {
     }
 
     @Test
-    void ifChoiceAnswersIsNotCorrect(){
+    void ifChoiceAnswersIsNotCorrect() {
         Survey survey = new Survey();
+        Set<SurveyContact> surveyContacts = new HashSet<>();
+        SurveyContact surveyContact = new SurveyContact();
         Contact contact = new Contact();
-        Set<Contact> contacts = new HashSet<>();
-        contacts.add(contact);
-        survey.setContacts(contacts);
+        surveyContact.setSurvey(survey);
+        surveyContact.setContact(contact);
+        surveyContacts.add(surveyContact);
+        survey.setSurveyContacts(surveyContacts);
         survey.setTitle("Survey #1");
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         SurveyQuestion question = new SurveyQuestion();
@@ -138,11 +145,7 @@ class SeparatelyStatisticMapperTest {
         question.setChoiceAnswers("adsdsa");
         surveyQuestions.add(question);
         survey.setSurveyQuestions(surveyQuestions);
-        Set<QuestionsSeparatelyStatisticDTO> dtoSet =
-                separatelyStatisticMapper.toSetQuestionsDTO(survey);
-        dtoSet.forEach(value ->{
-            assertTrue(value.getQuestionDTOS().isEmpty());
-        });
+        assertThrows(JsonProcessingException.class,() -> separatelyStatisticMapper.toSetQuestionsDTO(survey));
     }
 
     static Stream<Arguments> sourceToSetQuestionsDTO(){
@@ -177,8 +180,8 @@ class SeparatelyStatisticMapperTest {
 
     @ParameterizedTest
     @MethodSource("sourceToQuestionsDTO")
-    void toQuestionsDTO(Contact contact, Survey survey,
-                        QuestionsSeparatelyStatisticDTO expected) {
+    void toQuestionsDTO(SurveyContact contact, Survey survey,
+                        QuestionsSeparatelyStatisticDTO expected) throws JsonProcessingException {
         QuestionsSeparatelyStatisticDTO dto =
                 separatelyStatisticMapper.toQuestionsDTO(contact,survey);
 
@@ -212,7 +215,7 @@ class SeparatelyStatisticMapperTest {
 
         AtomicInteger i= new AtomicInteger();
         List<Arguments> list = new ArrayList<>();
-        Set<Contact> contacts = survey.getContacts();
+        Set<SurveyContact> contacts = survey.getSurveyContacts();
         contacts.forEach(contact ->
                 list.add(Arguments.of(contact, survey
                         , expected.get(i.getAndIncrement())))
@@ -223,8 +226,8 @@ class SeparatelyStatisticMapperTest {
 
     @ParameterizedTest
     @MethodSource("sourceToSetOneQuestionDTO")
-    void toSetOneQuestionDTO(List<SurveyQuestion> surveyQuestions, Contact contact,
-                             Set<OneQuestionSeparatelyStatisticDTO> expected) {
+    void toSetOneQuestionDTO(List<SurveyQuestion> surveyQuestions, SurveyContact contact,
+                             Set<OneQuestionSeparatelyStatisticDTO> expected) throws JsonProcessingException {
         Set<OneQuestionSeparatelyStatisticDTO> dtoSet =
                 separatelyStatisticMapper.toSetOneQuestionDTO(surveyQuestions,contact);
         assertArrayEquals(expected.toArray(),dtoSet.toArray());
@@ -255,7 +258,7 @@ class SeparatelyStatisticMapperTest {
         AtomicInteger i= new AtomicInteger();
         List<Arguments> list = new ArrayList<>();
         List<SurveyQuestion> surveyQuestions = survey.getSurveyQuestions();
-        Set<Contact> contacts = survey.getContacts();
+        Set<SurveyContact> contacts = survey.getSurveyContacts();
         contacts.forEach(contact ->
                     list.add(Arguments.of(surveyQuestions, contact
                             , expected.get(i.getAndIncrement())))
@@ -266,7 +269,7 @@ class SeparatelyStatisticMapperTest {
 
     @ParameterizedTest
     @MethodSource("sourceToOneQuestionDTO")
-    void toOneQuestionDTO(SurveyQuestion surveyQuestion, Contact contact,
+    void toOneQuestionDTO(SurveyQuestion surveyQuestion, SurveyContact contact,
                           OneQuestionSeparatelyStatisticDTO expected) throws JsonProcessingException {
 
         OneQuestionSeparatelyStatisticDTO dto =
@@ -295,17 +298,17 @@ class SeparatelyStatisticMapperTest {
         AtomicInteger i = new AtomicInteger();
         List<Arguments> list = new ArrayList<>();
         List<SurveyQuestion> surveyQuestions = survey.getSurveyQuestions();
-        Set<Contact> contacts = survey.getContacts();
-        surveyQuestions.forEach(surveyQuestion -> {
+        Set<SurveyContact> contacts = survey.getSurveyContacts();
+        surveyQuestions.forEach(surveyQuestion ->
             contacts.forEach(contact ->
-                    list.add(Arguments.of(surveyQuestion, contact,expected.get(i.getAndIncrement()))));
-        });
+                    list.add(Arguments.of(surveyQuestion, contact,expected.get(i.getAndIncrement()))))
+        );
         return list.stream();
     }
 
     @ParameterizedTest
     @MethodSource("sourceTransformationToAnswer")
-    void transformationToAnswer(SurveyQuestion surveyQuestion, Contact contact,List<String> expected) {
+    void transformationToAnswer(SurveyQuestion surveyQuestion, SurveyContact contact, List<String> expected) {
         List<String> answers =
                 separatelyStatisticMapper.transformationToAnswer(surveyQuestion,contact);
         assertFalse(answers.isEmpty());
@@ -320,11 +323,11 @@ class SeparatelyStatisticMapperTest {
         AtomicInteger i= new AtomicInteger();
         List<Arguments> list = new ArrayList<>();
         List<SurveyQuestion> surveyQuestions = survey.getSurveyQuestions();
-        Set<Contact> contacts = survey.getContacts();
-        surveyQuestions.forEach(surveyQuestion -> {
+        Set<SurveyContact> contacts = survey.getSurveyContacts();
+        surveyQuestions.forEach(surveyQuestion ->
             contacts.forEach(contact ->
-                    list.add(Arguments.of(surveyQuestion, contact,expected.get(i.getAndIncrement()))));
-        });
+                    list.add(Arguments.of(surveyQuestion, contact,expected.get(i.getAndIncrement()))))
+        );
         return list.stream();
     }
 

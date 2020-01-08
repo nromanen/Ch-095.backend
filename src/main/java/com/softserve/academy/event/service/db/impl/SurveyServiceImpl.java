@@ -83,7 +83,6 @@ public class SurveyServiceImpl implements SurveyService {
                 e.setSurvey(survey);
             });
         }
-        survey.setContacts(new HashSet<>());
         survey.getSurveyQuestions().forEach(e -> e.setSurveyAnswers(new HashSet<>()));
         repository.save(survey);
         return survey;
