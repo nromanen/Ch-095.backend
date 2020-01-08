@@ -58,7 +58,7 @@ public class CheckOpportunityController {
     @ApiOperation(value = "Check e-mail")
     @PostMapping(value = "/check")
     public ResponseEntity<ContactSurveyDTO> enterEmail(@RequestBody CheckOpportunityDTO checkOpportunityDTO){
-        String[] strings  = new String(Base64.getDecoder().decode(checkOpportunityDTO.getToken())).split(";");
+        String[] strings  = ";".split(new String(Base64.getDecoder().decode(checkOpportunityDTO.getToken())));
         final ContactSurveyDTO dto = new ContactSurveyDTO(strings[0], Long.valueOf(strings[1]));
         if (strings[0].equals(checkOpportunityDTO.getEmail())){
             return ResponseEntity.ok(dto);
