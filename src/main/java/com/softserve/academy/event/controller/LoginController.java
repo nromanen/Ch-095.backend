@@ -21,19 +21,13 @@ public class LoginController {
 
     private final UserMapper userMapper;
 
-    private final ApplicationEventPublisher eventPublisher;
-
     private final EmailService emailService;
-
-    private final Environment env;
 
     @Autowired
     public LoginController(UserService userService, UserMapper userMapper, ApplicationEventPublisher eventPublisher, EmailService emailService, Environment env) {
         this.userService = userService;
         this.userMapper = userMapper;
-        this.eventPublisher = eventPublisher;
         this.emailService = emailService;
-        this.env = env;
     }
 
    @PostMapping(value = "/registration")
