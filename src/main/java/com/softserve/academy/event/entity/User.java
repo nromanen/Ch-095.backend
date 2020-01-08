@@ -17,6 +17,10 @@ import java.util.Set;
         name = "findEmail",
         query = "from User u where u.email= :email"
 )
+@NamedQuery(
+        name = "findEmailById",
+        query = "from User u where u.id= :id"
+)
 @Entity
 @Table(name = "users")
 @EqualsAndHashCode(of = {"id"})
@@ -25,7 +29,7 @@ import java.util.Set;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 8894016998310477567L;
-    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 
     @Id

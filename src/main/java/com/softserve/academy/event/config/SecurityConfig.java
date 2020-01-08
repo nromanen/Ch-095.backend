@@ -61,6 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration").permitAll()
+                .antMatchers("/question", "/testAccess/{token}", "/testAccess/check").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
