@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = new User();
         user.setEmail(userAccount.getEmail());
-//        user.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
+        user.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         return userRepository.save(user);
     }
 
