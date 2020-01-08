@@ -1,7 +1,6 @@
 package com.softserve.academy.event.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.academy.event.annotation.PageableDefault;
 import com.softserve.academy.event.dto.*;
 import com.softserve.academy.event.entity.Survey;
@@ -25,10 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @Api(value = "/survey")
 @RestController
@@ -115,19 +112,16 @@ public class SurveyController {
         }
         EditSurveyDTO editSurveyDTO = new EditSurveyDTO(questionsDTO);
         Survey survey = service.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
-        editSurveyDTO = setSurveysTitleAndPhotoName(survey, editSurveyDTO);
-        editSurveyDTO = setSurveysPhotos(editSurveyDTO);
+        setSurveysTitleAndPhotoName(survey, editSurveyDTO);
         if (questionsDTO.isEmpty())
             return new ResponseEntity(editSurveyDTO, HttpStatus.BAD_REQUEST);
         return new ResponseEntity(editSurveyDTO, HttpStatus.OK);
     }
 
-    private EditSurveyDTO setSurveysTitleAndPhotoName(Survey survey, EditSurveyDTO editSurveyDTO) {
+    private void setSurveysTitleAndPhotoName(Survey survey, EditSurveyDTO editSurveyDTO) {
         editSurveyDTO.setTitle(survey.getTitle());
         editSurveyDTO.setSurveyPhotoName(survey.getImageUrl());
-        return editSurveyDTO;
     }
-
 
     @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
     @PostMapping(value = "/update/{id}")
@@ -139,24 +133,4 @@ public class SurveyController {
         }
         return ResponseEntity.ok(service.editSurvey(Long.parseLong(id), questions));
     }
-
-    private EditSurveyDTO setSurveysPhotos(EditSurveyDTO editSurveyDTO) throws IOException {
-        Properties properties = new Properties();
-        InputStream propertiesFile = FileUploadController.class.getClassLoader().getResourceAsStream("application.properties");
-        properties.load(propertiesFile);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        for (EditSurveyQuestionDTO questionDTO : editSurveyDTO.getQuestions()) {
-            if (questionDTO.getType().equals("RADIO_PICTURE") || questionDTO.getType().equals("CHECKBOX_PICTURE")) {
-                for (String pictureName : questionDTO.getChoiceAnswers()) {
-//                    File file = new File(properties.getProperty("image.upload.dir") + File.separator + pictureName);
-//                    FileInputStream input = new FileInputStream(file);
-//                    questionDTO.getFiles().add(new MockMultipartFile("file",
-//                            file.getName(), "image/jpg", IOUtils.toByteArray(input)));
-                }
-            }
-        }
-        return editSurveyDTO;
-    }
-
 }

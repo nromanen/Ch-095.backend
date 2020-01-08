@@ -147,7 +147,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     public Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions) {
         Survey survey = repository.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
-        survey.getSurveyQuestions().stream().forEach(questionRepository::delete);
+        survey.getSurveyQuestions().forEach(questionRepository::delete);
         survey.getSurveyQuestions().clear();
         surveyQuestions.forEach(survey::addQuestion);
         return repository.update(survey);

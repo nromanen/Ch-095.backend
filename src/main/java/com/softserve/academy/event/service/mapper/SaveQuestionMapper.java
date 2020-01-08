@@ -24,7 +24,6 @@ public interface SaveQuestionMapper {
     @Mapping(target = "choiceAnswers", expression = "java(Arrays.asList(new ObjectMapper().readValue(surveyQuestions.getChoiceAnswers(),String[].class)))")
     SurveyQuestionDTO toDTO(SurveyQuestion surveyQuestions) throws JsonProcessingException;
 
-    @Mapping(target = "files", ignore = true)
     @Mapping(target = "choiceAnswers", expression = "java(Arrays.asList(new ObjectMapper().readValue(surveyQuestions.getChoiceAnswers(),String[].class)))")
     EditSurveyQuestionDTO toEditDTO(SurveyQuestion surveyQuestions) throws JsonProcessingException;
 }
