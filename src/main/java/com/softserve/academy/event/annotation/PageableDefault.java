@@ -19,6 +19,10 @@ import java.lang.annotation.*;
 @Documented
 public @interface PageableDefault {
 
+    int minSize() default 1;
+
+    int maxSize() default 60;
+
     int size() default 12;
 
     int page() default 0;

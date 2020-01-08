@@ -17,6 +17,10 @@ import java.util.Set;
         name = "findEmail",
         query = "from User u where u.email= :email"
 )
+@NamedQuery(
+        name = "findEmailById",
+        query = "from User u where u.id= :id"
+)
 @Entity
 @Table(name = "users")
 @EqualsAndHashCode(of = {"id"})
@@ -25,7 +29,7 @@ import java.util.Set;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 8894016998310477567L;
-    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 
     @Id
@@ -41,14 +45,11 @@ public class User implements Serializable {
 
     private boolean active;
 
-    @Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDate creationDate = LocalDate.now();
 
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.USER;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<UserSocial> userSocials = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Contact> contacts = new HashSet<>();
@@ -59,6 +60,7 @@ public class User implements Serializable {
     public User() {
         this.active = false;
     }
+
     public User(String email, String password) {
         this.email = email;
         this.password = password;
@@ -69,9 +71,11 @@ public class User implements Serializable {
     public String getPassword() {
         return password;
     }
+
     public String getUsername() {
         return email;
     }
+
     public Roles getRole() {
         return role;
     }

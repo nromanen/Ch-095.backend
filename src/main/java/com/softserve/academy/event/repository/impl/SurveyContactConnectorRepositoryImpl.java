@@ -21,7 +21,7 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
     @Override
     public boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException {
         Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("select t.enable " + fromQuery)
+        Query query = session.createQuery("select t.canPass " + fromQuery)
                 .setParameter(CONTACT_ID, contactId)
                 .setParameter(SURVEY_ID, surveyId);
         List<Boolean> res = query.getResultList();
