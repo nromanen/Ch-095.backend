@@ -1,7 +1,7 @@
 package com.softserve.academy.event.config;
 
 import com.softserve.academy.event.service.MyAuthenticationEntryPoint;
-import com.softserve.academy.event.service.MySavedRequestAwareAuthenticationSuccessHandler;
+import com.softserve.academy.event.service.MyAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,23 +38,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MyAuthenticationEntryPoint myAuthenticationEntryPoint;
 
-    private final MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler;
+    private final MyAuthenticationSuccessHandler mySuccessHandler;
 
     private SimpleUrlAuthenticationFailureHandler myFailureHandler = new SimpleUrlAuthenticationFailureHandler();
 
     @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService, MyAuthenticationEntryPoint myAuthenticationEntryPoint, MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler) {
+    public SecurityConfig(UserDetailsService userDetailsService, MyAuthenticationEntryPoint myAuthenticationEntryPoint, MyAuthenticationSuccessHandler mySuccessHandler) {
         this.userDetailsService = userDetailsService;
         this.myAuthenticationEntryPoint = myAuthenticationEntryPoint;
         this.mySuccessHandler = mySuccessHandler;
-    }
-
-    private CorsConfiguration corsConfiguration() {
-        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
-        configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
-        return configuration;
     }
 
     @Override
@@ -79,16 +71,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .ignoringAntMatchers("/registration")
                     .csrfTokenRepository(getCsrfTokenRepository());
     }
-    private CsrfTokenRepository getCsrfTokenRepository() {
-        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        tokenRepository.setCookiePath("/");
-        return tokenRepository;
-    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -103,12 +91,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return authenticationProvider;
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/v2/api-docs",
@@ -117,6 +99,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/configuration/security",
                 "/swagger-ui.html",
                 "/webjars/**");
+    }
+
+    private CorsConfiguration corsConfiguration() {
+        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+        configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+        return configuration;
+    }
+
+    private CsrfTokenRepository getCsrfTokenRepository() {
+        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        tokenRepository.setCookiePath("/");
+        return tokenRepository;
     }
 
 }
