@@ -99,19 +99,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/loginSuccess")
                 .failureUrl("/loginFailure")
                 .and()
-
                 .csrf()
                     .ignoringAntMatchers("/registration")
                     .csrfTokenRepository(getCsrfTokenRepository())
-
                 .and()
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("http://localhost:4200/login")
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "XSRF-TOKEN")
-                .and();
+                .deleteCookies("JSESSIONID", "XSRF-TOKEN");
     }
 
     @Bean
