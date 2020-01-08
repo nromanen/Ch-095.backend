@@ -49,5 +49,4 @@ public class SurveyQuestion implements Serializable {
     private String choiceAnswers;
 
     private boolean required;
-
 }
