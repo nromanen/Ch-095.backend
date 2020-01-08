@@ -3,7 +3,6 @@ package com.softserve.academy.event.service.db;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.entity.enums.TokenValidation;
-import com.softserve.academy.event.exception.EmailExistException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Optional;
