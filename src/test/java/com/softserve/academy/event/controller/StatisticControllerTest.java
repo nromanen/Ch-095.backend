@@ -8,6 +8,7 @@ import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import com.softserve.academy.event.service.db.StatisticService;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -80,8 +81,8 @@ class StatisticControllerTest {
         when(statisticService.isSurveyBelongsUser(1L)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.get("/statistic/general?surveyId=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title",isEmptyOrNullString()))
-                .andExpect(jsonPath("$.questionDTOS", isEmptyOrNullString()));
+                .andExpect(jsonPath("$.title", Matchers.nullValue()))
+                .andExpect(jsonPath("$.questionDTOS", Matchers.nullValue()));
 
     }
 
