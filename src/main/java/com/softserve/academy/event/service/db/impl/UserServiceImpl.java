@@ -10,10 +10,10 @@ import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(email);
             user.setContacts(new HashSet<>());
             user.setCreationDate(LocalDate.now());
-            user.setPassword("somePassword");
+            user.setPassword(UUID.randomUUID().toString());
             user.setSurveys(new HashSet<>());
 
             return save(user);
