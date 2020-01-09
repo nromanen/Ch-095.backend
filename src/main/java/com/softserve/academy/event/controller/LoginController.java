@@ -10,7 +10,6 @@ import com.softserve.academy.event.service.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +35,7 @@ public class LoginController {
     }
 
    @PostMapping(value = "/registration")
-    public ResponseEntity<String> registerUserAccount(@RequestBody UserDto accountDto) {
+    public ResponseEntity registerUserAccount(@RequestBody UserDto accountDto) {
        try {
            UserDto registered = userMapper.userToDto(userService.newUserAccount(userMapper.userDtoToUser(accountDto)));
            VerificationToken verificationToken = userService.createVerificationToken(userMapper.userDtoToUser(registered));
@@ -49,7 +48,7 @@ public class LoginController {
 
 
     @GetMapping(value = "/registrationConfirm")
-    public ResponseEntity<String> confirmRegistration(@RequestParam("token")String token)  {
+    public ResponseEntity confirmRegistration(@RequestParam("token")String token)  {
         TokenValidation result = userService.validateVerificationToken(token);
         if (TokenValidation.TOKEN_VALID.equals(result)) {
             return new ResponseEntity<>(HttpStatus.OK);
