@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CheckOpportunityDTO {
+public class CheckPossibilityDTO {
     private String token;
     private String email;
 }
