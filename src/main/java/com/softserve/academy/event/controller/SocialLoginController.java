@@ -76,8 +76,8 @@ public class SocialLoginController {
         return "loginSuccess";
     }
 
-    @GetMapping(value = "/test")
-    public String test() {
+    @GetMapping(value = "/authenticatedEmail")
+    public String getAuthenticatedEmail() {
 
         Object something = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
