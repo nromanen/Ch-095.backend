@@ -1,7 +1,7 @@
 package com.softserve.academy.event.config;
 
 import com.softserve.academy.event.service.MyAuthenticationEntryPoint;
-import com.softserve.academy.event.service.MySavedRequestAwareAuthenticationSuccessHandler;
+import com.softserve.academy.event.service.MyAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -54,24 +53,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MyAuthenticationEntryPoint myAuthenticationEntryPoint;
 
-    private final MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler;
+    private final MyAuthenticationSuccessHandler mySuccessHandler;
 
-    private SimpleUrlAuthenticationFailureHandler myFailureHandler = new SimpleUrlAuthenticationFailureHandler();
+    private final SimpleUrlAuthenticationFailureHandler myFailureHandler = new SimpleUrlAuthenticationFailureHandler();
+
+    private final Environment env;
 
     @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService, MyAuthenticationEntryPoint myAuthenticationEntryPoint, MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler, Environment env) {
+    public SecurityConfig(UserDetailsService userDetailsService, MyAuthenticationEntryPoint myAuthenticationEntryPoint, MyAuthenticationSuccessHandler mySuccessHandler, Environment env) {
         this.userDetailsService = userDetailsService;
         this.myAuthenticationEntryPoint = myAuthenticationEntryPoint;
         this.mySuccessHandler = mySuccessHandler;
         this.env = env;
-    }
-
-    private CorsConfiguration corsConfiguration() {
-        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
-        configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
-        return configuration;
     }
 
     @Override
@@ -108,24 +101,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/loginSuccess")
                 .failureUrl("/loginFailure")
                 .and()
-
                 .csrf()
                     .ignoringAntMatchers("/registration")
                     .csrfTokenRepository(getCsrfTokenRepository())
-
                 .and()
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("http://localhost:4200/login")
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "XSRF-TOKEN")
-                .and();
-    }
-    private CsrfTokenRepository getCsrfTokenRepository() {
-        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        tokenRepository.setCookiePath("/");
-        return tokenRepository;
+                .deleteCookies("JSESSIONID", "XSRF-TOKEN");
     }
 
     @Bean
@@ -146,12 +131,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return authenticationProvider;
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/v2/api-docs",
@@ -160,6 +139,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/configuration/security",
                 "/swagger-ui.html",
                 "/webjars/**");
+    }
+
+    private CorsConfiguration corsConfiguration() {
+        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+        configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+        return configuration;
+    }
+
+    private CsrfTokenRepository getCsrfTokenRepository() {
+        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        tokenRepository.setCookiePath("/");
+        return tokenRepository;
     }
 
     /* VIKTOR PELEPIAK */

@@ -11,6 +11,15 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+
+@NamedQueries(
+        {
+                @NamedQuery(
+                        name = "findEmailContact",
+                        query = "from Contact u where u.email= :email"
+                )
+        }
+)
 @Entity
 @Table(name = "contacts",
         uniqueConstraints = @UniqueConstraint(columnNames = {"email", "user_id"}))
@@ -37,7 +46,7 @@ public class Contact implements Serializable {
     @Column(length = 128, nullable = false)
     private String email;
 
-    @ManyToMany(mappedBy = "contacts")
-    private Set<Survey> surveys = new HashSet<>();
+    @OneToMany(mappedBy = "contact")
+    private Set<SurveyContact> surveyContacts = new HashSet<>();
 
 }
