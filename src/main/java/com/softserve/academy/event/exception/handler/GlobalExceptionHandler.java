@@ -46,6 +46,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(IncorrectLinkException.class)
+    public ResponseEntity<Object> incorrectLinkHandler(Exception e, WebRequest request){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SurveyAlreadyPassedException.class)
+    public ResponseEntity<Object> surveyAlreadyPassedHandler(Exception e, WebRequest request){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
+    }
+
     private ResponseEntity<Object> handler(Exception e, WebRequest request, HttpStatus status) {
         log.error(e.getMessage());
         log.error(request.getDescription(false));

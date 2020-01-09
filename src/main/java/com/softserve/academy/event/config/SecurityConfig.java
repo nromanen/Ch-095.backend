@@ -31,6 +31,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -78,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration", "/logout", "/login").permitAll()
-                .antMatchers("/oauth_login", "/loginSuccess", "/loginFailure", "/test").permitAll()
+                .antMatchers("/oauth_login", "/loginSuccess", "/loginFailure", "/authenticatedEmail").permitAll()
                 .antMatchers("/testAccess/{token}", "/testAccess/check").permitAll()
                 .antMatchers("/question", "/testAccess/{token}", "/testAccess/check").permitAll()
                 .anyRequest().authenticated()
@@ -199,4 +200,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
         return null;
     }
+
 }
