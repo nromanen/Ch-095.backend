@@ -85,6 +85,7 @@ public class SurveyServiceImpl implements SurveyService {
             survey.getSurveyContacts().forEach(e -> {
                 e.setId(null);
                 e.setSurvey(survey);
+                e.setCanPass(false);
             });
         }
         survey.getSurveyQuestions().forEach(e -> e.setSurveyAnswers(new HashSet<>()));
