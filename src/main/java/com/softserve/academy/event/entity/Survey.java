@@ -10,9 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.softserve.academy.event.util.Constants.*;
@@ -40,7 +41,7 @@ public class Survey implements Serializable {
     private String title;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDate creationDate = LocalDate.now();
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @Enumerated
     @Column(nullable = false)
@@ -56,21 +57,12 @@ public class Survey implements Serializable {
     @JoinColumn(nullable = false)
     private User user;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "survey_contacts",
-            joinColumns = {@JoinColumn(name = "survey_id")},
-            inverseJoinColumns = {@JoinColumn(name = "contact_id")}
-    )
-    private Set<Contact> contacts = new HashSet<>();
-
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "survey_id")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "survey", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "survey")
     private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {
@@ -78,8 +70,8 @@ public class Survey implements Serializable {
     }
 
     public void addQuestion(SurveyQuestion surveyQuestion) {
-        surveyQuestions.add(surveyQuestion);
         surveyQuestion.setSurvey(this);
+        surveyQuestions.add(surveyQuestion);
     }
 
 }

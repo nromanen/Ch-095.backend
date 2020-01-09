@@ -2,7 +2,7 @@ package com.softserve.academy.event.controller;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class ApplicationInitializerTest extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
     protected Class<?>[] getRootConfigClasses() {

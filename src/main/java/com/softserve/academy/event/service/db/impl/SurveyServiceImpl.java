@@ -7,6 +7,8 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UnauthorizedException;
+import com.softserve.academy.event.exception.UserNotFound;
+import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.service.db.SurveyService;
@@ -18,13 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -34,20 +35,22 @@ public class SurveyServiceImpl implements SurveyService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final SurveyRepository repository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
-    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,UserService userService) {
+    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository, UserService userService, QuestionRepository questionRepository) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.repository = repository;
+        this.questionRepository = questionRepository;
     }
 
     @Override
     public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status) {
         if (Objects.nonNull(status) && status.length() > 0) {
-            return repository.findAllByPageableAndStatusAndUserEmail(pageable, status, getCurrentUserDetails().getUsername());
+            return repository.findAllByPageableAndStatusAndUserEmail(pageable, status, getCurrentUserEmail());
         }
-        return repository.findAllByPageableAndUserEmail(pageable, getCurrentUserDetails().getUsername());
+        return repository.findAllByPageableAndUserEmail(pageable, getCurrentUserEmail());
     }
 
 
@@ -67,8 +70,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public Survey duplicateSurvey(DuplicateSurveySettings settings) {
-        Survey survey = repository.findFirstById(settings.getId())
-                .orElseThrow(SurveyNotFound::new);
+        Survey survey = repository.eagerFindFirstById(settings.getId());
         if (!survey.getStatus().equals(SurveyStatus.TEMPLATE) &&
                 checkUserEmailNotEqualsCurrentUserEmail(survey.getUser().getEmail())) {
             log.debug("User " + survey.getUser().getUsername() + " try change other user information. ");
@@ -78,8 +80,15 @@ public class SurveyServiceImpl implements SurveyService {
         survey.setId(null);
         survey.setStatus(SurveyStatus.NON_ACTIVE);
         if (settings.isClearContacts()) {
-            survey.setContacts(new HashSet<>());
+            survey.setSurveyContacts(new HashSet<>());
+        } else {
+            survey.getSurveyContacts().forEach(e -> {
+                e.setId(null);
+                e.setSurvey(survey);
+                e.setCanPass(false);
+            });
         }
+        survey.getSurveyQuestions().forEach(e -> e.setSurveyAnswers(new HashSet<>()));
         repository.save(survey);
         return survey;
     }
@@ -95,13 +104,17 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     private boolean checkUserEmailNotEqualsCurrentUserEmail(String email) {
-        return !email.equals(getCurrentUserDetails().getUsername());
+        return !email.equals(getCurrentUserEmail());
     }
 
-    private UserDetails getCurrentUserDetails() {
+    private String getCurrentUserEmail() {
         Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userDetails instanceof UserDetails) {
-            return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        } else if (userDetails instanceof DefaultOidcUser) {
+            return ((DefaultOidcUser)userDetails).getEmail();                     // for google
+        } else if (userDetails instanceof DefaultOAuth2User) {
+            return ((DefaultOAuth2User)userDetails).getAttribute("email"); // for facebook
         } else {
             throw new UnauthorizedException();
         }
@@ -126,10 +139,17 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
         Long userID = userService.getAuthenticationId().orElseThrow(RuntimeException::new);
-        User user = userRepository.findFirstById(userID).orElseThrow(RuntimeException::new);
+        User user = userRepository.findFirstById(userID).orElseThrow(UserNotFound::new);
         survey.setUser(user);
         surveyQuestions.forEach(survey::addQuestion);
         return repository.save(survey);
     }
 
+    public Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions) {
+        Survey survey = repository.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
+        survey.getSurveyQuestions().forEach(questionRepository::delete);
+        survey.getSurveyQuestions().clear();
+        surveyQuestions.forEach(survey::addQuestion);
+        return repository.update(survey);
+    }
 }

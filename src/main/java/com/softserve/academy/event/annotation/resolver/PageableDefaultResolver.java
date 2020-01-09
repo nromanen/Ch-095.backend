@@ -13,10 +13,6 @@ import java.util.Objects;
 
 public class PageableDefaultResolver implements HandlerMethodArgumentResolver {
 
-    private static final int MAX_SIZE = 100;
-    private static final int MIN_SIZE = 4;
-    private static final int MIN_PAGE = 0;
-
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterAnnotation(PageableDefault.class) != null;
@@ -33,8 +29,8 @@ public class PageableDefaultResolver implements HandlerMethodArgumentResolver {
         String sort = webRequest.getParameter(annotation.params()[2]);
         String direction = webRequest.getParameter(annotation.params()[3]);
         return new Pageable(
-                size > MAX_SIZE || size < MIN_SIZE ? annotation.size() : size,
-                page < MIN_PAGE ? annotation.page() : page,
+                size > annotation.maxSize() || size < annotation.minSize() ? annotation.size() : size,
+                page < 0 ? annotation.page() : page,
                 0,
                 Sort.from(Objects.isNull(direction)  ? annotation.direction() : Sort.Direction.valueOf(direction),
                         Objects.isNull(sort) ? annotation.sort() : sort)

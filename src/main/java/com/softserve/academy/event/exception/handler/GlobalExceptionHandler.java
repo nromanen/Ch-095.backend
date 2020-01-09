@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
         String description = request.getDescription(false);
         log.error("Not default exception : " + e.getMessage());
         log.error("WebRequest description  : " + description);
-        return new ResponseEntity<>(e.getMessage() + "\n" + description, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(e.getMessage() + "\n" + description, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserNotFound.class)
