@@ -69,8 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-//                .cors().configurationSource(e -> corsConfiguration())
-//                .and()
+                .cors().configurationSource(e -> corsConfiguration())
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(myAuthenticationEntryPoint)
                 .and()
