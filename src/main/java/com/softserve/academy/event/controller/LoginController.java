@@ -8,8 +8,6 @@ import com.softserve.academy.event.service.db.EmailService;
 import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.service.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +22,7 @@ public class LoginController {
     private final EmailService emailService;
 
     @Autowired
-    public LoginController(UserService userService, UserMapper userMapper, ApplicationEventPublisher eventPublisher, EmailService emailService, Environment env) {
+    public LoginController(UserService userService, UserMapper userMapper,  EmailService emailService) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.emailService = emailService;

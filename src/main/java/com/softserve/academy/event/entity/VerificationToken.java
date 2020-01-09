@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class VerificationToken implements Serializable {
 
-    private static final int EXPIRATION = 60 *24;
+    private static final int EXPIRATION = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,9 +44,9 @@ public class VerificationToken implements Serializable {
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
-    private LocalDateTime calculateExpiryDate(int timeInMinutes) {
+    private LocalDateTime calculateExpiryDate(int timeInDate) {
         LocalDateTime now = LocalDateTime.now();
-        return now.plusMinutes(timeInMinutes);
+        return now.plusDays(timeInDate);
     }
 
     public void updateToken(final String token) {

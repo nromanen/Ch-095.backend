@@ -85,8 +85,7 @@ public class UserServiceImpl implements UserService {
             return TokenValidation.TOKEN_INVALID;
         }
 
-        if ((verificationToken.getExpiryDate()
-                .getMinute() - LocalDateTime.now().getMinute()) <= 0) {
+        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             return TokenValidation.TOKEN_EXPIRED;
         }
         final User user = verificationToken.getUser();
