@@ -16,8 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -84,12 +84,11 @@ public class UserServiceImpl implements UserService {
         if (verificationToken == null) {
             return TokenValidation.TOKEN_INVALID;
         }
-        final User user = verificationToken.getUser();
-        final Calendar calendar = Calendar.getInstance();
-        if ((verificationToken.getExpiryDate()
-                .getTime() - calendar.getTime().getTime()) <= 0) {
+
+        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             return TokenValidation.TOKEN_EXPIRED;
         }
+        final User user = verificationToken.getUser();
         user.setActive(true);
         userRepository.save(user);
         return TokenValidation.TOKEN_VALID;

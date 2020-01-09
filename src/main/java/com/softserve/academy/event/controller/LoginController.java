@@ -9,9 +9,7 @@ import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.service.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,19 +25,13 @@ public class LoginController {
 
     private final UserMapper userMapper;
 
-    private final ApplicationEventPublisher eventPublisher;
-
     private final EmailService emailService;
 
-    private final Environment env;
-
     @Autowired
-    public LoginController(UserService userService, UserMapper userMapper, ApplicationEventPublisher eventPublisher, EmailService emailService, Environment env) {
+    public LoginController(UserService userService, UserMapper userMapper,  EmailService emailService) {
         this.userService = userService;
         this.userMapper = userMapper;
-        this.eventPublisher = eventPublisher;
         this.emailService = emailService;
-        this.env = env;
     }
 
    @PostMapping(value = "/registration")
@@ -56,7 +48,7 @@ public class LoginController {
 
 
     @GetMapping(value = "/registrationConfirm")
-    public ResponseEntity<String> confirmRegistration(@RequestParam("token")String token)  {
+    public ResponseEntity confirmRegistration(@RequestParam("token")String token)  {
         TokenValidation result = userService.validateVerificationToken(token);
         if (TokenValidation.TOKEN_VALID.equals(result)) {
             return new ResponseEntity<>(HttpStatus.OK);
