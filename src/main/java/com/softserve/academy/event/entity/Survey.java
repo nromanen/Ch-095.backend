@@ -58,12 +58,11 @@ public class Survey implements Serializable {
     private User user;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "survey_id")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "survey", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "survey")
     private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {
@@ -71,8 +70,8 @@ public class Survey implements Serializable {
     }
 
     public void addQuestion(SurveyQuestion surveyQuestion) {
-        surveyQuestions.add(surveyQuestion);
         surveyQuestion.setSurvey(this);
+        surveyQuestions.add(surveyQuestion);
     }
 
 }

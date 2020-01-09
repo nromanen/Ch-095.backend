@@ -3,12 +3,10 @@ package com.softserve.academy.event.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 
 
@@ -26,7 +24,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class VerificationToken implements Serializable {
 
-    private static final int EXPIRATION = 60 *24;
+    private static final int EXPIRATION = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,27 +36,17 @@ public class VerificationToken implements Serializable {
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
-    // todo change to local date!
-    private Date expiryDate;
-
-    public VerificationToken(final String token) {
-        super();
-        this.token = token;
-        this.expiryDate = calculateExpiryDate(EXPIRATION);
-    }
+    private LocalDateTime expiryDate;
 
     public VerificationToken(final String token, final User user) {
-        super();
         this.token = token;
         this.user = user;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
-    private Date calculateExpiryDate(int timeInMinutes) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Timestamp(calendar.getTimeInMillis()));
-        calendar.add(Calendar.MINUTE, timeInMinutes);
-        return new Date(calendar.getTimeInMillis());
+    private LocalDateTime calculateExpiryDate(int timeInDate) {
+        LocalDateTime now = LocalDateTime.now();
+        return now.plusDays(timeInDate);
     }
 
     public void updateToken(final String token) {
