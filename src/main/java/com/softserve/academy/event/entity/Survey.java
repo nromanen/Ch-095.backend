@@ -58,15 +58,6 @@ public class Survey implements Serializable {
     private User user;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "survey_contacts",
-            joinColumns = {@JoinColumn(name = "survey_id")},
-            inverseJoinColumns = {@JoinColumn(name = "contact_id")}
-    )
-    private Set<Contact> contacts = new HashSet<>();
-
-    @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "survey", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<SurveyQuestion> surveyQuestions = new ArrayList<>();

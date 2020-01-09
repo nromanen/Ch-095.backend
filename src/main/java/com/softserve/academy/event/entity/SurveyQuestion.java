@@ -45,7 +45,7 @@ public class SurveyQuestion implements Serializable {
     @Enumerated(EnumType.STRING)
     private SurveyQuestionType type;
 
-    @Column(name = "answers", nullable = false, length = 10000)
+    @Column(nullable = false, length = 10000)
     private String choiceAnswers;
 
     private boolean required;

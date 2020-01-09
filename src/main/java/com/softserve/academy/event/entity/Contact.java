@@ -37,7 +37,7 @@ public class Contact implements Serializable {
     @Column(length = 128, nullable = false)
     private String email;
 
-    @ManyToMany(mappedBy = "contacts")
-    private Set<Survey> surveys = new HashSet<>();
+    @OneToMany(mappedBy = "contact")
+    private Set<SurveyContact> surveyContacts = new HashSet<>();
 
 }

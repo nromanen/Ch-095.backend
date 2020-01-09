@@ -2,6 +2,8 @@ package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,7 +12,9 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.Cookie;
@@ -23,11 +27,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/")
-@CrossOrigin(origins = "http://localhost:4200")
+@PropertySource("classpath:application.properties")
 public class SocialLoginController {
 
     private static final String authorizationRequestBaseUri = "oauth2/authorize-client";
     Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
+
+    @Value("${app.frontend.url}")
+    private String frontUrl;
 
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final UserService userService;
@@ -61,7 +68,7 @@ public class SocialLoginController {
         userService.newSocialUser(authentication.getPrincipal());
 
         try {
-            httpServletResponse.sendRedirect("http://localhost:4200/login");
+            httpServletResponse.sendRedirect(frontUrl + "/login");
         } catch (IOException e) {
             e.printStackTrace();
         }

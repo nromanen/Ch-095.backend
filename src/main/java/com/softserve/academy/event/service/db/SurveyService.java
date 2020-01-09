@@ -7,7 +7,6 @@ import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
-
 import java.util.List;
 import java.util.Optional;
 
