@@ -6,6 +6,6 @@ import lombok.Getter;
 public class DuplicateSurveySettings {
 
     Long id;
-    boolean isClearContacts;
+    boolean clearContacts;
 
 }

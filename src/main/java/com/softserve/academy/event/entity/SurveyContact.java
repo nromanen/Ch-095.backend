@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class SurveyContact implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
