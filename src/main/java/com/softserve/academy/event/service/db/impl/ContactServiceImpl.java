@@ -1,6 +1,8 @@
 package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.entity.Contact;
+import com.softserve.academy.event.entity.User;
+import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.repository.ContactRepository;
 import com.softserve.academy.event.service.db.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ public class ContactServiceImpl implements ContactService {
 
     @Autowired
     public ContactServiceImpl(ContactRepository repository) {
+
         this.repository = repository;
     }
 
@@ -55,5 +58,4 @@ public class ContactServiceImpl implements ContactService {
     public void detach(Contact entity) {
         repository.detach(entity);
     }
-
 }

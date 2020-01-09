@@ -7,7 +7,6 @@ import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UnauthorizedException;
-import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.service.db.SurveyService;

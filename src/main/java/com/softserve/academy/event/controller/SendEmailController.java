@@ -1,7 +1,6 @@
 package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.dto.EmailDTO;
-import com.softserve.academy.event.exception.IncorrectEmailsException;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.EmailService;
 import com.softserve.academy.event.service.db.UserService;
@@ -25,16 +24,10 @@ public class SendEmailController {
     @PostMapping("/sendEmails")
     public String doSendEmails(@RequestBody EmailDTO emailDTO) {
         String[] emails = emailDTO.getEmailsArray();
-        try {
-            EmailValidator.validate(emails);
-        } catch (IncorrectEmailsException e) {
-            return e.getMessage();
-        }
+        EmailValidator.validate(emails);
         String idUser = service.getAuthenticationId().orElseThrow(UserNotFound::new).toString();
         String idSurvey = emailDTO.getSurveyId();
-        for (String anEmail : emails) {
-            emailService.sendEmailForUser(idUser, idSurvey, anEmail);
-        }
+        emailService.sendEmailForUser(idUser, idSurvey, emails);
         return null;
     }
 }
