@@ -22,12 +22,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFound.class)
     public ResponseEntity<Object> userNotFoundHandler(Exception e, WebRequest request) {
-        return handler(e,request,HttpStatus.NOT_FOUND);
+        return handler(e, request, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(SurveyNotFound.class)
     public ResponseEntity<Object> surveyNotFoundHandler(Exception e, WebRequest request) {
-
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -47,12 +46,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IncorrectLinkException.class)
-    public ResponseEntity<Object> incorrectLinkHandler(Exception e, WebRequest request){
+    public ResponseEntity<Object> incorrectLinkHandler(Exception e, WebRequest request) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SurveyAlreadyPassedException.class)
-    public ResponseEntity<Object> surveyAlreadyPassedHandler(Exception e, WebRequest request){
+    public ResponseEntity<Object> surveyAlreadyPassedHandler(Exception e, WebRequest request) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
     }
 

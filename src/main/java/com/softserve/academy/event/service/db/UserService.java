@@ -21,4 +21,6 @@ public interface UserService extends BasicService<User, Long> {
     User newSocialUser(OAuth2User oAuth2User);
 
     String getEmailByUserId(Long id);
+
+    String getAuthenticatedUserEmail();
 }
