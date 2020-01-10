@@ -175,7 +175,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new InMemoryClientRegistrationRepository(registrations);
     }
 
-        private ClientRegistration getRegistration(String client) {
+    private ClientRegistration getRegistration(String client) {
         String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
 
         String clientId = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-id");
