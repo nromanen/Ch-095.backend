@@ -46,7 +46,6 @@ public class LoginController {
        }
     }
 
-
     @GetMapping(value = "/registrationConfirm")
     public ResponseEntity confirmRegistration(@RequestParam("token")String token)  {
         TokenValidation result = userService.validateVerificationToken(token);
