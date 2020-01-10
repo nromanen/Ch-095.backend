@@ -30,7 +30,7 @@ import java.util.Map;
 @Slf4j
 public class SocialLoginController {
 
-    private static final String authorizationRequestBaseUri = "oauth2/authorize-client";
+    private static final String AUTHORIZATION_REQUEST_BASE_URI = "oauth2/authorize-client";
     Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
     @Value("${app.frontend.url}")
@@ -57,7 +57,7 @@ public class SocialLoginController {
 
         if (clientRegistrations != null) {
             clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(),
-                    authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+                    AUTHORIZATION_REQUEST_BASE_URI + "/" + registration.getRegistrationId()));
         }
 
         return ResponseEntity.ok(oauth2AuthenticationUrls);

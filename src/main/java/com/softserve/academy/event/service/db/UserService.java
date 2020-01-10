@@ -22,5 +22,5 @@ public interface UserService extends BasicService<User, Long> {
 
     String getEmailByUserId(Long id);
 
-    public String getAuthenticatedUserEmail();
+    String getAuthenticatedUserEmail();
 }

@@ -2,7 +2,6 @@ package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.exception.IncorrectLinkException;
-import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.repository.SurveyContactConnectorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -19,22 +18,19 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
     private static final String SURVEY_ID = "surveyId";
 
     @Override
-    @SuppressWarnings("unchecked")
-    public boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException {
-        List<Boolean> res = sessionFactory.getCurrentSession()
+    public boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException {
+        Optional<Boolean> res = Optional.ofNullable(
+                (Boolean) sessionFactory.getCurrentSession()
                 .createQuery("select t.canPass " + fromQuery)
                 .setParameter(CONTACT_ID, contactId)
                 .setParameter(SURVEY_ID, surveyId)
-                .getResultList();
-        if (res.isEmpty()) {
+                .setMaxResults(1)
+                .getResultList().get(0));
+        if (!res.isPresent()) {
             log.error("This survey is not available for the current user");
             throw new IncorrectLinkException("Sorry, but you can`t pass survey by this link");
         }
-        if (res.get(0)) {
-            return true;
-        }
-        log.error("This user has already passed survey");
-        throw new SurveyAlreadyPassedException("Sorry, but you have already passed this survey");
+        return res.get();
     }
 
     @Override
