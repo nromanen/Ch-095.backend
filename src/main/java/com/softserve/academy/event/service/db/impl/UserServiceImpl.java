@@ -146,7 +146,6 @@ public class UserServiceImpl implements UserService {
         }
         return userRepository.findByEmail(email).orElseThrow(NoSuchElementException::new);
     }
-
     public String getAuthenticatedUserEmail() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
