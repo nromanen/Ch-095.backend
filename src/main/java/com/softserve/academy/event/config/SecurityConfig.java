@@ -80,7 +80,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration").permitAll()
                 .antMatchers("/oauth_login", "/loginSuccess", "/loginFailure", "/authenticatedEmail").permitAll()
-                .antMatchers("/testAccess/{token}", "/testAccess/check").permitAll()
                 .antMatchers("/question", "/testAccess/{token}", "/testAccess/check").permitAll()
                 .anyRequest().authenticated()
                 .and()

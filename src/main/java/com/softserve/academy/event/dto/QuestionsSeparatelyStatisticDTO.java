@@ -2,7 +2,6 @@ package com.softserve.academy.event.dto;
 
 import lombok.*;
 
-import java.util.Objects;
 import java.util.Set;
 
 @Getter

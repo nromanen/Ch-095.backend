@@ -1,6 +1,7 @@
 package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.service.db.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -10,8 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,9 +27,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/")
 @PropertySource("classpath:application.properties")
+@Slf4j
 public class SocialLoginController {
 
-    private static final String authorizationRequestBaseUri = "oauth2/authorize-client";
+    private static final String AUTHORIZATION_REQUEST_BASE_URI = "oauth2/authorize-client";
     Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
     @Value("${app.frontend.url}")
@@ -56,7 +56,8 @@ public class SocialLoginController {
         }
 
         if (clientRegistrations != null) {
-            clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(), authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+            clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(),
+                    AUTHORIZATION_REQUEST_BASE_URI + "/" + registration.getRegistrationId()));
         }
 
         return ResponseEntity.ok(oauth2AuthenticationUrls);
@@ -69,24 +70,15 @@ public class SocialLoginController {
 
         try {
             httpServletResponse.sendRedirect(frontUrl + "/login");
+            return "login success";
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Redirect error", e);
+            return "login failed";
         }
-
-        return "loginSuccess";
     }
 
     @GetMapping(value = "/authenticatedEmail")
     public String getAuthenticatedEmail() {
-
-        Object something = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (something instanceof DefaultOidcUser) {
-            return ((DefaultOidcUser)something).getEmail();                     // for google
-        } else if (something instanceof DefaultOAuth2User) {
-            return ((DefaultOAuth2User)something).getAttribute("email"); // for facebook
-        } else {
-            return null;
-        }
+        return userService.getAuthenticatedUserEmail();
     }
 }
