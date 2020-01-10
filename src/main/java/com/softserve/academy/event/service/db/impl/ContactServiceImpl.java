@@ -70,6 +70,4 @@ public class ContactServiceImpl implements ContactService {
     public void detach(Contact entity) {
         repository.detach(entity);
     }
-
-
 }
