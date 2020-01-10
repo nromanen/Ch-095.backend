@@ -77,7 +77,6 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    @Transactional
     public boolean isSurveyBelongsUser(Long surveyId) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {

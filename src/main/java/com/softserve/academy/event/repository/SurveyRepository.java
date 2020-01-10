@@ -9,8 +9,8 @@ public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
     Survey eagerFindFirstById(Long id);
 
-    Page<SurveyDTO> findAllByPageableAndUserEmail(Pageable pageable, String userEmail);
+    Page<Survey> findAllByPageableAndUserEmail(Pageable pageable, String userEmail);
 
-    Page<SurveyDTO> findAllByPageableAndStatusAndUserEmail(Pageable pageable, String status, String userEmail);
+    Page<Survey> findAllByPageableAndStatusAndUserEmail(Pageable pageable, String status, String userEmail);
 
 }

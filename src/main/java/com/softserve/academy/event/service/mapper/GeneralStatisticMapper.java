@@ -30,15 +30,17 @@ public interface GeneralStatisticMapper {
             throws JsonProcessingException;
 
     default List<List<String>> transformationToAnswers(SurveyQuestion surveyQuestion) {
-        return surveyQuestion.getSurveyAnswers().stream().map(surveyAnswer -> {
-            try {
-                if(surveyAnswer.getValue() != null) {
-                    return Arrays.asList(new ObjectMapper().readValue(surveyAnswer.getValue(), String[].class));
-                }
-                return new ArrayList<String>();
-            } catch (JsonProcessingException e) {
-                return null;
+        return surveyQuestion.getSurveyAnswers().stream().map(this::mapSurveyAnswer).collect(Collectors.toList());
+    }
+
+    default List<String> mapSurveyAnswer(SurveyAnswer surveyAnswer) {
+        try {
+            if (surveyAnswer.getValue() != null) {
+                return Arrays.asList(new ObjectMapper().readValue(surveyAnswer.getValue(), String[].class));
             }
-        }).collect(Collectors.toList());
+            return new ArrayList<String>();
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 }

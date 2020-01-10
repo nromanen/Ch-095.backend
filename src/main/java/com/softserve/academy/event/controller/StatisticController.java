@@ -30,13 +30,12 @@ public class StatisticController {
             @RequestParam(name = "surveyId") long surveyId) {
         log.info("call with surveyId = " + surveyId);
 
-        if(statisticService.isSurveyBelongsUser(surveyId)){
+        if (statisticService.isSurveyBelongsUser(surveyId)) {
             QuestionsGeneralStatisticDTO surveyDTO =
                     statisticService.getGeneralStatistic(surveyId);
             log.info(String.format(RETURN_ID, HttpStatus.OK, surveyId));
-            return new ResponseEntity<>(surveyDTO,HttpStatus.OK);
-        }
-        else {
+            return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -44,17 +43,14 @@ public class StatisticController {
     @GetMapping("/separately")
     public ResponseEntity<Set<QuestionsSeparatelyStatisticDTO>> getSeparatelyStatistic(
             @RequestParam(name = "surveyId") long surveyId) {
-        log.info("call with surveyId = " + surveyId);
+        log.info("call with surveyId = {}", surveyId);
 
-        if(statisticService.isSurveyBelongsUser(surveyId)){
-            Set<QuestionsSeparatelyStatisticDTO> surveyDTO =
-                    statisticService.getSeparatelyStatistic(surveyId);
+        if (statisticService.isSurveyBelongsUser(surveyId)) {
             log.info(String.format(RETURN_ID, HttpStatus.OK, surveyId));
-            return new ResponseEntity<>(surveyDTO,HttpStatus.OK);
+            return new ResponseEntity<>(statisticService.getSeparatelyStatistic(surveyId), HttpStatus.OK);
         }
-        else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
     }
 
 }

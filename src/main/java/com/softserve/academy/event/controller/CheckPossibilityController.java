@@ -45,11 +45,12 @@ public class CheckPossibilityController {
             return new ResponseEntity<>("Sorry, but you can`t pass survey by this link", HttpStatus.BAD_REQUEST);
         }
         Optional<Long> longOptional = contactService.getIdByEmail(res[0]);
-        if (longOptional.isPresent()) {
+        if (!longOptional.isPresent()) {
             try {
                 if (surveyContactConnectorService.isEnable(longOptional.get(), Long.valueOf(res[1]))) {
                     return ResponseEntity.ok(token);
                 }
+
             } catch (SurveyAlreadyPassedException e) {
                 return new ResponseEntity<>("Sorry, but you have already passed this survey", HttpStatus.GONE);
             } catch (Exception e) {

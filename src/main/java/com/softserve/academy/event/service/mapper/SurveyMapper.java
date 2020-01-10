@@ -10,5 +10,6 @@ import org.springframework.stereotype.Service;
 public interface SurveyMapper {
 
     SurveyDTO toDTO(Survey survey);
+    SurveyDTO toDTO(Survey survey, Long countAnswers, Long countContacts);
 
 }

@@ -48,8 +48,7 @@ public class QuestionController {
     public ResponseEntity<SurveyContactDTO> startSurvey(Long surveyId, String contactEmail){
         if (!contactService.canPass(surveyId, contactEmail))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
-        List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questions);
+        List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questionService.findBySurveyId(surveyId));
         SurveyContactDTO dto = new SurveyContactDTO();
         dto.setContactEmail(contactEmail);
         dto.setSurveyId(surveyId);

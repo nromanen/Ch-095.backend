@@ -48,7 +48,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public void detach(SurveyAnswer entity) {
-        answerRepository.detach(entity);
+
     }
 
 

@@ -22,23 +22,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFound.class)
     public ResponseEntity<Object> userNotFoundHandler(Exception e, WebRequest request) {
-        return handler(e,request,HttpStatus.NOT_FOUND);
+        return handler(e, request,"", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(SurveyNotFound.class)
     public ResponseEntity<Object> surveyNotFoundHandler(Exception e, WebRequest request) {
+        return handler(e, request,"", HttpStatus.NOT_FOUND);
+    }
 
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> accessDeniedHandler(Exception e, WebRequest request) {
+        return handler(e, request,"Try change other user information!", HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(EmailExistException.class)
     public ResponseEntity<Object> emailExistHandler(Exception e, WebRequest request) {
-        return handler(e, request, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(IncorrectEmailsException.class)
-    public ResponseEntity<Object> incorrectEmailsHandler(Exception e, WebRequest request) {
-        return handler(e, request, HttpStatus.CONFLICT);
+        return handler(e, request,"Try register already existing email", HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -47,17 +46,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IncorrectLinkException.class)
-    public ResponseEntity<Object> incorrectLinkHandler(Exception e, WebRequest request){
+    public ResponseEntity<Object> incorrectLinkHandler(Exception e, WebRequest request) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SurveyAlreadyPassedException.class)
-    public ResponseEntity<Object> surveyAlreadyPassedHandler(Exception e, WebRequest request){
+    public ResponseEntity<Object> surveyAlreadyPassedHandler(Exception e, WebRequest request) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
     }
 
-    private ResponseEntity<Object> handler(Exception e, WebRequest request, HttpStatus status) {
-        log.error(e.getMessage());
+    private ResponseEntity<Object> handler(Exception e, WebRequest request, String message, HttpStatus status) {
+        log.error(message, e);
         log.error(request.getDescription(false));
         return new ResponseEntity<>(e.getMessage(), status);
     }

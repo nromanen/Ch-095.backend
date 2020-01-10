@@ -1,7 +1,6 @@
 package com.softserve.academy.event.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.softserve.academy.event.annotation.PageableDefault;
 import com.softserve.academy.event.dto.*;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
@@ -14,7 +13,6 @@ import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
-import com.softserve.academy.event.util.Sort;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -49,8 +47,8 @@ public class SurveyController {
     @ApiOperation(value = "Get all surveys")
     @GetMapping
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
-            @PageableDefault(sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
-            @RequestParam(required = false, name = "status") String status) {
+            Pageable pageable,
+            @RequestParam(required = false) String status) {
         return ResponseEntity.ok(
                 service.findAllByPageableAndStatus(pageable, status)
         );
@@ -66,21 +64,15 @@ public class SurveyController {
 
     @ApiOperation(value = "Change the title of the survey")
     @PutMapping
-    public ResponseEntity<Boolean> updateTitle(@RequestParam Long id, @RequestParam String title) {
+    public ResponseEntity<HttpStatus> updateTitle(@RequestParam Long id, @RequestParam String title) {
         service.updateTitle(id, title);
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @PutMapping("/status/active")
-    public ResponseEntity<Boolean> setStatusActive(@RequestParam Long id) {
-        service.updateStatus(id, SurveyStatus.ACTIVE);
-        return ResponseEntity.ok(true);
-    }
-
-    @PutMapping("/status/done")
-    public ResponseEntity<Boolean> setStatusDone(@RequestParam Long id) {
-        service.updateStatus(id, SurveyStatus.DONE);
-        return ResponseEntity.ok(true);
+    @PutMapping("/status/{status}")
+    public ResponseEntity<HttpStatus> setStatusDone(@RequestParam Long id, @PathVariable SurveyStatus status) {
+        service.updateStatus(id, status);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ApiOperation(value = "Delete a survey")
