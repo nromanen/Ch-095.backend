@@ -1,6 +1,7 @@
 package com.softserve.academy.event.entity;
 
 import com.softserve.academy.event.entity.enums.Roles;
+import com.sun.istack.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,6 +42,7 @@ public class User implements Serializable {
     private String email;
 
     @Column(length = 100)
+    @Nullable
     private String password;
 
     private boolean active;

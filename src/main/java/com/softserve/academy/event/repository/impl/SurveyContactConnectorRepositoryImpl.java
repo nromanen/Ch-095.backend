@@ -4,13 +4,13 @@ import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.exception.IncorrectLinkException;
 import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.repository.SurveyContactConnectorRepository;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<SurveyContact, Long> implements SurveyContactConnectorRepository {
 
@@ -19,22 +19,26 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
     private static final String SURVEY_ID = "surveyId";
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("select t.canPass " + fromQuery)
+        List<Boolean> res = sessionFactory.getCurrentSession()
+                .createQuery("select t.canPass " + fromQuery)
                 .setParameter(CONTACT_ID, contactId)
-                .setParameter(SURVEY_ID, surveyId);
-        List<Boolean> res = query.getResultList();
+                .setParameter(SURVEY_ID, surveyId)
+                .getResultList();
         if (res.isEmpty()) {
-            throw new IncorrectLinkException();
+            log.error("This survey is not available for the current user");
+            throw new IncorrectLinkException("Sorry, but you can`t pass survey by this link");
         }
         if (res.get(0)) {
             return true;
         }
-        throw new SurveyAlreadyPassedException();
+        log.error("This user has already passed survey");
+        throw new SurveyAlreadyPassedException("Sorry, but you have already passed this survey");
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId) {
         List<SurveyContact> result = sessionFactory.getCurrentSession()
                 .createQuery(fromQuery)
@@ -44,16 +48,5 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
         if (result.isEmpty())
             return Optional.empty();
         return Optional.of(result.get(0));
-    }
-
-    @Override
-    public SurveyContact getByContactIdAndSurveyId(Long contactId, Long surveyId) {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery(fromQuery)
-                .setParameter(CONTACT_ID, contactId)
-                .setParameter(SURVEY_ID, surveyId);
-        List<SurveyContact> res = query.getResultList();
-        if (res.isEmpty()) return null;
-        return res.get(0);
     }
 }
