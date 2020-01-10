@@ -20,7 +20,7 @@ import java.util.Properties;
 @CrossOrigin(origins = "http://localhost:4200")
 public class FileUploadController {
 
-    private final long MAX_UPLOAD_SIZE = 2 * 1024 * 1024;  // 2 MB
+    private static final long MAX_UPLOAD_SIZE = 2097152;  // 2 MB
 
 
     @ApiOperation(value = "Upload a picture to the server")

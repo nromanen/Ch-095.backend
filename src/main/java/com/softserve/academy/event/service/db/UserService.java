@@ -19,4 +19,6 @@ public interface UserService extends BasicService<User, Long> {
     TokenValidation validateVerificationToken(String token);
 
     User newSocialUser(OAuth2User oAuth2User);
+
+    String getAuthenticatedUserEmail();
 }
