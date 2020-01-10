@@ -46,11 +46,11 @@ public class UserServiceImpl implements UserService {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
-            String email = ((UserDetails)principal).getUsername();
+            String email = ((UserDetails) principal).getUsername();
             Long id = userRepository.findByEmail(email).orElseThrow(UserNotFound::new).getId();
             return Optional.of(id);
         }
-       return Optional.empty();
+        return Optional.empty();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = new User();
         user.setEmail(userAccount.getEmail());
-        user.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
+        user.setPassword(bCryptPasswordEncoder.encode(Objects.requireNonNull(userAccount.getPassword())));
         return userRepository.save(user);
     }
 
@@ -137,14 +137,14 @@ public class UserServiceImpl implements UserService {
     public User newSocialUser(OAuth2User oAuth2User) {
         String email = oAuth2User.getAttribute("email");
 
-        if (!emailExists(email)){
+        if (!emailExists(email)) {
             User user = new User();
             user.setRole(Roles.USER);
             user.setActive(true);
             user.setEmail(email);
             user.setContacts(new HashSet<>());
             user.setCreationDate(LocalDate.now());
-            user.setPassword(UUID.randomUUID().toString());
+            user.setPassword(null);
             user.setSurveys(new HashSet<>());
 
             return save(user);
