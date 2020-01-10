@@ -42,7 +42,7 @@ public class LoginController {
            emailConfirm(registered.getEmail(), verificationToken.getToken());
            return new ResponseEntity<>(HttpStatus.CREATED);
        }catch (EmailExistException e) {
-           return new ResponseEntity(e, HttpStatus.NOT_ACCEPTABLE);
+           return new ResponseEntity(e, HttpStatus.CONFLICT);
        }
     }
 

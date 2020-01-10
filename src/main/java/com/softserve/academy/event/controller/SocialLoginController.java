@@ -89,23 +89,4 @@ public class SocialLoginController {
             return null;
         }
     }
-
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response, SessionStatus sessionStatus) {
-        HttpSession session = request.getSession(false);
-        if (request.isRequestedSessionIdValid() && session != null) {
-            session.invalidate();
-        }
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            cookie.setMaxAge(0);
-            cookie.setValue(null);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-        }
-
-        SecurityContextHolder.getContext().setAuthentication(null);
-        sessionStatus.setComplete();
-        return "";
-    }
 }
