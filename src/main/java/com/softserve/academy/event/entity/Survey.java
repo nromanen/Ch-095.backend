@@ -63,7 +63,7 @@ public class Survey implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "survey")
     private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {

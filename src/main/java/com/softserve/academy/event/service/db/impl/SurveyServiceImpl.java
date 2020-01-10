@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,10 +48,11 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status) {
         if (Objects.nonNull(status) && status.length() > 0) {
-            return repository.findAllByPageableAndStatusAndUserEmail(pageable, status, getCurrentUserDetails().getUsername());
+            return repository.findAllByPageableAndStatusAndUserEmail(pageable, status, getCurrentUserEmail());
         }
-        return repository.findAllByPageableAndUserEmail(pageable, getCurrentUserDetails().getUsername());
+        return repository.findAllByPageableAndUserEmail(pageable, getCurrentUserEmail());
     }
+
 
     @Override
     public void updateTitle(Long id, String title) {
@@ -82,6 +85,7 @@ public class SurveyServiceImpl implements SurveyService {
             survey.getSurveyContacts().forEach(e -> {
                 e.setId(null);
                 e.setSurvey(survey);
+                e.setCanPass(false);
             });
         }
         survey.getSurveyQuestions().forEach(e -> e.setSurveyAnswers(new HashSet<>()));
@@ -100,13 +104,17 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     private boolean checkUserEmailNotEqualsCurrentUserEmail(String email) {
-        return !email.equals(getCurrentUserDetails().getUsername());
+        return !email.equals(getCurrentUserEmail());
     }
 
-    private UserDetails getCurrentUserDetails() {
+    private String getCurrentUserEmail() {
         Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userDetails instanceof UserDetails) {
-            return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        } else if (userDetails instanceof DefaultOidcUser) {
+            return ((DefaultOidcUser)userDetails).getEmail();                     // for google
+        } else if (userDetails instanceof DefaultOAuth2User) {
+            return ((DefaultOAuth2User)userDetails).getAttribute("email"); // for facebook
         } else {
             throw new UnauthorizedException();
         }
@@ -139,6 +147,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     public Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions) {
         Survey survey = repository.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
+        survey.getSurveyQuestions().forEach(questionRepository::delete);
         survey.getSurveyQuestions().clear();
         surveyQuestions.forEach(survey::addQuestion);
         return repository.update(survey);

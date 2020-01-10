@@ -1,14 +1,13 @@
 package com.softserve.academy.event.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.academy.event.annotation.PageableDefault;
-import com.softserve.academy.event.dto.SaveSurveyDTO;
-import com.softserve.academy.event.dto.SurveyDTO;
-import com.softserve.academy.event.dto.SurveyQuestionDTO;
+import com.softserve.academy.event.dto.*;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.exception.SurveyNotFound;
+import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
 import com.softserve.academy.event.service.mapper.SurveyMapper;
@@ -24,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,21 +33,23 @@ import java.util.List;
 @Slf4j
 public class SurveyController {
 
-    private final SurveyService service;
     private final SaveQuestionMapper saveQuestionMapper;
+    private final SurveyService service;
     private final SurveyMapper surveyMapper;
+    private final QuestionService questionService;
 
     @Autowired
-    public SurveyController(SurveyService service, SurveyMapper surveyMapper, SaveQuestionMapper saveQuestionMapper) {
+    public SurveyController(SurveyService service, SurveyMapper surveyMapper, SaveQuestionMapper saveQuestionMapper, QuestionService questionService) {
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
         this.surveyMapper = surveyMapper;
+        this.questionService = questionService;
     }
 
     @ApiOperation(value = "Get all surveys")
     @GetMapping
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
-            @PageableDefault(minSize = 4, sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @PageableDefault(sort = "creationDate", direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, name = "status") String status) {
         return ResponseEntity.ok(
                 service.findAllByPageableAndStatus(pageable, status)
@@ -89,29 +91,46 @@ public class SurveyController {
     }
 
     @PostMapping(value = "/createNewSurvey")
-    public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
+    public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws IOException {
         Survey survey = new Survey();
         survey.setTitle(saveSurveyDTO.getTitle());
         survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
-        List<SurveyQuestion> surveyQuestions = getQuestionsEntities(saveSurveyDTO.getQuestions());
+        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
+        for (SurveyQuestionDTO x : saveSurveyDTO.getQuestions()) {
+            surveyQuestions.add(saveQuestionMapper.toEntity(x));
+        }
         return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
     }
 
-    /**
-     * Method gets list of Question DTO and made list of entities with correct variant of answers
-     * Mapper can't make string from list, so i set it through object mapper
-     *
-     * @return List<SurveyQuestion> - list of entities but without established survey
-     */
-    private List<SurveyQuestion> getQuestionsEntities(List<SurveyQuestionDTO> surveyQuestionsDTO) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
-        for (SurveyQuestionDTO surveyQuestionDTO : surveyQuestionsDTO) {
-            SurveyQuestion surveyQuestion = saveQuestionMapper.toEntity(surveyQuestionDTO);
-            String answers = mapper.writeValueAsString(surveyQuestionDTO.getChoiceAnswers());
-            surveyQuestion.setChoiceAnswers(answers);
-            surveyQuestions.add(surveyQuestion);
+    @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
+    @GetMapping(value = "/edit/{id}")
+    public ResponseEntity loadForEditSurvey(@PathVariable(name = "id") Long surveyId) throws IOException {
+        List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
+        List<EditSurveyQuestionDTO> questionsDTO = new ArrayList<>();
+        for (SurveyQuestion x : questions) {
+            questionsDTO.add(saveQuestionMapper.toEditDTO(x));
         }
-        return surveyQuestions;
+        EditSurveyDTO editSurveyDTO = new EditSurveyDTO(questionsDTO);
+        Survey survey = service.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
+        setSurveysTitleAndPhotoName(survey, editSurveyDTO);
+        if (questionsDTO.isEmpty())
+            return new ResponseEntity(editSurveyDTO, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(editSurveyDTO, HttpStatus.OK);
+    }
+
+    private void setSurveysTitleAndPhotoName(Survey survey, EditSurveyDTO editSurveyDTO) {
+        editSurveyDTO.setTitle(survey.getTitle());
+        editSurveyDTO.setSurveyPhotoName(survey.getImageUrl());
+    }
+
+    @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
+    @PostMapping(value = "/update/{id}")
+    public ResponseEntity updateSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO, @PathVariable("id") String id) throws
+            JsonProcessingException {
+        List<SurveyQuestion> questions = new ArrayList<>();
+        for (SurveyQuestionDTO x : saveSurveyDTO.getQuestions()) {
+            questions.add(saveQuestionMapper.toEntity(x));
+        }
+        return ResponseEntity.ok(service.editSurvey(Long.parseLong(id), questions));
     }
 }

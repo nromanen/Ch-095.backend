@@ -8,7 +8,6 @@ import lombok.Setter;
 public class EmailDTO {
 
     private String[] emailsArray;
-    private String userId;
     private String surveyId;
 
 }

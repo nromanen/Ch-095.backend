@@ -26,7 +26,4 @@ public class EditSurveyQuestionDTO {
     private List<String> choiceAnswers;
 
     private boolean required;
-
-    private List<MultipartFile> files = new ArrayList<>();
-
 }

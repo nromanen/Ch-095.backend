@@ -1,9 +1,6 @@
 package com.softserve.academy.event.exception.handler;
 
-import com.softserve.academy.event.exception.EmailExistException;
-import com.softserve.academy.event.exception.SurveyNotFound;
-import com.softserve.academy.event.exception.UnauthorizedException;
-import com.softserve.academy.event.exception.UserNotFound;
+import com.softserve.academy.event.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +36,24 @@ public class GlobalExceptionHandler {
         return handler(e, request, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(IncorrectEmailsException.class)
+    public ResponseEntity<Object> incorrectEmailsHandler(Exception e, WebRequest request) {
+        return handler(e, request, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> unauthorizedHandler(Exception e, WebRequest request) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(IncorrectLinkException.class)
+    public ResponseEntity<Object> incorrectLinkHandler(Exception e, WebRequest request){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SurveyAlreadyPassedException.class)
+    public ResponseEntity<Object> surveyAlreadyPassedHandler(Exception e, WebRequest request){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
     }
 
     private ResponseEntity<Object> handler(Exception e, WebRequest request, HttpStatus status) {
