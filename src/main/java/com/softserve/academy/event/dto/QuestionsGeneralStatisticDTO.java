@@ -5,11 +5,7 @@ import lombok.*;
 
 import java.util.Set;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode
+@Data
 public class QuestionsGeneralStatisticDTO {
     String title;
     Set<OneQuestionGeneralStatisticDTO> questionDTOS;

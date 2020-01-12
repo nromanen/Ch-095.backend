@@ -9,7 +9,7 @@ import java.util.List;
 public class OneQuestionSeparatelyStatisticDTO {
     private String question;
     private SurveyQuestionType type;
-    private String[] choiceAnswers;
+    private List<String> choiceAnswers;
     private int index;
     private List<String> answer;
 
