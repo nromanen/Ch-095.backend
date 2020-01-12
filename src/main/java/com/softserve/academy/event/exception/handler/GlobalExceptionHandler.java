@@ -40,11 +40,6 @@ public class GlobalExceptionHandler {
         return handler(e, request, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(IncorrectEmailsException.class)
-    public ResponseEntity<Object> incorrectEmailsHandler(Exception e, WebRequest request) {
-        return handler(e, request, HttpStatus.CONFLICT);
-    }
-
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> unauthorizedHandler(Exception e, WebRequest request) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);

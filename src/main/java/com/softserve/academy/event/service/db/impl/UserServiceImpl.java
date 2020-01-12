@@ -118,11 +118,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getEmailByUserId(Long id) {
-        return userRepository.getEmailByUserId(id);
-    }
-
-    @Override
     public Optional<User> findFirstById(Long id) {
         return userRepository.findFirstById(id);
     }
