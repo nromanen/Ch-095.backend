@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> exceptionHandler(Exception e, WebRequest request) {
         String description = request.getDescription(false);
-        log.error("Not default exception : " + e.getMessage());
+        log.error("Not default exception", e);
         log.error("WebRequest description  : " + description);
         return new ResponseEntity<>(e.getMessage() + "\n" + description, HttpStatus.BAD_REQUEST);
     }

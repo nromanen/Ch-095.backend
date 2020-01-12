@@ -30,17 +30,20 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     @Override
     public Page<Survey> findAllByPageableAndUserEmail(Pageable pageable, String userEmail) {
         Session session = sessionFactory.getCurrentSession();
-        return getSurveyPage(pageable, session, userEmail, SurveyStatus.TEMPLATE, "s.status != :status");
+        return getSurveyPage(pageable, session, userEmail,
+                SurveyStatus.TEMPLATE, "s.status != :status");
     }
 
     @Override
-    public Page<Survey> findAllByPageableAndStatusAndUserEmail(Pageable pageable, SurveyStatus status, String userEmail) {
+    public Page<Survey> findAllByPageableAndStatusAndUserEmail(Pageable pageable,
+                                                               SurveyStatus status, String userEmail) {
         Session session = sessionFactory.getCurrentSession();
         return getSurveyPage(pageable, session, userEmail, status, "s.status = :status");
     }
 
     @SuppressWarnings("unchecked")
-    private Page<Survey> getSurveyPage(Pageable pageable, Session session, String userEmail, SurveyStatus status, String statusQuery) {
+    private Page<Survey> getSurveyPage(Pageable pageable, Session session,
+                                       String userEmail, SurveyStatus status, String statusQuery) {
         Query query = session.createQuery("from " + clazz.getName() + " as s" +
                 " left join fetch s.surveyContacts c" +
                 " where s.user.email = :userEmail and s.active = true and " + statusQuery +

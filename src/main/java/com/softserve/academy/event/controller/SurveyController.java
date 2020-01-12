@@ -37,7 +37,8 @@ public class SurveyController {
     private final QuestionService questionService;
 
     @Autowired
-    public SurveyController(SurveyService service, SurveyMapper surveyMapper, SaveQuestionMapper saveQuestionMapper, QuestionService questionService) {
+    public SurveyController(SurveyService service, SurveyMapper surveyMapper,
+                            SaveQuestionMapper saveQuestionMapper, QuestionService questionService) {
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
         this.surveyMapper = surveyMapper;
@@ -97,7 +98,7 @@ public class SurveyController {
     public ResponseEntity<EditSurveyDTO> loadForEditSurvey(@PathVariable(name = "id") Long surveyId) throws IOException {
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
         List<EditSurveyQuestionDTO> editSurveyQuestionsDTO = new ArrayList<>();
-        for(SurveyQuestion question : questions){
+        for (SurveyQuestion question : questions) {
             editSurveyQuestionsDTO.add(saveQuestionMapper.toEditSurveyQuestionDTO(question));
         }
         Survey survey = service.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
