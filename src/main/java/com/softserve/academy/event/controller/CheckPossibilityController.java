@@ -54,11 +54,11 @@ public class CheckPossibilityController {
     @ApiOperation(value = "Check e-mail")
     @PostMapping(value = "/check")
     public ResponseEntity<ContactSurveyDTO> enterEmail(@RequestBody CheckPossibilityDTO checkPossibilityDTO) {
-        String string = new String(Base64.getDecoder().decode(checkPossibilityDTO.getToken())).split(";")[0];
-        final ContactSurveyDTO dto = new ContactSurveyDTO(string, Long.valueOf(string));
-        if (string.matches(User.EMAIL_PATTERN)
+        String[] strings = new String(Base64.getDecoder().decode(checkPossibilityDTO.getToken())).split(";");
+        final ContactSurveyDTO dto = new ContactSurveyDTO(strings[0], Long.valueOf(strings[1]));
+        if (strings[0].matches(User.EMAIL_PATTERN)
                 && checkPossibilityDTO.getEmail().matches(User.EMAIL_PATTERN)
-                && string.equals(checkPossibilityDTO.getEmail())) {
+                && strings[0].equals(checkPossibilityDTO.getEmail())) {
             return ResponseEntity.ok(dto);
         }
         log.error("Email does not match the specified contact");
