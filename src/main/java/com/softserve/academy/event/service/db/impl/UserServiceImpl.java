@@ -5,7 +5,6 @@ import com.softserve.academy.event.entity.VerificationToken;
 import com.softserve.academy.event.entity.enums.Roles;
 import com.softserve.academy.event.entity.enums.TokenValidation;
 import com.softserve.academy.event.exception.EmailExistException;
-import com.softserve.academy.event.exception.UnauthorizedException;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
@@ -181,7 +180,7 @@ public class UserServiceImpl implements UserService {
         } else if (principal instanceof DefaultOAuth2User) {
             return ((DefaultOAuth2User) principal).getAttribute("email"); // for facebook
         } else {
-            throw new UnauthorizedException();
+            return null;
         }
     }
 }
