@@ -56,9 +56,9 @@ public class SurveyController {
 
     @ApiOperation(value = "Duplicates a survey")
     @PostMapping
-    public ResponseEntity<SurveyDTO> duplicateSurvey(@RequestBody DuplicateSurveySettings settings) {
+    public ResponseEntity<Long> duplicateSurvey(@RequestBody DuplicateSurveySettings settings) {
         return ResponseEntity.ok(
-                surveyMapper.toDTO(service.duplicateSurvey(settings))
+                service.duplicateSurvey(settings)
         );
     }
 

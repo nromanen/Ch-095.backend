@@ -66,8 +66,4 @@ public class ContactServiceImpl implements ContactService {
         repository.delete(entity);
     }
 
-    @Override
-    public void detach(Contact entity) {
-        repository.detach(entity);
-    }
 }

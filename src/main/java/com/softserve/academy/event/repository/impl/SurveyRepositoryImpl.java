@@ -12,14 +12,14 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.ParameterMode;
+import java.math.BigInteger;
 
 @Repository
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> implements SurveyRepository {
 
     @Override
     public Survey eagerFindFirstById(Long id) {
-        Survey survey = super.findFirstById(id)
+        Survey survey = findFirstById(id)
                 .orElseThrow(SurveyNotFound::new);
         Hibernate.initialize(survey.getSurveyContacts());
         Hibernate.initialize(survey.getSurveyQuestions());
@@ -57,23 +57,14 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
         return new Page<>(query.list(), pageable);
     }
 
-    /*Query query = sessionFactory.getCurrentSession()
-        .getNamedQuery("callCloneFunction")
-        .setParameter("survey", 1L)
-        .setParameter("status", 1)
-        .setParameter("cloneContacts", true).list();
-*/
-
-    public Survey cloneSurvey(DuplicateSurveySettings settings) {
-        return (Survey) sessionFactory.getCurrentSession()
-                .createStoredProcedureQuery("clone_function")
-                .registerStoredProcedureParameter(1, Long.class, ParameterMode.IN)
-                .registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN)
-                .registerStoredProcedureParameter(3, Boolean.class, ParameterMode.IN)
-                .setParameter(1, settings.getId())
-                .setParameter(2, 0)
-                .setParameter(3, settings.isClearContacts())
-                .getSingleResult();
+    @Override
+    public long cloneSurvey(DuplicateSurveySettings settings) {
+        return ((BigInteger) sessionFactory.getCurrentSession()
+                .createNativeQuery("SELECT clone_survey(:id,:clearContacts);")
+                .setParameter("id", settings.getId())
+                .setParameter("clearContacts", settings.isClearContacts())
+                .getSingleResult())
+                .longValue();
     }
 
 }

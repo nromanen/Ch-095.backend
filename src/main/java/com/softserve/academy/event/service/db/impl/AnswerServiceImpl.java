@@ -45,11 +45,5 @@ public class AnswerServiceImpl implements AnswerService {
     public void delete(SurveyAnswer entity) {
         answerRepository.delete(entity);
     }
-
-    @Override
-    public void detach(SurveyAnswer entity) {
-
-    }
-
-
+    
 }

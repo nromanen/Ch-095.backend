@@ -55,8 +55,4 @@ public class VerificationTokenRepositoryImpl implements VerificationTokenReposit
 
     }
 
-    @Override
-    public void detach(VerificationToken entity) {
-
-    }
 }

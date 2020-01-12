@@ -14,6 +14,6 @@ public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
     Page<Survey> findAllByPageableAndStatusAndUserEmail(Pageable pageable, SurveyStatus status, String userEmail);
 
-    Survey cloneSurvey(DuplicateSurveySettings settings);
+    long cloneSurvey(DuplicateSurveySettings settings);
 
 }
