@@ -22,27 +22,27 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFound.class)
     public ResponseEntity<Object> userNotFoundHandler(Exception e, WebRequest request) {
-        return handler(e, request,"", HttpStatus.NOT_FOUND);
+        return handler(e, request, "", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(SurveyNotFound.class)
     public ResponseEntity<Object> surveyNotFoundHandler(Exception e, WebRequest request) {
-        return handler(e, request,"", HttpStatus.NOT_FOUND);
+        return handler(e, request, "", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> accessDeniedHandler(Exception e, WebRequest request) {
-        return handler(e, request,"Try change other user information!", HttpStatus.FORBIDDEN);
+        return handler(e, request, "Try change other user information!", HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(IncorrectDataDB.class)
     public ResponseEntity<Object> incorrectDataDbHandler(Exception e, WebRequest request) {
-        return handler(e,request,HttpStatus.CONFLICT);
+        return handler(e, request, "Incorrect database info", HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(EmailExistException.class)
     public ResponseEntity<Object> emailExistHandler(Exception e, WebRequest request) {
-        return handler(e, request,"Try register already existing email", HttpStatus.CONFLICT);
+        return handler(e, request, "Try register already existing email", HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SurveyNotBelongUser.class)
     public ResponseEntity<Object> surveyNotBelongUserHandler(Exception e, WebRequest request) {
-        return handler(e,request,HttpStatus.LOCKED);
+        return handler(e, request, "Current survey is not belong to this user", HttpStatus.LOCKED);
     }
 
     @ExceptionHandler(IncorrectLinkException.class)
