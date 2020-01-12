@@ -19,15 +19,6 @@ import java.util.Optional;
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> implements SurveyRepository {
 
     @Override
-    public Survey eagerFindFirstById(Long id) {
-        Survey survey = findFirstById(id)
-                .orElseThrow(SurveyNotFound::new);
-        Hibernate.initialize(survey.getSurveyContacts());
-        Hibernate.initialize(survey.getSurveyQuestions());
-        return survey;
-    }
-
-    @Override
     public Page<Survey> findAllByPageableAndUserEmail(Pageable pageable, String userEmail) {
         Session session = sessionFactory.getCurrentSession();
         return getSurveyPage(pageable, session, userEmail,
