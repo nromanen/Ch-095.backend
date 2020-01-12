@@ -3,9 +3,7 @@ package com.softserve.academy.event.dto;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import lombok.*;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 public class OneQuestionSeparatelyStatisticDTO {

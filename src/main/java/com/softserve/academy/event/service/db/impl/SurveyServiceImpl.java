@@ -30,6 +30,10 @@ import java.util.stream.Collectors;
 
 import static com.softserve.academy.event.util.SecurityUserUtil.checkUserEmailNotEqualsCurrentUserEmail;
 import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -123,18 +127,16 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
-        Long userID = userService.getAuthenticationId()
-                .orElseThrow(RuntimeException::new);
-        User user = userRepository.findFirstById(userID)
-                .orElseThrow(UserNotFound::new);
+        String email = userService.getAuthenticatedUserEmail();
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFound::new);
         survey.setUser(user);
         surveyQuestions.forEach(survey::addQuestion);
         return repository.save(survey);
     }
 
-    public Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions) {
-        Survey survey = repository.findFirstById(surveyId)
-                .orElseThrow(SurveyNotFound::new);
+    @Override
+    public Survey updateSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions) {
+        Survey survey = repository.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
         survey.getSurveyQuestions().forEach(questionRepository::delete);
         survey.getSurveyQuestions().clear();
         surveyQuestions.forEach(survey::addQuestion);

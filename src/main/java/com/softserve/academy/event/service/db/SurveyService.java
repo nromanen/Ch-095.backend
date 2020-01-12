@@ -26,6 +26,6 @@ public interface SurveyService {
 
     Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions);
 
-    Survey editSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions);
+    Survey updateSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions);
 }
 
