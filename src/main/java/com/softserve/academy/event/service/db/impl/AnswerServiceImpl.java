@@ -52,4 +52,8 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
 
+    @Override
+    public List<SurveyAnswer> saveAll(List<SurveyAnswer> answers) {
+        return answerRepository.saveAll(answers);
+    }
 }

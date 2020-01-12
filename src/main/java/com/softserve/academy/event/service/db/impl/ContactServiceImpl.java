@@ -4,8 +4,8 @@ import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.exception.IncorrectLinkException;
 import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.repository.ContactRepository;
+import com.softserve.academy.event.repository.SurveyContactConnectorRepository;
 import com.softserve.academy.event.service.db.ContactService;
-import com.softserve.academy.event.service.db.SurveyContactConnectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,24 +18,24 @@ import java.util.Optional;
 public class ContactServiceImpl implements ContactService {
 
     private final ContactRepository repository;
-    private final SurveyContactConnectorService surveyContactConnectorService;
+    private final SurveyContactConnectorRepository surveyContactConnectorRepository;
 
     @Autowired
-    public ContactServiceImpl(ContactRepository repository, SurveyContactConnectorService surveyContactConnectorService) {
+    public ContactServiceImpl(ContactRepository repository, SurveyContactConnectorRepository surveyContactConnectorRepository) {
         this.repository = repository;
-        this.surveyContactConnectorService = surveyContactConnectorService;
+        this.surveyContactConnectorRepository = surveyContactConnectorRepository;
     }
 
     @Override
-    public Optional<Long> getIdByEmail(String email) {
-        return repository.getIdByEmail(email);
+    public Long getIdByEmail(String email) {
+        return repository.getIdByEmail(email).orElse(null);
     }
 
     @Override
     public boolean canPass(Long surveyId, String contactEmail) {
-        Optional<Long> contactId = getIdByEmail(contactEmail);
+        Long contactId = getIdByEmail(contactEmail);
         try {
-            return surveyContactConnectorService.isEnable(contactId.orElse(null), surveyId);
+            return surveyContactConnectorRepository.isEnable(contactId, surveyId);
         } catch (IncorrectLinkException | SurveyAlreadyPassedException e) {
             return false;
         }

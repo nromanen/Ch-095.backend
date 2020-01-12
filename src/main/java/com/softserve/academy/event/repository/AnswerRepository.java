@@ -7,4 +7,5 @@ import java.util.List;
 public interface AnswerRepository extends BasicRepository<SurveyAnswer, Long> {
 
     List<SurveyAnswer> findByQuestionId(Long questionId);
+    List<SurveyAnswer> saveAll(List<SurveyAnswer> answers);
 }

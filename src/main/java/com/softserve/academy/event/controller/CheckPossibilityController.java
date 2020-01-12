@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
-import java.util.Optional;
 
 @Api(value = "/testAccess")
 @RestController
@@ -39,12 +38,12 @@ public class CheckPossibilityController {
     @GetMapping(value = "/{token}")
     public ResponseEntity<String> mailTest(@PathVariable(name = "token") String token) throws IncorrectLinkException, SurveyAlreadyPassedException {
         String[] res = checkPossibilityService.parseToken(token);
-        Optional<Long> longOptional = contactService.getIdByEmail(res[0]);
-        if (!longOptional.isPresent()) {
+        Long longOptional = contactService.getIdByEmail(res[0]);
+        if (longOptional == null) {
             log.error("This survey is not available for the current user");
             return new ResponseEntity<>("Sorry, but you can`t pass survey by this link", HttpStatus.UNAUTHORIZED);
         }
-        if (surveyContactConnectorService.isEnable(longOptional.get(), Long.valueOf(res[1]))) {
+        if (surveyContactConnectorService.isEnable(longOptional, Long.valueOf(res[1]))) {
             return ResponseEntity.ok(token);
         }
         log.error("This user has already passed survey");
