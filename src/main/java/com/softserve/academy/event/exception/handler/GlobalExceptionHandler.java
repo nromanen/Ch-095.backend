@@ -30,6 +30,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(IncorrectDataDB.class)
+    public ResponseEntity<Object> incorrectDataDbHandler(Exception e, WebRequest request) {
+        return handler(e,request,HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(EmailExistException.class)
     public ResponseEntity<Object> emailExistHandler(Exception e, WebRequest request) {
         return handler(e, request, HttpStatus.CONFLICT);
@@ -43,6 +48,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> unauthorizedHandler(Exception e, WebRequest request) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(SurveyNotBelongUser.class)
+    public ResponseEntity<Object> surveyNotBelongUserHandler(Exception e, WebRequest request) {
+        return handler(e,request,HttpStatus.LOCKED);
     }
 
     @ExceptionHandler(IncorrectLinkException.class)

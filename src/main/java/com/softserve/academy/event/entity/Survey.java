@@ -70,8 +70,8 @@ public class Survey implements Serializable {
     }
 
     public void addQuestion(SurveyQuestion surveyQuestion) {
-        surveyQuestion.setSurvey(this);
         surveyQuestions.add(surveyQuestion);
+        surveyQuestion.setSurvey(this);
     }
 
 }
