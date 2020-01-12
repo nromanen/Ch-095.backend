@@ -15,7 +15,7 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
 
     @Override
     public Optional<Contact> findByEmail(String email) {
-        TypedQuery<Contact> query = sessionFactory.getCurrentSession().createNamedQuery("findEmailContact", Contact.class);
+        TypedQuery<Contact> query = sessionFactory.getCurrentSession().createNamedQuery("findEmailContact", Contact.class).setMaxResults(1);
         query.setParameter("email", email);
         List<Contact> contacts = query.getResultList();
         if (contacts.isEmpty()) {
