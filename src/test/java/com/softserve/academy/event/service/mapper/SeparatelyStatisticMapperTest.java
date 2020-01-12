@@ -30,7 +30,6 @@ class SeparatelyStatisticMapperTest {
         survey.setTitle("Survey #1");
         Set<SurveyContact> contacts = new HashSet<>();
         SurveyContact surveyContact = new SurveyContact();
-        surveyContact.setId(1L);
         Contact contact = new Contact();
         contact.setId(1L);
         contact.setEmail("test1@gmail.com");
@@ -39,7 +38,6 @@ class SeparatelyStatisticMapperTest {
         contacts.add(surveyContact);
 
         surveyContact = new SurveyContact();
-        surveyContact.setId(2L);
         contact = new Contact();
         contact.setId(2L);
         contact.setEmail("test2@gmail.com");
@@ -138,7 +136,8 @@ class SeparatelyStatisticMapperTest {
 
         Set<QuestionsSeparatelyStatisticDTO> dto =
                 separatelyStatisticMapper.toSetQuestionsDTO(survey);
-
+        System.out.println(dto);
+        System.out.println(expected);
         assertEquals(expected,dto);
     }
 

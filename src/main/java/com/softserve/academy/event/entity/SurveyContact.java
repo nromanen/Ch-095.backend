@@ -13,7 +13,6 @@ import java.io.Serializable;
         uniqueConstraints = @UniqueConstraint(columnNames = {"survey_id", "contact_id"}))
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"id"})
 @Data
 public class SurveyContact implements Serializable {
 
