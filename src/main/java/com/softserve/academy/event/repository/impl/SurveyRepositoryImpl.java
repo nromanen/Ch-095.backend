@@ -13,6 +13,7 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
+import java.util.Optional;
 
 @Repository
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> implements SurveyRepository {
@@ -58,13 +59,12 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     }
 
     @Override
-    public long cloneSurvey(DuplicateSurveySettings settings) {
-        return ((BigInteger) sessionFactory.getCurrentSession()
+    public Optional<BigInteger> cloneSurvey(DuplicateSurveySettings settings) {
+        return Optional.of((BigInteger) sessionFactory.getCurrentSession()
                 .createNativeQuery("SELECT clone_survey(:id,:clearContacts);")
                 .setParameter("id", settings.getId())
                 .setParameter("clearContacts", settings.isClearContacts())
-                .getSingleResult())
-                .longValue();
+                .getSingleResult());
     }
 
 }

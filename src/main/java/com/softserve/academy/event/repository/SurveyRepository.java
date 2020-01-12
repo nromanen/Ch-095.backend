@@ -6,6 +6,9 @@ import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 
+import java.math.BigInteger;
+import java.util.Optional;
+
 public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
     Survey eagerFindFirstById(Long id);
@@ -14,6 +17,6 @@ public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
     Page<Survey> findAllByPageableAndStatusAndUserEmail(Pageable pageable, SurveyStatus status, String userEmail);
 
-    long cloneSurvey(DuplicateSurveySettings settings);
+    Optional<BigInteger> cloneSurvey(DuplicateSurveySettings settings);
 
 }

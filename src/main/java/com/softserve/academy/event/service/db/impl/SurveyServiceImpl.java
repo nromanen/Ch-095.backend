@@ -92,7 +92,9 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public long duplicateSurvey(DuplicateSurveySettings settings) {
-        return repository.cloneSurvey(settings);
+        return repository.cloneSurvey(settings)
+                .orElseThrow(SurveyNotFound::new)
+                .longValue();
     }
 
     private Survey findSurveyById(Long id) {
