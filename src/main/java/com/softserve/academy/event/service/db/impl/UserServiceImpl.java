@@ -8,8 +8,12 @@ import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.repository.VerificationTokenRepository;
+import com.softserve.academy.event.service.db.EmailService;
 import com.softserve.academy.event.service.db.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,7 +29,11 @@ import java.util.*;
 
 @Service
 @Transactional
+@PropertySource("classpath:application.properties")
 public class UserServiceImpl implements UserService {
+
+    @Value("${app.frontend.url}")
+    private String frontUrl;
 
     private final UserRepository userRepository;
 
@@ -33,11 +41,14 @@ public class UserServiceImpl implements UserService {
 
     private final VerificationTokenRepository tokenRepository;
 
+    private final EmailService emailService;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, VerificationTokenRepository tokenRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, VerificationTokenRepository tokenRepository, @Lazy EmailService emailService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.tokenRepository = tokenRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -56,6 +67,7 @@ public class UserServiceImpl implements UserService {
     public VerificationToken updateTokenExpiration(String token) {
         VerificationToken verificationToken = tokenRepository.findByToken(token);
         verificationToken.updateToken(UUID.randomUUID().toString());
+        emailConfirm(verificationToken.getUser().getEmail(), verificationToken.getToken());
         return tokenRepository.save(verificationToken);
     }
 
@@ -78,6 +90,7 @@ public class UserServiceImpl implements UserService {
     public VerificationToken createVerificationToken(User user) {
         String token = UUID.randomUUID().toString();
         VerificationToken vToken = new VerificationToken(token, user);
+        emailConfirm(user.getEmail(), token);
         return tokenRepository.save(vToken);
     }
 
@@ -95,6 +108,13 @@ public class UserServiceImpl implements UserService {
         user.setActive(true);
         userRepository.save(user);
         return TokenValidation.TOKEN_VALID;
+    }
+
+    private void emailConfirm(String email, String token) {
+        String subject = "Registration Confirmation";
+        String confirmationUrl = frontUrl + "/confirm?token=" + token;
+        String message = "Thank you for registration. Please click on the below link to activate your account.";
+        emailService.sendMail(email,subject,message + confirmationUrl);
     }
 
     @Override
