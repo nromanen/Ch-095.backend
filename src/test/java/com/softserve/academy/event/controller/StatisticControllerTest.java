@@ -5,6 +5,7 @@ import com.softserve.academy.event.dto.OneQuestionSeparatelyStatisticDTO;
 import com.softserve.academy.event.dto.QuestionsGeneralStatisticDTO;
 import com.softserve.academy.event.dto.QuestionsSeparatelyStatisticDTO;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
+import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.service.db.StatisticService;
 
 import org.hamcrest.Matcher;
@@ -45,7 +46,6 @@ class StatisticControllerTest {
         public StatisticService statisticService() {
             return Mockito.mock(StatisticService.class);
         }
-
     }
 
     @Autowired
@@ -65,7 +65,6 @@ class StatisticControllerTest {
     @MethodSource("sourceGetGeneralStatistic")
     void getGeneralStatistic(QuestionsGeneralStatisticDTO questionsDTO) throws Exception {
         when(statisticService.getGeneralStatistic(1L)).thenReturn(questionsDTO);
-        when(statisticService.isSurveyBelongsUser(1L)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.get("/statistic/general?surveyId=1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.questionDTOS",
@@ -74,17 +73,6 @@ class StatisticControllerTest {
                 .andExpect(jsonPath("$.questionDTOS",hasSize(not(0))));
     }
 
-    @Test
-    void getGeneralStatisticNegative() throws Exception {
-        when(statisticService.getGeneralStatistic(1L))
-                .thenReturn(new QuestionsGeneralStatisticDTO());
-        when(statisticService.isSurveyBelongsUser(1L)).thenReturn(true);
-        mockMvc.perform(MockMvcRequestBuilders.get("/statistic/general?surveyId=1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title", Matchers.nullValue()))
-                .andExpect(jsonPath("$.questionDTOS", Matchers.nullValue()));
-
-    }
 
     static Stream<QuestionsGeneralStatisticDTO> sourceGetGeneralStatistic()  {
         List<QuestionsGeneralStatisticDTO> data =  new ArrayList<>();
@@ -95,7 +83,7 @@ class StatisticControllerTest {
         question.setIndex(1);
         question.setType(SurveyQuestionType.TEXTAREA);
         question.setQuestion("What's your first name?");
-        question.setChoiceAnswers(new String[0]);
+        question.setChoiceAnswers(new ArrayList<>());
         List<List<String>> answers = new ArrayList<>();
         answers.add(Collections.singletonList("Vlad"));
         answers.add(Collections.singletonList("Ivan"));
@@ -112,7 +100,7 @@ class StatisticControllerTest {
         question.setIndex(1);
         question.setType(SurveyQuestionType.TEXTAREA);
         question.setQuestion("What's your last name?");
-        question.setChoiceAnswers(new String[0]);
+        question.setChoiceAnswers(new ArrayList<>());
         answers = new ArrayList<>();
         answers.add(Collections.singletonList("Banar"));
         answers.add(Collections.singletonList("Rospopov"));
@@ -130,7 +118,6 @@ class StatisticControllerTest {
     @MethodSource("sourceGetSeparatelyStatistic")
     void getSeparatelyStatistic(Set<QuestionsSeparatelyStatisticDTO> setQuestionsDTO) throws Exception {
         when(statisticService.getSeparatelyStatistic(1L)).thenReturn(setQuestionsDTO);
-        when(statisticService.isSurveyBelongsUser(1L)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.get("/statistic/separately?surveyId=1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",hasSize(2)))
@@ -141,29 +128,19 @@ class StatisticControllerTest {
 
     }
 
-    @Test
-    void getSeparatelyStatisticNegative() throws Exception {
-        when(statisticService.getSeparatelyStatistic(1L)).thenReturn(new HashSet<>());
-        when(statisticService.isSurveyBelongsUser(1L)).thenReturn(true);
-        mockMvc.perform(MockMvcRequestBuilders.get("/statistic/separately?surveyId=1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$",hasSize(0)));
-
-    }
-
-    
     static Stream<Set<QuestionsSeparatelyStatisticDTO>> sourceGetSeparatelyStatistic() {
         List<Set<QuestionsSeparatelyStatisticDTO>> data = new ArrayList<>();
 
         Set<QuestionsSeparatelyStatisticDTO> setQuestions = new HashSet<>();
         QuestionsSeparatelyStatisticDTO questions = new QuestionsSeparatelyStatisticDTO();
         questions.setEmail("test1@gmail.com");
+
         Set<OneQuestionSeparatelyStatisticDTO> setOneQuestion = new HashSet<>();
         OneQuestionSeparatelyStatisticDTO question = new OneQuestionSeparatelyStatisticDTO();
         question.setIndex(1);
         question.setType(SurveyQuestionType.TEXTAREA);
         question.setQuestion("What's your last name?");
-        question.setChoiceAnswers(new String[0]);
+        question.setChoiceAnswers(new ArrayList<>());
         question.setAnswer(Collections.singletonList("Vlad"));
         setOneQuestion.add(question);
         questions.setQuestionDTOS(setOneQuestion);
@@ -177,7 +154,7 @@ class StatisticControllerTest {
         question.setIndex(1);
         question.setType(SurveyQuestionType.TEXTAREA);
         question.setQuestion("What's your last name?");
-        question.setChoiceAnswers(new String[0]);
+        question.setChoiceAnswers(new ArrayList<>());
         question.setAnswer(Collections.singletonList("Vlad"));
         setOneQuestion.add(question);
         questions.setQuestionDTOS(setOneQuestion);

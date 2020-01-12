@@ -11,5 +11,5 @@ public interface StatisticService {
 
     Set<QuestionsSeparatelyStatisticDTO> getSeparatelyStatistic(Long surveyId);
 
-    boolean isSurveyBelongsUser(Long surveyId);
+    void isSurveyBelongsUser(Long surveyId);
 }
