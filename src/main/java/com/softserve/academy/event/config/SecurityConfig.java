@@ -28,10 +28,10 @@ import org.springframework.security.oauth2.client.web.AuthorizationRequestReposi
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -78,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration", "/logout", "/login").permitAll()
+                .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration").permitAll()
                 .antMatchers("/oauth_login", "/loginSuccess", "/loginFailure", "/authenticatedEmail").permitAll()
                 .antMatchers("/question", "/testAccess/{token}", "/testAccess/check").permitAll()
                 .anyRequest().authenticated()
@@ -87,7 +87,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .successHandler(mySuccessHandler)
                     .failureHandler(myFailureHandler)
                 .and()
+                .logout()
+                    .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
 
+                .and()
                 .oauth2Login()
                 .loginPage("/oauth_login")
                 .authorizationEndpoint()
@@ -101,15 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureUrl("/loginFailure")
                 .and()
                 .csrf()
-                    .ignoringAntMatchers("/registration")
-                    .csrfTokenRepository(getCsrfTokenRepository())
-                .and()
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("http://localhost:4200/login")
-                .clearAuthentication(true)
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "XSRF-TOKEN");
+                    .csrfTokenRepository(getCsrfTokenRepository());
     }
 
     @Bean
