@@ -30,10 +30,6 @@ import java.util.stream.Collectors;
 
 import static com.softserve.academy.event.util.SecurityUserUtil.checkUserEmailNotEqualsCurrentUserEmail;
 import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Transactional
