@@ -92,35 +92,25 @@ public class SurveyController {
 
     @PostMapping(value = "/createNewSurvey")
     public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws IOException {
-        Survey survey = new Survey();
-        survey.setTitle(saveSurveyDTO.getTitle());
-        survey.setImageUrl(saveSurveyDTO.getSurveyPhotoName());
+        Survey survey = saveQuestionMapper.toSurvey(saveSurveyDTO);
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
-        for (SurveyQuestionDTO x : saveSurveyDTO.getQuestions()) {
-            surveyQuestions.add(saveQuestionMapper.toEntity(x));
+        for (SurveyQuestionDTO question : saveSurveyDTO.getQuestions()) {
+            surveyQuestions.add(saveQuestionMapper.toEntity(question));
         }
         return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
     }
 
     @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
     @GetMapping(value = "/edit/{id}")
-    public ResponseEntity loadForEditSurvey(@PathVariable(name = "id") Long surveyId) throws IOException {
+    public ResponseEntity<EditSurveyDTO> loadForEditSurvey(@PathVariable(name = "id") Long surveyId) throws IOException {
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
-        List<EditSurveyQuestionDTO> questionsDTO = new ArrayList<>();
-        for (SurveyQuestion x : questions) {
-            questionsDTO.add(saveQuestionMapper.toEditDTO(x));
+        List<EditSurveyQuestionDTO> editSurveyQuestionsDTO = new ArrayList<>();
+        for(SurveyQuestion question : questions){
+            editSurveyQuestionsDTO.add(saveQuestionMapper.toEditSurveyQuestionDTO(question));
         }
-        EditSurveyDTO editSurveyDTO = new EditSurveyDTO(questionsDTO);
         Survey survey = service.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
-        setSurveysTitleAndPhotoName(survey, editSurveyDTO);
-        if (questionsDTO.isEmpty())
-            return new ResponseEntity(editSurveyDTO, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(editSurveyDTO, HttpStatus.OK);
-    }
-
-    private void setSurveysTitleAndPhotoName(Survey survey, EditSurveyDTO editSurveyDTO) {
-        editSurveyDTO.setTitle(survey.getTitle());
-        editSurveyDTO.setSurveyPhotoName(survey.getImageUrl());
+        EditSurveyDTO editSurveyDTO = saveQuestionMapper.toEditSurveyDTO(survey, editSurveyQuestionsDTO);
+        return new ResponseEntity<>(editSurveyDTO, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
@@ -128,9 +118,9 @@ public class SurveyController {
     public ResponseEntity updateSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO, @PathVariable("id") String id) throws
             JsonProcessingException {
         List<SurveyQuestion> questions = new ArrayList<>();
-        for (SurveyQuestionDTO x : saveSurveyDTO.getQuestions()) {
-            questions.add(saveQuestionMapper.toEntity(x));
+        for (SurveyQuestionDTO questionDTO : saveSurveyDTO.getQuestions()) {
+            questions.add(saveQuestionMapper.toEntity(questionDTO));
         }
-        return ResponseEntity.ok(service.editSurvey(Long.parseLong(id), questions));
+        return ResponseEntity.ok(service.updateSurvey(Long.parseLong(id), questions));
     }
 }
