@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.ParameterMode;
 import java.math.BigInteger;
 import java.util.Optional;
 
@@ -55,7 +56,9 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     @Override
     public Optional<BigInteger> cloneSurvey(DuplicateSurveySettings settings) {
         return Optional.of((BigInteger) sessionFactory.getCurrentSession()
-                .createNativeQuery("SELECT clone_survey(:id,:clearContacts);")
+                .createStoredProcedureQuery("clone_survey")
+                .registerStoredProcedureParameter("id",Long.class,ParameterMode.IN)
+                .registerStoredProcedureParameter("clearContacts",Boolean.class,ParameterMode.IN)
                 .setParameter("id", settings.getId())
                 .setParameter("clearContacts", settings.isClearContacts())
                 .getSingleResult());
