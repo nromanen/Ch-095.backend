@@ -13,7 +13,7 @@ public class UserRepositoryImpl extends BasicRepositoryImpl<User, Long>  impleme
 
     @Override
     public Optional<User> findByEmail(String email) {
-        TypedQuery<User> query = sessionFactory.getCurrentSession().createNamedQuery("findEmail", User.class);
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createNamedQuery("findEmail", User.class).setMaxResults(1);
         query.setParameter("email", email);
         List<User> user = query.getResultList();
         if (user.isEmpty()) {
@@ -21,13 +21,5 @@ public class UserRepositoryImpl extends BasicRepositoryImpl<User, Long>  impleme
         }
        return Optional.of(query.getResultList().get(0));
     }
-
-    @Override
-    public String getEmailByUserId(Long id) {
-        TypedQuery<User> query = sessionFactory.getCurrentSession().createNamedQuery("findEmailById", User.class);
-        query.setParameter("id", id);
-        return query.getSingleResult().getEmail();
-    }
-
 }
 

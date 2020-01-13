@@ -19,18 +19,17 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
 
     @Override
     public boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException {
-        Optional<Boolean> res = Optional.ofNullable(
-                (Boolean) sessionFactory.getCurrentSession()
+        List res = sessionFactory.getCurrentSession()
                 .createQuery("select t.canPass " + fromQuery)
                 .setParameter(CONTACT_ID, contactId)
                 .setParameter(SURVEY_ID, surveyId)
                 .setMaxResults(1)
-                .getResultList().get(0));
-        if (!res.isPresent()) {
+                .getResultList();
+        if (res.isEmpty()) {
             log.error("This survey is not available for the current user");
             throw new IncorrectLinkException("Sorry, but you can`t pass survey by this link");
         }
-        return res.get();
+        return (boolean) res.get(0);
     }
 
     @Override
