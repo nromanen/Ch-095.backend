@@ -2,12 +2,10 @@ package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
-import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;

@@ -4,7 +4,6 @@ import com.softserve.academy.event.dto.ContactResponseDTO;
 import com.softserve.academy.event.dto.QuestionDTO;
 import com.softserve.academy.event.dto.SurveyContactDTO;
 import com.softserve.academy.event.entity.SurveyContact;
-import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.service.db.AnswerService;
 import com.softserve.academy.event.service.db.ContactService;
 import com.softserve.academy.event.service.db.QuestionService;

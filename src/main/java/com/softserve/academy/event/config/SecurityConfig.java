@@ -171,15 +171,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private ClientRegistration getRegistration(String client) {
-        String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
+        String clientPropertyKey = "spring.security.oauth2.client.registration.";
 
-        String clientId = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-id");
+        String clientId = env.getProperty(clientPropertyKey + client + ".client-id");
 
         if (clientId == null) {
             return null;
         }
 
-        String clientSecret = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-secret");
+        String clientSecret = env.getProperty(clientPropertyKey + client + ".client-secret");
         if (client.equals("google")) {
             return CommonOAuth2Provider.GOOGLE.getBuilder(client)
                     .clientId(clientId)
