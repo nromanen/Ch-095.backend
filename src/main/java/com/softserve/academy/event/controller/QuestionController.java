@@ -3,6 +3,7 @@ package com.softserve.academy.event.controller;
 import com.softserve.academy.event.dto.ContactResponseDTO;
 import com.softserve.academy.event.dto.QuestionDTO;
 import com.softserve.academy.event.dto.SurveyContactDTO;
+import com.softserve.academy.event.entity.SurveyAnswer;
 import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.service.db.AnswerService;
@@ -19,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Api(value = "/question")
 @RestController
@@ -50,37 +51,28 @@ public class QuestionController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
         List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questions);
-        SurveyContactDTO dto = new SurveyContactDTO();
-        dto.setContactEmail(contactEmail);
-        dto.setSurveyId(surveyId);
-        dto.setQuestions(questionsDTO);
         if(questionsDTO.isEmpty())
-            return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        SurveyContactDTO dto = new SurveyContactDTO(surveyId, contactEmail, questionsDTO);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Save answers to the database")
     @PostMapping
     public ResponseEntity<String> addAnswers(@RequestBody ContactResponseDTO contactResponseDTO){
-        String result;
-        Optional<Long> contactId = contactService.getIdByEmail(contactResponseDTO.getContactEmail());
-        if(!contactId.isPresent()) {
-            result = "missing email data";
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-        }
-        Optional <SurveyContact> surveyContact =
-                surveyContactConnectorService.findByContactAndSurvey(contactId.get(), contactResponseDTO.getSurveyId());
-        if(!surveyContact.isPresent()){
-            result = "mail is not in the invite list";
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        Long contactId = contactService.getIdByEmail(contactResponseDTO.getContactEmail());
+        SurveyContact surveyContact = surveyContactConnectorService.findByContactAndSurvey(contactId, contactResponseDTO.getSurveyId());
+        if(contactId == null || surveyContact == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        surveyContact.get().setCanPass(false);
-        surveyContactConnectorService.update(surveyContact.get());
-        contactResponseDTO.getAnswers().stream()
-                .peek(answerDTO -> answerDTO.setContactId(contactId.get()))
+        surveyContact.setCanPass(false);
+        surveyContactConnectorService.update(surveyContact);
+        List<SurveyAnswer> answers = contactResponseDTO.getAnswers().stream()
+                .peek(answerDTO -> answerDTO.setContactId(contactId))
                 .map(answerMapper::toEntity)
-                .forEach(answerService::save);
+                .collect(Collectors.toList());
+        answerService.saveAll(answers);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
