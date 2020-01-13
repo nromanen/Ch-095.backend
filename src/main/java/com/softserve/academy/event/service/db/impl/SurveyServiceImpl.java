@@ -6,7 +6,6 @@ import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
-import com.softserve.academy.event.exception.AccessDeniedException;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.QuestionRepository;
@@ -21,6 +20,7 @@ import com.softserve.academy.event.util.Pageable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -28,7 +28,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.softserve.academy.event.util.SecurityUserUtil.checkUserEmailNotEqualsCurrentUserEmail;
 import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
 
 @Service
@@ -53,7 +52,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status) {
         Page<Survey> surveysPage;
         if (Objects.nonNull(status) && status.length() > 0) {
@@ -65,58 +64,58 @@ public class SurveyServiceImpl implements SurveyService {
         return new Page<>(
                 surveysPage.getItems()
                         .stream()
-                        .map(e -> mapper.toDTO(
-                                e,
-                                e.getSurveyContacts()
-                                        .stream()
-                                        .filter(SurveyContact::isCanPass)
-                                        .count(),
-                                (long) e.getSurveyContacts().size()))
+                        .map(this::surveyToSurveyDto)
                         .collect(Collectors.toList()),
                 surveysPage.getPageable()
         );
     }
 
+    private SurveyDTO surveyToSurveyDto(Survey survey) {
+        return mapper.toDTO(
+                survey,
+                survey.getSurveyContacts()
+                        .stream()
+                        .filter(SurveyContact::isCanPass)
+                        .count(),
+                (long) survey.getSurveyContacts().size());
+    }
+
     @Override
     public void updateTitle(Long id, String title) {
-        Survey survey = findSurveyById(id);
+        Survey survey = repository.findFirstById(id)
+                .orElseThrow(SurveyNotFound::new);
         survey.setTitle(title);
         repository.update(survey);
     }
 
     @Override
     public void updateStatus(Long id, SurveyStatus status) {
-        Survey survey = findSurveyById(id);
+        Survey survey = repository.findFirstById(id)
+                .orElseThrow(SurveyNotFound::new);
         survey.setStatus(status);
         repository.update(survey);
     }
 
     @Override
-    public long duplicateSurvey(DuplicateSurveySettings settings) {
+    public long duplicate(DuplicateSurveySettings settings) {
         return repository.cloneSurvey(settings)
                 .orElseThrow(SurveyNotFound::new)
                 .longValue();
     }
 
-    private Survey findSurveyById(Long id) {
+    @Override
+    public void disable(Long id) {
         Survey survey = repository.findFirstById(id)
                 .orElseThrow(SurveyNotFound::new);
-        if (checkUserEmailNotEqualsCurrentUserEmail(survey.getUser().getEmail())) {
-            log.debug("User " + survey.getUser().getUsername() + " try change other user information. ");
-            throw new AccessDeniedException();
-        }
-        return survey;
+        survey.setActive(false);
+        repository.update(survey);
     }
 
     @Override
     public void delete(Long id) {
-        Survey survey = findSurveyById(id);
-        if (survey.isActive()) {
-            survey.setActive(false);
-            repository.update(survey);
-        } else {
-            repository.delete(survey);
-        }
+        Survey survey = repository.findFirstById(id)
+                .orElseThrow(SurveyNotFound::new);
+        repository.delete(survey);
     }
 
     @Override
