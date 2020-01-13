@@ -48,11 +48,6 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    public void detach(SurveyQuestion entity) {
-        questionRepository.detach(entity);
-    }
-
-    @Override
     public List<SurveyQuestion> findBySurveyId(Long surveyId) {
         return questionRepository.findBySurveyId(surveyId);
     }

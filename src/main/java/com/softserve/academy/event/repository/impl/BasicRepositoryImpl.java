@@ -57,9 +57,4 @@ public abstract class BasicRepositoryImpl<T extends Serializable, I extends Seri
                 .remove(entity);
     }
 
-    @Override
-    public void detach(T entity) {
-        sessionFactory.getCurrentSession().detach(entity);
-    }
-
 }
