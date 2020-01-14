@@ -84,11 +84,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                    .successHandler(mySuccessHandler)
-                    .failureHandler(myFailureHandler)
+                .successHandler(mySuccessHandler)
+                .failureHandler(myFailureHandler)
                 .and()
                 .logout()
-                    .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
+                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
 
                 .and()
                 .oauth2Login()
@@ -104,7 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureUrl("/loginFailure")
                 .and()
                 .csrf()
-                    .csrfTokenRepository(getCsrfTokenRepository());
+                .csrfTokenRepository(getCsrfTokenRepository());
     }
 
     @Bean
