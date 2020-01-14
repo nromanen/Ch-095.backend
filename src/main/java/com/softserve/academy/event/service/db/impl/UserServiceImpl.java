@@ -143,11 +143,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void detach(User entity) {
-        userRepository.detach(entity);
-    }
-
-    @Override
     public User newSocialUser(OAuth2User oAuth2User) {
         String email = oAuth2User.getAttribute("email");
 
