@@ -5,9 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -52,32 +49,18 @@ public class EmailConfig {
     private String mailDebug;
 
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-        configurer.setLocations(
-                new ClassPathResource("email.properties")
-        );
-        configurer.setIgnoreResourceNotFound(true);
-        return configurer;
-    }
-
-    @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-
         javaMailSender.setHost(host);
         javaMailSender.setPort(port);
         javaMailSender.setUsername(username);
         javaMailSender.setPassword(password);
-
         javaMailSender.setJavaMailProperties(getMailProperties());
-
         return javaMailSender;
     }
 
     private Properties getMailProperties() {
         Properties properties = new Properties();
-
         properties.setProperty("mail.transport.protocol", mailTransportProtocol);
         properties.setProperty("mail.smtp.auth", maiSmtpAuth);
         properties.setProperty("mail.smtp.starttls.enable", mailSmtpStarttlsEnable);
@@ -85,18 +68,6 @@ public class EmailConfig {
         properties.setProperty("mail.smtp.socketFactory.class", mailSmtpSocketFactoryClass);
         properties.setProperty("mail.smtp.socketFactory.fallback", mailSmtpSocketFactoryFallback);
         properties.setProperty("mail.debug", mailDebug);
-
         return properties;
     }
-
-    @Bean
-    public SimpleMailMessage emailTemplate() {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("somebody@gmail.com");
-        message.setFrom("admin@gmail.com");
-        message.setText("FATAL - Application crash. Save your job !!");
-        return message;
-    }
-
-
 }

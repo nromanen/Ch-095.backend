@@ -1,6 +1,7 @@
 package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Contact;
+import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.repository.ContactRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -44,5 +45,13 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
         List<Contact> res = query.getResultList();
         if (res.isEmpty()) return null;
         return res.get(0);
+    }
+
+    @Override
+    public List<Contact> listContactsByUserId(Long userId) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from " + Contact.class.getName() + " where user_id = :userId ORDER BY index")
+                .setParameter("userId", userId)
+                .getResultList();
     }
 }
