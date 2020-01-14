@@ -19,10 +19,10 @@ import java.util.List;
 @RestController
 @PropertySource("classpath:application.properties")
 public class FileUploadController {
-  
+
     @Value("${image.upload.dir}")
     private String imageUploadDir;
-  
+
     private static final long MAX_UPLOAD_SIZE = 2L * 1024 * 1024;  // 2 MB
 
     @ApiOperation(value = "Upload a picture to the server")

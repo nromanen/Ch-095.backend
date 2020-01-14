@@ -1,21 +1,15 @@
 package com.softserve.academy.event.dto;
 
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Data
 public class OneQuestionSeparatelyStatisticDTO {
     private String question;
     private SurveyQuestionType type;
-    private String[] choiceAnswers;
+    private List<String> choiceAnswers;
     private int index;
     private List<String> answer;
 

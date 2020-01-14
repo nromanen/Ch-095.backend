@@ -2,33 +2,34 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.exception.AccessDeniedException;
 import com.softserve.academy.event.exception.SurveyNotFound;
-import com.softserve.academy.event.exception.UnauthorizedException;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.QuestionRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.repository.UserRepository;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.db.UserService;
+import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.softserve.academy.event.util.SecurityUserUtil.checkUserEmailNotEqualsCurrentUserEmail;
+import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
 
 @Service
 @Transactional
@@ -39,23 +40,42 @@ public class SurveyServiceImpl implements SurveyService {
     private final UserService userService;
     private final SurveyRepository repository;
     private final QuestionRepository questionRepository;
+    private final SurveyMapper mapper;
 
     @Autowired
-    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository, UserService userService, QuestionRepository questionRepository) {
+    public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,
+                             UserService userService, QuestionRepository questionRepository, SurveyMapper mapper) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.repository = repository;
         this.questionRepository = questionRepository;
+        this.mapper = mapper;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status) {
+        Page<Survey> surveysPage;
         if (Objects.nonNull(status) && status.length() > 0) {
-            return repository.findAllByPageableAndStatusAndUserEmail(pageable, status, getCurrentUserEmail());
+            surveysPage = repository.findAllByPageableAndStatusAndUserEmail(pageable,
+                    SurveyStatus.valueOf(status), getCurrentUserEmail());
+        } else {
+            surveysPage = repository.findAllByPageableAndUserEmail(pageable, getCurrentUserEmail());
         }
-        return repository.findAllByPageableAndUserEmail(pageable, getCurrentUserEmail());
+        return new Page<>(
+                surveysPage.getItems()
+                        .stream()
+                        .map(e -> mapper.toDTO(
+                                e,
+                                e.getSurveyContacts()
+                                        .stream()
+                                        .filter(SurveyContact::isCanPass)
+                                        .count(),
+                                (long) e.getSurveyContacts().size()))
+                        .collect(Collectors.toList()),
+                surveysPage.getPageable()
+        );
     }
-
 
     @Override
     public void updateTitle(Long id, String title) {
@@ -72,28 +92,10 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public Survey duplicateSurvey(DuplicateSurveySettings settings) {
-        Survey survey = repository.eagerFindFirstById(settings.getId());
-        if (!survey.getStatus().equals(SurveyStatus.TEMPLATE) &&
-                checkUserEmailNotEqualsCurrentUserEmail(survey.getUser().getEmail())) {
-            log.debug("User " + survey.getUser().getUsername() + " try change other user information. ");
-            throw new SurveyNotFound();
-        }
-        repository.detach(survey);
-        survey.setId(null);
-        survey.setStatus(SurveyStatus.NON_ACTIVE);
-        if (settings.isClearContacts()) {
-            survey.setSurveyContacts(new HashSet<>());
-        } else {
-            survey.getSurveyContacts().forEach(e -> {
-                e.setId(null);
-                e.setSurvey(survey);
-                e.setCanPass(false);
-            });
-        }
-        survey.getSurveyQuestions().forEach(e -> e.setSurveyAnswers(new HashSet<>()));
-        repository.save(survey);
-        return survey;
+    public long duplicateSurvey(DuplicateSurveySettings settings) {
+        return repository.cloneSurvey(settings)
+                .orElseThrow(SurveyNotFound::new)
+                .longValue();
     }
 
     private Survey findSurveyById(Long id) {
@@ -101,26 +103,9 @@ public class SurveyServiceImpl implements SurveyService {
                 .orElseThrow(SurveyNotFound::new);
         if (checkUserEmailNotEqualsCurrentUserEmail(survey.getUser().getEmail())) {
             log.debug("User " + survey.getUser().getUsername() + " try change other user information. ");
-            throw new SurveyNotFound();
+            throw new AccessDeniedException();
         }
         return survey;
-    }
-
-    private boolean checkUserEmailNotEqualsCurrentUserEmail(String email) {
-        return !email.equals(getCurrentUserEmail());
-    }
-
-    private String getCurrentUserEmail() {
-        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userDetails instanceof UserDetails) {
-            return ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        } else if (userDetails instanceof DefaultOidcUser) {
-            return ((DefaultOidcUser)userDetails).getEmail();                     // for google
-        } else if (userDetails instanceof DefaultOAuth2User) {
-            return ((DefaultOAuth2User)userDetails).getAttribute("email"); // for facebook
-        } else {
-            throw new UnauthorizedException();
-        }
     }
 
     @Override
@@ -156,4 +141,5 @@ public class SurveyServiceImpl implements SurveyService {
         surveyQuestions.forEach(survey::addQuestion);
         return repository.update(survey);
     }
+
 }
