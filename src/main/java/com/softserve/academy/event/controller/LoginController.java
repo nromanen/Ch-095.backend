@@ -25,13 +25,9 @@ public class LoginController {
 
    @PostMapping(value = "/registration")
     public ResponseEntity registerUserAccount(@RequestBody UserDto accountDto) {
-       try {
            UserDto registered = userMapper.userToDto(userService.newUserAccount(userMapper.userDtoToUser(accountDto)));
            userService.createVerificationToken(userMapper.userDtoToUser(registered));
            return new ResponseEntity<>(HttpStatus.CREATED);
-       }catch (EmailExistException e) {
-           return new ResponseEntity<>(e, HttpStatus.CONFLICT);
-       }
     }
 
     @GetMapping(value = "/registrationConfirm")
