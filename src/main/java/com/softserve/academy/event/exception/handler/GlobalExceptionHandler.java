@@ -55,6 +55,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
     }
 
+    @ExceptionHandler(EmailNotMatchContactException.class)
+    public ResponseEntity<Object> emailNotMatchContactHandler(Exception e, WebRequest request){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     private ResponseEntity<Object> handler(Exception e, WebRequest request, HttpStatus status) {
         log.error(e.getMessage());
         log.error(request.getDescription(false));
