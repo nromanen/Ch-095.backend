@@ -52,6 +52,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(UserNotFound::new);
+    }
+
+    @Override
     public Optional<Long> getAuthenticationId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

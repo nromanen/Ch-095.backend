@@ -20,7 +20,7 @@ import java.util.Set;
 @Entity
 @Table(name = "contacts",
         uniqueConstraints = @UniqueConstraint(columnNames = {"email", "user_id"}))
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"email", "user"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

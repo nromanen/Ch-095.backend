@@ -2,6 +2,8 @@ package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.repository.ContactRepository;
+import com.softserve.academy.event.util.Page;
+import com.softserve.academy.event.util.Pageable;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
@@ -10,8 +12,50 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
+import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
+
 @Repository
 public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> implements ContactRepository {
+
+
+    @Override
+    public Page<Contact> findAllByPageable(Pageable pageable) {
+        Session session = sessionFactory.getCurrentSession();
+        return getContactPage(
+                pageable,
+                session.createQuery("from " + clazz.getName() + " as c" +
+                        " where c.user.email = :userEmail" +
+                        " order by c." + pageable.sorting())
+                        .setParameter("userEmail", getCurrentUserEmail()),
+                (Long) session.createQuery("select count(c) from " + clazz.getName() +
+                        " as c where c.user.email = :userEmail ")
+                        .setParameter("userEmail", getCurrentUserEmail()).uniqueResult()
+        );
+    }
+
+    @Override
+    public Page<Contact> findAllByPageableAndNameOrEmail(Pageable pageable, String text) {
+        Session session = sessionFactory.getCurrentSession();
+        return getContactPage(
+                pageable,
+                session.createQuery("from " + clazz.getName() + " as c" +
+                        " where c.user.email = :userEmail and (c.name = :filter or c.email = :filter)" +
+                        " order by c." + pageable.sorting())
+                        .setParameter("userEmail", getCurrentUserEmail()).setParameter("filter", text),
+                (Long) session.createQuery("select count(c) from " + clazz.getName() +
+                        " as c where c.user.email = :userEmail and (c.name = :filter or c.email = :filter)")
+                        .setParameter("userEmail", getCurrentUserEmail()).setParameter("filter", text).uniqueResult()
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    private Page<Contact> getContactPage(Pageable pageable, Query query, Long countResult) {
+        query.setFirstResult(pageable.getCurrentPage() * pageable.getSize());
+        query.setMaxResults(pageable.getSize());
+        pageable.setLastPage((int) Math.ceil((double) countResult / pageable.getSize()));
+        pageable.setCurrentPage(pageable.getCurrentPage() + 1);
+        return new Page<>(query.list(), pageable);
+    }
 
     @Override
     public Optional<Contact> findByEmail(String email) {
