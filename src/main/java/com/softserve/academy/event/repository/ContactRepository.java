@@ -2,6 +2,7 @@ package com.softserve.academy.event.repository;
 
 import com.softserve.academy.event.entity.Contact;
 
+import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,5 +14,5 @@ public interface ContactRepository extends BasicRepository<Contact, Long> {
 
     Contact getEmailAndUserId(String email, Long userId);
 
-    List<Contact> listContactsByUserId(Long userId);
+    List<String> listContactsByUserId(Long userId);
 }

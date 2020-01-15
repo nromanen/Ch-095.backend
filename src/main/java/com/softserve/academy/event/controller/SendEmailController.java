@@ -2,6 +2,7 @@ package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.dto.EmailDTO;
 import com.softserve.academy.event.entity.Contact;
+import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.exception.IncorrectEmailsException;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.ContactService;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,8 +50,9 @@ public class SendEmailController {
     }
 
     @GetMapping("/contacts")
-    public List<Contact> listOfContacts(){
+    public List<String> listOfContacts(){
         String userId = service.getAuthenticationId().orElseThrow(UserNotFound::new).toString();
-        return contactService.listContactsByUserId(Long.valueOf(userId));
+        List<String> contacts = contactService.listContactsByUserId(Long.valueOf(userId));
+        return contacts;
     }
 }

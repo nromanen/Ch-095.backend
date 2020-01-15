@@ -1,15 +1,16 @@
 package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Contact;
-import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.repository.ContactRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> implements ContactRepository {
@@ -48,10 +49,11 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
     }
 
     @Override
-    public List<Contact> listContactsByUserId(Long userId) {
-        return sessionFactory.getCurrentSession()
-                .createQuery("from " + Contact.class.getName() + " where user_id = :userId ORDER BY index")
-                .setParameter("userId", userId)
-                .getResultList();
+    public List<String> listContactsByUserId(Long userId) {
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from " + clazz.getName() + " as t " + " where t.user.id = :userId")
+                .setParameter("userId", userId);
+        List<Contact> res = query.getResultList();
+        return res.stream().map(e -> e.getEmail()).collect(Collectors.toList());
     }
 }
