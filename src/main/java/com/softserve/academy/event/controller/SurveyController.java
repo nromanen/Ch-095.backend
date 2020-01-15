@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.softserve.academy.event.dto.*;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
-import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -17,31 +17,39 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Api(value = "/survey")
 @RestController
 @RequestMapping("survey")
 @Slf4j
+@PropertySource("classpath:application.properties")
 public class SurveyController {
+
+    @Value("${image.upload.dir}")
+    private String imageUploadDir;
 
     private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyService service;
-    private final SurveyMapper surveyMapper;
     private final QuestionService questionService;
 
     @Autowired
-    public SurveyController(SurveyService service, SurveyMapper surveyMapper,
+    public SurveyController(SurveyService service,
                             SaveQuestionMapper saveQuestionMapper, QuestionService questionService) {
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
-        this.surveyMapper = surveyMapper;
         this.questionService = questionService;
     }
 
@@ -99,12 +107,25 @@ public class SurveyController {
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
         List<EditSurveyQuestionDTO> editSurveyQuestionsDTO = new ArrayList<>();
         for (SurveyQuestion question : questions) {
-            editSurveyQuestionsDTO.add(saveQuestionMapper.toEditSurveyQuestionDTO(question));
+            EditSurveyQuestionDTO editSurveyQuestionDTO = saveQuestionMapper.toEditSurveyQuestionDTO(question);
+            if(question.getType().equals(SurveyQuestionType.CHECKBOX_PICTURE) || question.getType().equals(SurveyQuestionType.RADIO_PICTURE)){
+                for(String filename : editSurveyQuestionDTO.getChoiceAnswers()){
+                    editSurveyQuestionDTO.getUploadingPhotos().add(getPhotoAsStrByFilename(filename));
+                }
+            }
+            editSurveyQuestionsDTO.add(editSurveyQuestionDTO);
         }
         Survey survey = service.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
         EditSurveyDTO editSurveyDTO = saveQuestionMapper.toEditSurveyDTO(survey, editSurveyQuestionsDTO);
         return new ResponseEntity<>(editSurveyDTO, HttpStatus.OK);
     }
+
+    private String getPhotoAsStrByFilename(String filename) throws IOException {
+        Path path = Paths.get(imageUploadDir,filename);
+        byte[] arr = Files.readAllBytes(path);
+        return Base64.getEncoder().encodeToString(arr);
+    }
+
 
     @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
     @PostMapping(value = "/update/{id}")
