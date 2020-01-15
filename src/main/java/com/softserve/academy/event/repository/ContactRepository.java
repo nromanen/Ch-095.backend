@@ -10,7 +10,7 @@ public interface ContactRepository extends BasicRepository<Contact, Long> {
 
     Page<Contact> findAllByPageable(Pageable pageable);
 
-    Page<Contact> findAllByPageableAndNameOrEmail(Pageable pageable, String text);
+    Page<Contact> findAllByPageableAndFilterLikeNameOrEmail(Pageable pageable, String text);
 
     Optional<Contact> findByEmail(String email);
 

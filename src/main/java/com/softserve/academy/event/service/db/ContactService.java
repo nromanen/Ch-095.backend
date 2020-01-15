@@ -1,5 +1,6 @@
 package com.softserve.academy.event.service.db;
 
+import com.softserve.academy.event.dto.ContactDTO;
 import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -14,7 +15,9 @@ public interface ContactService extends BasicService<Contact, Long>  {
 
     Page<Contact> findAllByPageableAndFilter(Pageable pageable, String filter);
 
-    Long save(String name, String email);
+    Long save(ContactDTO contactDTO);
+
+    void update(ContactDTO contactDTO);
 
     void delete(Long id);
 

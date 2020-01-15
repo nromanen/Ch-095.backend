@@ -1,5 +1,6 @@
 package com.softserve.academy.event.service.db.impl;
 
+import com.softserve.academy.event.dto.ContactDTO;
 import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.exception.ContactNotFound;
 import com.softserve.academy.event.exception.IncorrectLinkException;
@@ -43,7 +44,7 @@ public class ContactServiceImpl implements ContactService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Page<Contact> findAllByPageableAndFilter(Pageable pageable, String filter) {
         if (Objects.nonNull(filter) && filter.length() > 0) {
-            return repository.findAllByPageableAndNameOrEmail(pageable, filter);
+            return repository.findAllByPageableAndFilterLikeNameOrEmail(pageable, filter);
         } else {
             return repository.findAllByPageable(pageable);
         }
@@ -80,13 +81,13 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public Long save(String name, String email) {
+    public Long save(ContactDTO contactDTO) {
         return save(
                 new Contact(
                         null,
                         userService.findByEmail(getCurrentUserEmail()),
-                        name,
-                        email,
+                        contactDTO.getName(),
+                        contactDTO.getEmail(),
                         new HashSet<>())
         ).getId();
     }
@@ -94,6 +95,15 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public Contact update(Contact object) {
         return repository.update(object);
+    }
+
+    @Override
+    public void update(ContactDTO contactDTO) {
+        Contact contact = findFirstById(contactDTO.getId())
+                .orElseThrow(ContactNotFound::new);
+        contact.setName(contactDTO.getName());
+        contact.setEmail(contactDTO.getEmail());
+        update(contact);
     }
 
     @Override

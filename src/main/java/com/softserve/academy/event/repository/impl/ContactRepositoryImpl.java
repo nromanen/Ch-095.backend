@@ -17,7 +17,6 @@ import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEm
 @Repository
 public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> implements ContactRepository {
 
-
     @Override
     public Page<Contact> findAllByPageable(Pageable pageable) {
         Session session = sessionFactory.getCurrentSession();
@@ -34,17 +33,19 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
     }
 
     @Override
-    public Page<Contact> findAllByPageableAndNameOrEmail(Pageable pageable, String text) {
+    public Page<Contact> findAllByPageableAndFilterLikeNameOrEmail(Pageable pageable, String filter) {
         Session session = sessionFactory.getCurrentSession();
         return getContactPage(
                 pageable,
                 session.createQuery("from " + clazz.getName() + " as c" +
-                        " where c.user.email = :userEmail and (c.name = :filter or c.email = :filter)" +
+                        " where c.user.email = :userEmail and (c.name like :filter or c.email like :filter)" +
                         " order by c." + pageable.sorting())
-                        .setParameter("userEmail", getCurrentUserEmail()).setParameter("filter", text),
+                        .setParameter("userEmail", getCurrentUserEmail())
+                        .setParameter("filter", "%" + filter + "%"),
                 (Long) session.createQuery("select count(c) from " + clazz.getName() +
                         " as c where c.user.email = :userEmail and (c.name = :filter or c.email = :filter)")
-                        .setParameter("userEmail", getCurrentUserEmail()).setParameter("filter", text).uniqueResult()
+                        .setParameter("userEmail", getCurrentUserEmail())
+                        .setParameter("filter", "%" + filter + "%").uniqueResult()
         );
     }
 
