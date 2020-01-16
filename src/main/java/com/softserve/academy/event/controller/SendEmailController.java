@@ -42,6 +42,14 @@ public class SendEmailController {
         emailService.sendEmailForUser(idUser, idSurvey, emails);
     }
 
+    @PostMapping("/sendSelectedEmails")
+    public void doSendSelectedEmails(@RequestBody EmailDTO emailDTO) {
+        String[] emails = emailDTO.getEmailsArray();
+        String idUser = service.getAuthenticationId().orElseThrow(UserNotFound::new).toString();
+        String idSurvey = emailDTO.getSurveyId();
+        emailService.sendSelectedEmailForUser(idUser, idSurvey, emails);
+    }
+
     @ExceptionHandler(IncorrectEmailsException.class)
     public ResponseEntity<String> incorrectEmailsHandler(Exception e, WebRequest request) {
         log.error("Incorrect emails : ", e);
@@ -53,6 +61,7 @@ public class SendEmailController {
     public List<String> listOfContacts(){
         String userId = service.getAuthenticationId().orElseThrow(UserNotFound::new).toString();
         List<String> contacts = contactService.listContactsByUserId(Long.valueOf(userId));
+
         return contacts;
     }
 }

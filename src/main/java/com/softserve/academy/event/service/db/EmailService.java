@@ -4,4 +4,5 @@ public interface EmailService {
     void sendMail(String recipientAddress, String subject, String message);
 
     void sendEmailForUser(String idUser, String idSurvey, String[] anEmail);
+    void sendSelectedEmailForUser(String idUser, String idSurvey, String[] anEmail);
 }

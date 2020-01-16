@@ -4,6 +4,7 @@ import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.User;
+import com.softserve.academy.event.exception.ContactNotFound;
 import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UserNotFound;
@@ -29,18 +30,21 @@ import java.util.Optional;
 public class EmailServiceImpl implements EmailService {
     @Value("${app.frontend.url}")
     private String baseUrl;
+    String subject = "Survey";
     private static final String END_POINT = "test/";
     private final JavaMailSender javaMailSender;
     private final SurveyRepository surveyRepository;
     private final ContactRepository contactRepository;
+    private final ContactService contactService;
     private final SurveyContactConnectorRepository surveyContactRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public EmailServiceImpl(JavaMailSender javaMailSender, SurveyRepository surveyRepository, ContactRepository contactRepository, SurveyContactConnectorRepository surveyContactRepository, UserRepository userRepository) {
+    public EmailServiceImpl(JavaMailSender javaMailSender, SurveyRepository surveyRepository, ContactRepository contactRepository, ContactService contactService, SurveyContactConnectorRepository surveyContactRepository, UserRepository userRepository) {
         this.javaMailSender = javaMailSender;
         this.surveyRepository = surveyRepository;
         this.contactRepository = contactRepository;
+        this.contactService = contactService;
         this.surveyContactRepository = surveyContactRepository;
         this.userRepository = userRepository;
     }
@@ -51,7 +55,20 @@ public class EmailServiceImpl implements EmailService {
             Optional<Survey> survey = surveyRepository.findFirstById(Long.parseLong(idSurvey));
             newSurveyContact(survey.orElseThrow(SurveyNotFound::new), newContact(user, anEmail));
         }
-        String subject = "Survey";
+        for (String anEmail : emails) {
+            String codEmail = anEmail + ";" + idSurvey;
+            String encodedString = baseUrl + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
+            String message = "Message from " + user.getEmail() + ": " + "<<Please, follow the link and take the survey" + " " + encodedString + " >>";
+            sendMail(anEmail, subject, message);
+        }
+    }
+
+    public void sendSelectedEmailForUser(String idUser, String idSurvey, String[] emails) {
+        User user = userRepository.findFirstById(Long.valueOf(idUser)).orElseThrow(UserNotFound::new);
+        for (String anEmail : emails) {
+            Optional<Survey> survey = surveyRepository.findFirstById(Long.parseLong(idSurvey));
+            newSurveyContact(survey.orElseThrow(SurveyNotFound::new), contactService.findFirstById(contactService.getIdByEmail(anEmail).get()).orElseThrow(ContactNotFound::new));
+        }
         for (String anEmail : emails) {
             String codEmail = anEmail + ";" + idSurvey;
             String encodedString = baseUrl + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
