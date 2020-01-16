@@ -42,7 +42,7 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public List<String> listContactsByUserId(Long userId) {
+    public List<Contact> listContactsByUserId(Long userId) {
         return repository.listContactsByUserId(userId);
     }
 

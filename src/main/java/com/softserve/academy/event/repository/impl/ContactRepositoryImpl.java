@@ -48,12 +48,21 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
         return res.get(0);
     }
 
+//    @Override
+//    public List<String> listContactsByUserId(Long userId) {
+//        Session session = sessionFactory.getCurrentSession();
+//        Query query = session.createQuery("from " + clazz.getName() + " as t " + " where t.user.id = :userId")
+//                .setParameter("userId", userId);
+//        List<Contact> res = query.getResultList();
+//        return res.stream().map(e -> e.getEmail()).collect(Collectors.toList());
+//    }
+
     @Override
-    public List<String> listContactsByUserId(Long userId) {
+    public List<Contact> listContactsByUserId(Long userId) {
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("from " + clazz.getName() + " as t " + " where t.user.id = :userId")
                 .setParameter("userId", userId);
         List<Contact> res = query.getResultList();
-        return res.stream().map(e -> e.getEmail()).collect(Collectors.toList());
+        return res;
     }
 }
