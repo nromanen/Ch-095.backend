@@ -1,10 +1,11 @@
 package com.softserve.academy.event.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.academy.event.dto.ContactResponseDTO;
 import com.softserve.academy.event.dto.QuestionDTO;
 import com.softserve.academy.event.dto.SurveyContactDTO;
 import com.softserve.academy.event.entity.SurveyContact;
-import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import com.softserve.academy.event.service.db.AnswerService;
 import com.softserve.academy.event.service.db.ContactService;
 import com.softserve.academy.event.service.db.QuestionService;
@@ -14,17 +15,24 @@ import com.softserve.academy.event.service.mapper.QuestionMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 @Api(value = "/question")
 @RestController
 @RequestMapping("question")
+@PropertySource("classpath:application.properties")
 public class QuestionController {
+
+    @Value("${image.upload.dir}")
+    private String imageUploadDir;
 
     private final ContactService contactService;
     private final QuestionService questionService;
@@ -45,10 +53,11 @@ public class QuestionController {
 
     @ApiOperation(value = "Get a survey form for contact", notes = "Checks an e-mail, Id(survey) and builds a form", response = SurveyContactDTO.class)
     @GetMapping
-    public ResponseEntity<SurveyContactDTO> startSurvey(Long surveyId, String contactEmail){
+    public ResponseEntity<SurveyContactDTO> startSurvey(Long surveyId, String contactEmail) throws IOException {
         if (!contactService.canPass(surveyId, contactEmail))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questionService.findBySurveyId(surveyId));
+        savePhotoInQuestionDTO(questionsDTO);
         SurveyContactDTO dto = new SurveyContactDTO();
         dto.setContactEmail(contactEmail);
         dto.setSurveyId(surveyId);
@@ -56,6 +65,17 @@ public class QuestionController {
         if(questionsDTO.isEmpty())
             return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    private void  savePhotoInQuestionDTO(List<QuestionDTO> questionsDTO) throws IOException {
+        for(QuestionDTO questionDTO : questionsDTO){
+            if(questionDTO.getType().equals(SurveyQuestionType.RADIO_PICTURE) ||
+              questionDTO.getType().equals(SurveyQuestionType.CHECKBOX_PICTURE)){
+                for (String filename : new ObjectMapper().readValue(questionDTO.getChoiceAnswers(),String[].class)) {
+                    questionDTO.getUploadingPhotos().add(FileUploadController.getPhotoAsEncodeStrByFilename(imageUploadDir,filename));
+                }
+            }
+        }
     }
 
     @ApiOperation(value = "Save answers to the database")

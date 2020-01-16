@@ -4,6 +4,9 @@ import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class QuestionDTO {
@@ -14,4 +17,5 @@ public class QuestionDTO {
     private SurveyQuestionType type;
     private String value;
     private String choiceAnswers;
+    private List<String> uploadingPhotos = new ArrayList<>();
 }

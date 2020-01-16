@@ -24,11 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Api(value = "/survey")
@@ -106,24 +102,23 @@ public class SurveyController {
     public ResponseEntity<EditSurveyDTO> loadForEditSurvey(@PathVariable(name = "id") Long surveyId) throws IOException {
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
         List<EditSurveyQuestionDTO> editSurveyQuestionsDTO = new ArrayList<>();
-        for (SurveyQuestion question : questions) {
-            EditSurveyQuestionDTO editSurveyQuestionDTO = saveQuestionMapper.toEditSurveyQuestionDTO(question);
-            if(question.getType().equals(SurveyQuestionType.CHECKBOX_PICTURE) || question.getType().equals(SurveyQuestionType.RADIO_PICTURE)){
-                for(String filename : editSurveyQuestionDTO.getChoiceAnswers()){
-                    editSurveyQuestionDTO.getUploadingPhotos().add(getPhotoAsStrByFilename(filename));
-                }
-            }
-            editSurveyQuestionsDTO.add(editSurveyQuestionDTO);
-        }
+        savePhotoInEditSurveyDTO(questions, editSurveyQuestionsDTO);
         Survey survey = service.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
         EditSurveyDTO editSurveyDTO = saveQuestionMapper.toEditSurveyDTO(survey, editSurveyQuestionsDTO);
         return new ResponseEntity<>(editSurveyDTO, HttpStatus.OK);
     }
 
-    private String getPhotoAsStrByFilename(String filename) throws IOException {
-        Path path = Paths.get(imageUploadDir,filename);
-        byte[] arr = Files.readAllBytes(path);
-        return Base64.getEncoder().encodeToString(arr);
+    private void savePhotoInEditSurveyDTO(List<SurveyQuestion> questions, List<EditSurveyQuestionDTO> editSurveyQuestionsDTO) throws IOException {
+        for (SurveyQuestion question : questions) {
+            EditSurveyQuestionDTO editSurveyQuestionDTO = saveQuestionMapper.toEditSurveyQuestionDTO(question);
+            if (question.getType().equals(SurveyQuestionType.CHECKBOX_PICTURE) ||
+                question.getType().equals(SurveyQuestionType.RADIO_PICTURE)) {
+                for (String filename : editSurveyQuestionDTO.getChoiceAnswers()) {
+                    editSurveyQuestionDTO.getUploadingPhotos().add(FileUploadController.getPhotoAsEncodeStrByFilename(imageUploadDir, filename));
+                }
+            }
+            editSurveyQuestionsDTO.add(editSurveyQuestionDTO);
+        }
     }
 
 
