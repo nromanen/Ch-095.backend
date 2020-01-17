@@ -9,6 +9,7 @@ import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.service.db.CheckPossibilityService;
 import com.softserve.academy.event.service.db.ContactService;
 import com.softserve.academy.event.service.db.SurveyContactConnectorService;
+import com.softserve.academy.event.service.db.SurveyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +29,14 @@ public class CheckPossibilityController {
     private final SurveyContactConnectorService surveyContactConnectorService;
     private final CheckPossibilityService checkPossibilityService;
     private final ContactService contactService;
+    private final SurveyService surveyService;
 
     @Autowired
-    public CheckPossibilityController(SurveyContactConnectorService surveyContactConnectorService, ContactService contactService, CheckPossibilityService checkPossibilityService) {
+    public CheckPossibilityController(SurveyContactConnectorService surveyContactConnectorService, ContactService contactService, CheckPossibilityService checkPossibilityService, SurveyService surveyService) {
         this.surveyContactConnectorService = surveyContactConnectorService;
         this.checkPossibilityService = checkPossibilityService;
         this.contactService = contactService;
+        this.surveyService = surveyService;
     }
 
     @ApiOperation(value = "Mail verification")
@@ -65,5 +68,16 @@ public class CheckPossibilityController {
         }
         log.error("Entered email does not match the specified contact");
         throw new EmailNotMatchContactException("Entered email does not match the specified contact");
+    }
+
+    @GetMapping(value = "/common/{token}")
+    public ResponseEntity<Long> commonTest(@PathVariable(name = "token") String token) throws IncorrectLinkException {
+        String[] strings = new String(Base64.getDecoder().decode(token)).split("~");
+
+        Long id = Long.valueOf(strings[0]);
+        if (surveyService.isCommonWithIdAndNameExist(id, strings[1])){
+            return ResponseEntity.ok(id);
+        }
+        throw new IncorrectLinkException("Sorry, but you can`t pass survey by this link");
     }
 }

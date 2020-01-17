@@ -54,8 +54,8 @@ public class EmailServiceImpl implements EmailService {
         String subject = "Survey";
         for (String anEmail : emails) {
             String codEmail = anEmail + ";" + idSurvey;
-            String encodedString = baseUrl + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
-            String message = "Message from " + user.getEmail() + ": " + "<<Please, follow the link and take the survey" + " " + encodedString + " >>";
+            String encodedString = baseUrl + "/" + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
+            String message = "Message from " + user.getEmail() + ": " + "<<Please, follow the link and take the survey " + encodedString + " >>";
             sendMail(anEmail, subject, message);
         }
     }

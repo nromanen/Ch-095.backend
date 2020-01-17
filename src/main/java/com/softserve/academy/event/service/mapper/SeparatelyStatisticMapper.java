@@ -62,7 +62,8 @@ public interface SeparatelyStatisticMapper {
     default List<String> transformationToAnswer
             (SurveyQuestion surveyQuestion, SurveyContact contact) {
         return surveyQuestion.getSurveyAnswers().stream().map(answer -> {
-            if (answer.getContact().getId().equals(contact.getContact().getId())) {
+            //todo: NullPointerException
+            if (answer.getRespondent().getContact().getId().equals(contact.getContact().getId())) {
                 try {
                     return new ObjectMapper().readValue(answer.getValue(), String[].class);
                 } catch (JsonProcessingException e) {

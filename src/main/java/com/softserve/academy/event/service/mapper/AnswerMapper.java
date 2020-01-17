@@ -14,7 +14,6 @@ public interface AnswerMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "question", source = "questionId", qualifiedByName = "getQuestion")
-    @Mapping(target = "contact", source = "contactId", qualifiedByName = "getContact")
     @Mapping(target = "value", source = "answers", qualifiedByName = "getAnswers")
     SurveyAnswer toEntity(AnswerDTO answerDTO);
 

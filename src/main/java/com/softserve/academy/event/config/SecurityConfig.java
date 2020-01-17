@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,10 +33,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,8 +41,11 @@ import java.util.stream.Stream;
 @Configuration
 @EnableWebSecurity
 @PropertySource({"classpath:application.properties", "classpath:social.properties"})
-@ComponentScan(basePackages = { "com.softserve.academy.event.service" })
+@ComponentScan(basePackages = {"com.softserve.academy.event.service"})
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final String AUTHORIZATION_REQUEST_BASE_URI = "oauth2/authorize-client";
+    private static final String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
 
     @Value("${app.frontend.url}")
     private String frontUrl;
@@ -80,12 +81,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration", "/logout", "/login").permitAll()
                 .antMatchers("/oauth_login", "/loginSuccess", "/loginFailure", "/authenticatedEmail").permitAll()
-                .antMatchers("/question", "/testAccess/{token}", "/testAccess/check").permitAll()
+                .antMatchers("/question", "/question/common/{token}", "/testAccess/{token}", "/testAccess/common/{token}", "/testAccess/check").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                    .successHandler(mySuccessHandler)
-                    .failureHandler(myFailureHandler)
+                .successHandler(mySuccessHandler)
+                .failureHandler(myFailureHandler)
                 .and()
 
                 .oauth2Login()
@@ -101,8 +102,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureUrl("/loginFailure")
                 .and()
                 .csrf()
-                    .ignoringAntMatchers("/registration")
-                    .csrfTokenRepository(getCsrfTokenRepository())
+                .ignoringAntMatchers("/registration")
+                .csrfTokenRepository(getCsrfTokenRepository())
                 .and()
                 .logout()
                 .logoutUrl("/logout")
@@ -118,7 +119,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(authenticationProvider());
     }
 
@@ -131,7 +132,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/v2/api-docs",
                 "/configuration/ui",
                 "/swagger-resources/**",
@@ -144,7 +145,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
         configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         return configuration;
     }
 
@@ -166,6 +167,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    @SuppressWarnings("unchecked")
+    public Map<String, String> oAuth2ClientRegistrations() {
+        Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
+
+        Iterable<ClientRegistration> clientRegistrations = null;
+        ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository()).as(Iterable.class);
+        if (type == ResolvableType.NONE) {
+            throw new IllegalStateException("Resolvable type must not be null");
+        }
+
+        if (ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
+            clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository();
+        }
+
+        if (clientRegistrations != null) {
+            clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(),
+                    AUTHORIZATION_REQUEST_BASE_URI + "/" + registration.getRegistrationId()));
+        }
+        return Collections.unmodifiableMap(oauth2AuthenticationUrls);
+    }
+
+    @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
         List<ClientRegistration> registrations = Stream.of("facebook", "google")
                 .map(this::getRegistration)
@@ -176,8 +199,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private ClientRegistration getRegistration(String client) {
-        String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
-
         String clientId = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-id");
 
         if (clientId == null) {

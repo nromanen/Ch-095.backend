@@ -2,6 +2,7 @@ package com.softserve.academy.event.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.entity.enums.SurveyType;
 import lombok.*;
 import org.hibernate.annotations.*;
 
@@ -56,6 +57,10 @@ public class Survey implements Serializable {
     @ManyToOne
     @JoinColumn(nullable = false)
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SurveyType type;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "survey", cascade = CascadeType.ALL)
