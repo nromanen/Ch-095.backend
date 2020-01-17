@@ -18,7 +18,7 @@ public interface SurveyService {
 
     void updateStatus(Long id, SurveyStatus status);
 
-    Survey duplicateSurvey(DuplicateSurveySettings settings);
+    long duplicateSurvey(DuplicateSurveySettings settings);
 
     void delete(Long id);
 

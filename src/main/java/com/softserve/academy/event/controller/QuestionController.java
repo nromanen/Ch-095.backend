@@ -64,8 +64,7 @@ public class QuestionController {
     }
 
     private ResponseEntity<SurveyContactDTO> getSurveyContactDTO(Long id, String respondent) {
-        List<SurveyQuestion> questions = questionService.findBySurveyId(id);
-        List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questions);
+        List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questionService.findBySurveyId(id));
         SurveyContactDTO dto = new SurveyContactDTO();
         dto.setContactEmail(respondent);
         dto.setSurveyId(id);

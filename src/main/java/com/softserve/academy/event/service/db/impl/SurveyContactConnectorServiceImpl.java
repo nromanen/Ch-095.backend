@@ -49,11 +49,6 @@ public class SurveyContactConnectorServiceImpl implements SurveyContactConnector
     }
 
     @Override
-    public void detach(SurveyContact entity) {
-        repository.detach(entity);
-    }
-
-    @Override
     public boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException {
         return repository.isEnable(contactId, surveyId);
     }

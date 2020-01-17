@@ -16,6 +16,7 @@ import java.util.Set;
         name = "findEmailContact",
         query = "from Contact u where u.email= :email"
 )
+
 @Entity
 @Table(name = "contacts",
         uniqueConstraints = @UniqueConstraint(columnNames = {"email", "user_id"}))
