@@ -63,6 +63,6 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
         Query query = session.createQuery("from " + clazz.getName() + " as t " + " where t.user.id = :userId")
                 .setParameter("userId", userId);
         List<Contact> res = query.getResultList();
-        return res;
+        return res.stream().collect(Collectors.toList());
     }
 }

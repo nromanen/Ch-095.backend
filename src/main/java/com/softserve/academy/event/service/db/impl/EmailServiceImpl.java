@@ -4,10 +4,7 @@ import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.User;
-import com.softserve.academy.event.exception.ContactNotFound;
-import com.softserve.academy.event.exception.EmailExistException;
-import com.softserve.academy.event.exception.SurveyNotFound;
-import com.softserve.academy.event.exception.UserNotFound;
+import com.softserve.academy.event.exception.*;
 import com.softserve.academy.event.repository.ContactRepository;
 import com.softserve.academy.event.repository.SurveyContactConnectorRepository;
 import com.softserve.academy.event.repository.SurveyRepository;
@@ -28,9 +25,11 @@ import java.util.Optional;
 @Service
 @Transactional
 public class EmailServiceImpl implements EmailService {
+
+    String subject = "Survey";
+
     @Value("${app.frontend.url}")
     private String baseUrl;
-    String subject = "Survey";
     private static final String END_POINT = "test/";
     private final JavaMailSender javaMailSender;
     private final SurveyRepository surveyRepository;
@@ -52,32 +51,38 @@ public class EmailServiceImpl implements EmailService {
     public void sendEmailForUser(String idUser, String idSurvey, String[] emails) {
         User user = userRepository.findFirstById(Long.valueOf(idUser)).orElseThrow(UserNotFound::new);
         for (String anEmail : emails) {
-            Optional<Survey> survey = surveyRepository.findFirstById(Long.parseLong(idSurvey));
-            newSurveyContact(survey.orElseThrow(SurveyNotFound::new), newContact(user, anEmail));
+            newContact(user,anEmail, Long.parseLong(idSurvey));
         }
-        for (String anEmail : emails) {
-            String codEmail = anEmail + ";" + idSurvey;
-            String encodedString = baseUrl + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
-            String message = "Message from " + user.getEmail() + ": " + "<<Please, follow the link and take the survey" + " " + encodedString + " >>";
-            sendMail(anEmail, subject, message);
-        }
+        message(user, idSurvey, emails);
     }
 
     public void sendSelectedEmailForUser(String idUser, String idSurvey, String[] emails) {
         User user = userRepository.findFirstById(Long.valueOf(idUser)).orElseThrow(UserNotFound::new);
         for (String anEmail : emails) {
+
             Optional<Survey> survey = surveyRepository.findFirstById(Long.parseLong(idSurvey));
             newSurveyContact(survey.orElseThrow(SurveyNotFound::new), contactService.findFirstById(contactService.getIdByEmail(anEmail).get()).orElseThrow(ContactNotFound::new));
         }
+        message(user, idSurvey, emails);
+    }
+
+    private void message(User user, String surveyId, String[] emails) {
         for (String anEmail : emails) {
-            String codEmail = anEmail + ";" + idSurvey;
+            String codEmail = anEmail + ";" + surveyId;
             String encodedString = baseUrl + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
             String message = "Message from " + user.getEmail() + ": " + "<<Please, follow the link and take the survey" + " " + encodedString + " >>";
             sendMail(anEmail, subject, message);
         }
     }
 
+    private boolean surveyContactExist(Long contactId, Long surveyId) {
+        return surveyContactRepository.findByContactAndSurvey(contactId, surveyId).isPresent();
+    }
+
     private void newSurveyContact(Survey survey, Contact contact) {
+        if (surveyContactExist(contact.getId(), survey.getId())) {
+                throw new SurveyAlreadyReceivedException(contact.getEmail() + " already received the survey");
+        }
         SurveyContact surveyContact = new SurveyContact();
         surveyContact.setContact(contact);
         surveyContact.setSurvey(survey);
@@ -85,18 +90,30 @@ public class EmailServiceImpl implements EmailService {
         surveyContactRepository.save(surveyContact);
     }
 
-    private boolean emailExists(String email) {
+    private boolean isContactExist(String email) {
         return contactRepository.findByEmail(email).isPresent();
     }
 
-    private Contact newContact(User user, String anEmail) {
-        if (emailExists(anEmail)) {
-            throw new EmailExistException("There is an contact with that email address: " + anEmail);
+    private void newContact(User user, String anEmail, Long surveyId) {
+        if (!isContactExist(anEmail)) {
+            Optional<Contact> contactByEmail = contactRepository.findByEmail(anEmail);
+            Long contactId = contactByEmail.orElseThrow(ContactNotFound::new).getId();
+            if (surveyContactExist(contactId, surveyId)) {
+                Optional<SurveyContact> surveyContact = surveyContactRepository.findByContactAndSurvey(contactId, surveyId);
+                if (surveyContact.get().isCanPass()) {
+                    throw new SurveyAlreadyReceivedException(anEmail + " already received the survey");
+                } else {
+                    throw new SurveyAlreadyPassedException(anEmail + " already passed the survey");
+                }
+            } else {
+                newSurveyContact(surveyRepository.findFirstById(surveyId).orElseThrow(SurveyNotFound::new), contactByEmail.orElseThrow(ContactNotFound::new));
+            }
+        } else {
+            Contact contact = new Contact();
+            contact.setEmail(anEmail);
+            contact.setUser(user);
+            contactRepository.save(contact);
         }
-        Contact contact = new Contact();
-        contact.setEmail(anEmail);
-        contact.setUser(user);
-        return contactRepository.save(contact);
     }
 
     @Override

@@ -65,6 +65,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
     }
 
+    @ExceptionHandler(SurveyAlreadyReceivedException.class)
+    public ResponseEntity<Object> surveyAlreadyReceivedHandler(Exception e, WebRequest request) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
+    }
+
     private ResponseEntity<Object> handler(Exception e, WebRequest request, String message, HttpStatus status) {
         log.error(message, e);
         log.error(request.getDescription(false));

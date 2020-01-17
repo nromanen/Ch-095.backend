@@ -3,6 +3,7 @@ package com.softserve.academy.event.controller;
 import com.softserve.academy.event.dto.EmailDTO;
 import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.entity.SurveyContact;
+import com.softserve.academy.event.exception.ContactNotFound;
 import com.softserve.academy.event.exception.IncorrectEmailsException;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.ContactService;
@@ -51,7 +52,7 @@ public class SendEmailController {
         String[] emails = emailDTO.getEmailsArray();
         String idUser = service.getAuthenticationId().orElseThrow(UserNotFound::new).toString();
         String idSurvey = emailDTO.getSurveyId();
-        emailService.sendEmailForUser(idUser, idSurvey, emails);
+        emailService.sendSelectedEmailForUser(idUser, idSurvey, emails);
     }
 
     @ExceptionHandler(IncorrectEmailsException.class)
@@ -61,19 +62,25 @@ public class SendEmailController {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/contacts")
-    public List<Contact> listOfContacts(Long surveyId){
-        List<Contact> contacts1 = new ArrayList<>();
+    @GetMapping("/availableContacts")
+    public List<String> listOfAvailableContacts(Long surveyId) {
+        List<SurveyContact> listOfNotAvailableSurveyContacts = new ArrayList<>();
+        List<Long> idListOfNotAvailableContacts = new ArrayList<>();
         String userId = service.getAuthenticationId().orElseThrow(UserNotFound::new).toString();
-        List<Contact> contacts = contactService.listContactsByUserId(Long.valueOf(userId));  //список всіх контактів по юзеру
-        List<Long> idListOfContacts = contacts.stream().map(e -> e.getId()).collect(Collectors.toList());
-        for (Long contactId : idListOfContacts){
-            SurveyContact surveyContact = surveyContactService.surveyContactsByContactId(contactId, surveyId);
-            Contact contact = surveyContact.getContact();
-            contacts1.add(contact);
+        List<Contact> allContactsOfUser = contactService.listContactsByUserId(Long.valueOf(userId));  //список всіх контактів по юзеру
+        List<Long> idListOfAllContacts = allContactsOfUser.stream().map(Contact::getId).collect(Collectors.toList()); //список всіх id цих контактів
+        for (Long contactId : idListOfAllContacts) {
+            SurveyContact surveyContact = surveyContactService.surveyContactsByContactId(contactId, surveyId); //пара по (contactId, surveyId), що є у surveyContact
+            if (surveyContact != null) {
+                listOfNotAvailableSurveyContacts.add(surveyContact);
+            }
         }
-        List<Contact> result = contacts1.stream().filter(contact -> !contacts.contains(contact)).collect(Collectors.toList());
-        result.stream().map(e -> e.getEmail()).collect(Collectors.toList());
-        return result;
+        for (SurveyContact surveyContact : listOfNotAvailableSurveyContacts) {
+            Long idContact = surveyContact.getContact().getId();
+            idListOfNotAvailableContacts.add(idContact);  // список id контактів, які треба виключити
+        }
+        //select * from contacts where contacts.id not in(select contact_id from survey_contacts where survey_id=2) and contacts.user_id=1;
+        List<Contact> listOfContact = idListOfNotAvailableContacts.stream().map(e -> contactService.findFirstById(e).orElseThrow(ContactNotFound::new)).collect(Collectors.toList()); // список контактів, які треба виключити
+        return allContactsOfUser.stream().filter(contact -> !listOfContact.contains(contact)).map(Contact::getEmail).collect(Collectors.toList());
     }
 }
