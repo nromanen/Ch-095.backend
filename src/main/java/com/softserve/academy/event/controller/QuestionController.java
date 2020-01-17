@@ -3,10 +3,9 @@ package com.softserve.academy.event.controller;
 import com.softserve.academy.event.dto.ContactResponseDTO;
 import com.softserve.academy.event.dto.QuestionDTO;
 import com.softserve.academy.event.dto.SurveyContactDTO;
-    import com.softserve.academy.event.entity.Respondent;
+import com.softserve.academy.event.entity.Respondent;
 import com.softserve.academy.event.entity.SurveyAnswer;
 import com.softserve.academy.event.entity.SurveyContact;
-import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.service.db.*;
 import com.softserve.academy.event.service.mapper.AnswerMapper;
 import com.softserve.academy.event.service.mapper.QuestionMapper;
@@ -132,16 +131,10 @@ public class QuestionController {
         final Respondent finalRespondent = respondent;
         contactResponseDTO.getAnswers().stream()
                 .map(answerMapper::toEntity)
-                .forEach(surveyAnswer -> {
-                    answerService.save(
-                            new SurveyAnswer(
-                                    null,
-                                    surveyAnswer.getQuestion(),
-                                    finalRespondent,
-                                    surveyAnswer.getValue()
-                            )
-                    );
-                });
+                .forEach(surveyAnswer -> answerService.save(
+                        new SurveyAnswer(null, surveyAnswer.getQuestion(),
+                                finalRespondent, surveyAnswer.getValue())
+                ));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
