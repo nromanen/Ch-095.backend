@@ -1,9 +1,11 @@
 package com.softserve.academy.event.repository.impl;
 
 import com.softserve.academy.event.entity.Contact;
+import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.repository.ContactRepository;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
+import com.softserve.academy.event.util.SecurityUserUtil;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
@@ -16,6 +18,16 @@ import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEm
 
 @Repository
 public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> implements ContactRepository {
+
+    @Override
+    public Optional<Contact> findFirstById(Long id) {
+        return Optional.ofNullable((Contact) sessionFactory.getCurrentSession()
+                .createQuery("from " + clazz.getName() + " where id = :id and user.email = :user")
+                .setParameter("id", id)
+                .setParameter("user", SecurityUserUtil.getCurrentUserEmail())
+                .setMaxResults(1)
+                .getSingleResult());
+    }
 
     @Override
     public Page<Contact> findAllByPageable(Pageable pageable) {
@@ -90,4 +102,15 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
         if (res.isEmpty()) return null;
         return res.get(0);
     }
+
+    @Override
+    public boolean isSurveysContainContact(Long contactId) {
+        return ((Long) sessionFactory.getCurrentSession()
+                .createQuery("select count(c) from " + SurveyContact.class.getName()
+                        + " as c where c.contact.id = :id")
+                .setParameter("id", contactId)
+                .setMaxResults(1)
+                .getSingleResult()) > 0;
+    }
+
 }

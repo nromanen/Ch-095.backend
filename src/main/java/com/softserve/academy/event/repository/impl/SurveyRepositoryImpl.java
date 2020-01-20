@@ -21,7 +21,8 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     @Override
     public Optional<Survey> findFirstById(Long id) {
         return Optional.ofNullable((Survey) sessionFactory.getCurrentSession()
-                .createQuery("from " + clazz.getName() + " where user.email = :user")
+                .createQuery("from " + clazz.getName() + " where id = :id and user.email = :user")
+                .setParameter("id", id)
                 .setParameter("user", SecurityUserUtil.getCurrentUserEmail())
                 .setMaxResults(1)
                 .getSingleResult());

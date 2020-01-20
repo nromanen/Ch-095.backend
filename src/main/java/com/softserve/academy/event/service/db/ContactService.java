@@ -5,6 +5,7 @@ import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ContactService extends BasicService<Contact, Long>  {
@@ -15,7 +16,9 @@ public interface ContactService extends BasicService<Contact, Long>  {
 
     Page<Contact> findAllByPageableAndFilter(Pageable pageable, String filter);
 
-    Long save(ContactDTO contactDTO);
+    Contact save(ContactDTO contactDTO);
+
+    List<Long> saveAll(List<Contact> contact);
 
     void update(ContactDTO contactDTO);
 

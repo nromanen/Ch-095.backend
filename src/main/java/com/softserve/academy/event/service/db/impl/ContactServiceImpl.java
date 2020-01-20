@@ -3,12 +3,14 @@ package com.softserve.academy.event.service.db.impl;
 import com.softserve.academy.event.dto.ContactDTO;
 import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.exception.ContactNotFound;
+import com.softserve.academy.event.exception.DataAlreadyUsedException;
 import com.softserve.academy.event.exception.IncorrectLinkException;
 import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.repository.ContactRepository;
 import com.softserve.academy.event.service.db.ContactService;
 import com.softserve.academy.event.service.db.SurveyContactConnectorService;
 import com.softserve.academy.event.service.db.UserService;
+import com.softserve.academy.event.util.EmailValidator;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
 
@@ -81,7 +81,7 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public Long save(ContactDTO contactDTO) {
+    public Contact save(ContactDTO contactDTO) {
         return save(
                 new Contact(
                         null,
@@ -89,7 +89,15 @@ public class ContactServiceImpl implements ContactService {
                         contactDTO.getName(),
                         contactDTO.getEmail(),
                         new HashSet<>())
-        ).getId();
+        );
+    }
+
+    @Override
+    public List<Long> saveAll(List<Contact> contacts) {
+        EmailValidator.validate(contacts);
+        List<Long> list = new ArrayList<>();
+        contacts.forEach(e -> list.add(repository.save(e).getId()));
+        return list;
     }
 
     @Override
@@ -113,6 +121,9 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public void delete(Long id) {
+        if (repository.isSurveysContainContact(id)) {
+            throw new DataAlreadyUsedException("This contact uses in survey(s) and can't be deleted");
+        }
         delete(repository.findFirstById(id)
                 .orElseThrow(ContactNotFound::new));
     }

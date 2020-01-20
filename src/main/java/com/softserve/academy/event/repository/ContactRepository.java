@@ -17,4 +17,7 @@ public interface ContactRepository extends BasicRepository<Contact, Long> {
     Optional<Long> getIdByEmail(String email);
 
     Contact getEmailAndUserId(String email, Long userId);
+
+    boolean isSurveysContainContact(Long contactId);
+
 }
