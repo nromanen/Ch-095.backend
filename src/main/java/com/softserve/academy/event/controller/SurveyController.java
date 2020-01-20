@@ -5,6 +5,7 @@ import com.softserve.academy.event.dto.*;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.entity.enums.SurveyType;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
@@ -86,6 +87,7 @@ public class SurveyController {
     @PostMapping(value = "/createNewSurvey")
     public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws IOException {
         Survey survey = saveQuestionMapper.toSurvey(saveSurveyDTO);
+        survey.setType(SurveyType.COMMON);
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         for (SurveyQuestionDTO question : saveSurveyDTO.getQuestions()) {
             surveyQuestions.add(saveQuestionMapper.toEntity(question));
