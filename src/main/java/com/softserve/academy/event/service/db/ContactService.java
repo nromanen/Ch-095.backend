@@ -10,5 +10,6 @@ public interface ContactService extends BasicService<Contact, Long> {
     Optional<Long> getIdByEmail(String email);
 
     boolean canPass(Long surveyId, String contactEmail);
-    List<Contact> listContactsByUserId(Long userId);
+
+    List<Contact> findAvailableContacts(Long surveyId, Long userId);
 }

@@ -42,8 +42,8 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public List<Contact> listContactsByUserId(Long userId) {
-        return repository.listContactsByUserId(userId);
+    public List<Contact> findAvailableContacts(Long surveyId, Long userId) {
+        return repository.findAvailableContacts(surveyId, userId);
     }
 
     @Override

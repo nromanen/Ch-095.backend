@@ -36,10 +36,11 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
 
     @Override
     public SurveyContact surveyContactsByContactId(Long contactId, Long surveyId) {
-            Session session = sessionFactory.getCurrentSession();
-            Query query = session.createQuery("from " + clazz.getName() + " as t " + " where t.contact.id = :contactId and t.survey.id = :surveyId")
-                    .setParameter("contactId", contactId)
-                    .setParameter("surveyId", surveyId);
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from " + clazz.getName() + " as t " +
+                " where t.contact.id = :contactId and t.survey.id = :surveyId")
+                .setParameter("contactId", contactId)
+                .setParameter("surveyId", surveyId);
         List<SurveyContact> res = query.getResultList();
         if (res.isEmpty()) return null;
         return res.get(0);

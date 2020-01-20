@@ -4,7 +4,6 @@ import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.exception.IncorrectLinkException;
 import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface SurveyContactConnectorRepository extends BasicRepository<SurveyContact, Long> {
@@ -12,5 +11,6 @@ public interface SurveyContactConnectorRepository extends BasicRepository<Survey
     Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId);
 
     boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException;
+
     SurveyContact surveyContactsByContactId(Long contactId, Long surveyId);
 }
