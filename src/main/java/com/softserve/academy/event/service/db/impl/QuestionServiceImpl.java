@@ -1,9 +1,12 @@
 package com.softserve.academy.event.service.db.impl;
 
+import com.softserve.academy.event.entity.Respondent;
+import com.softserve.academy.event.entity.SurveyAnswer;
+import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.repository.AnswerRepository;
 import com.softserve.academy.event.repository.QuestionRepository;
-import com.softserve.academy.event.service.db.QuestionService;
+import com.softserve.academy.event.service.db.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +19,18 @@ import java.util.Optional;
 public class QuestionServiceImpl implements QuestionService{
 
     private final QuestionRepository questionRepository;
+    private final RespondentService respondentService;
+    private final AnonymService anonymService;
+    private final AnswerService answerService;
+    private final SurveyContactConnectorService surveyContactService;
 
     @Autowired
-    public QuestionServiceImpl(QuestionRepository questionRepository, AnswerRepository answerRepository) {
+    public QuestionServiceImpl(QuestionRepository questionRepository, AnswerRepository answerRepository, AnonymService anonymService, RespondentService respondentService, AnonymService anonymService1, AnswerService answerService, SurveyContactConnectorService surveyContactService) {
         this.questionRepository = questionRepository;
+        this.respondentService = respondentService;
+        this.anonymService = anonymService1;
+        this.answerService = answerService;
+        this.surveyContactService = surveyContactService;
     }
 
     @Override
@@ -50,6 +61,29 @@ public class QuestionServiceImpl implements QuestionService{
     @Override
     public List<SurveyQuestion> findBySurveyId(Long surveyId) {
         return questionRepository.findBySurveyId(surveyId);
+    }
+
+    @Override
+    public List<SurveyAnswer> saveAnswers(List<SurveyAnswer> answers) {
+
+        Respondent respondent = respondentService.save(anonymService.save(answers.get(0)));
+        answers.remove(0);
+        answers.forEach(answer -> answer.setRespondent(respondent));
+        answerService.saveAll(answers);
+
+        return answers;
+    }
+
+    @Override
+    public List<SurveyAnswer> saveAnswers(List<SurveyAnswer> answers, SurveyContact surveyContact) {
+
+        surveyContact.setCanPass(false);
+        surveyContactService.update(surveyContact);
+        Respondent respondent = respondentService.save(surveyContact.getContact());
+        answers.forEach(answer -> answer.setRespondent(respondent));
+        answerService.saveAll(answers);
+
+        return answers;
     }
 
 }
