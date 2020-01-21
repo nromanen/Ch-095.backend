@@ -57,7 +57,7 @@ public class SurveyController {
     @PostMapping
     public ResponseEntity<Long> duplicateSurvey(@RequestBody DuplicateSurveySettings settings) {
         return ResponseEntity.ok(
-                service.duplicateSurvey(settings)
+                service.duplicate(settings)
         );
     }
 
@@ -71,6 +71,13 @@ public class SurveyController {
     @PutMapping("/status/{status}")
     public ResponseEntity<HttpStatus> setStatusDone(@RequestParam Long id, @PathVariable SurveyStatus status) {
         service.updateStatus(id, status);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Disable a survey")
+    @PutMapping("/disable")
+    public ResponseEntity<HttpStatus> disableSurvey(@RequestParam Long id) {
+        service.disable(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
