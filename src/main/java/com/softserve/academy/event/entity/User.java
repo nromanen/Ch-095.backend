@@ -53,10 +53,10 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.USER;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Contact> contacts = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Survey> surveys = new HashSet<>();
 
     public User() {
