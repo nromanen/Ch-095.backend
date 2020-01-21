@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,5 +24,8 @@ public class EditSurveyQuestionDTO {
 
     private List<String> choiceAnswers;
 
+    private List<String> uploadingPhotos = new ArrayList<>();
+
     private boolean required;
+
 }
