@@ -10,7 +10,6 @@ import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
-import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -34,15 +33,13 @@ public class SurveyController {
 
     private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyService service;
-    private final SurveyMapper surveyMapper;
     private final QuestionService questionService;
 
     @Autowired
-    public SurveyController(SurveyService service, SurveyMapper surveyMapper,
+    public SurveyController(SurveyService service,
                             SaveQuestionMapper saveQuestionMapper, QuestionService questionService) {
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
-        this.surveyMapper = surveyMapper;
         this.questionService = questionService;
     }
 
@@ -60,7 +57,7 @@ public class SurveyController {
     @PostMapping
     public ResponseEntity<Long> duplicateSurvey(@RequestBody DuplicateSurveySettings settings) {
         return ResponseEntity.ok(
-                service.duplicateSurvey(settings)
+                service.duplicate(settings)
         );
     }
 
@@ -74,6 +71,13 @@ public class SurveyController {
     @PutMapping("/status/{status}")
     public ResponseEntity<HttpStatus> setStatusDone(@RequestParam Long id, @PathVariable SurveyStatus status) {
         service.updateStatus(id, status);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Disable a survey")
+    @PutMapping("/disable")
+    public ResponseEntity<HttpStatus> disableSurvey(@RequestParam Long id) {
+        service.disable(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

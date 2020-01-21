@@ -201,7 +201,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             return null;
         }
 
-        String clientSecret = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-secret");
+        String clientSecret = env.getProperty(clientPropertyKey + client + ".client-secret");
         if (client.equals("google")) {
             return CommonOAuth2Provider.GOOGLE.getBuilder(client)
                     .clientId(clientId)
