@@ -136,8 +136,6 @@ class SeparatelyStatisticMapperTest {
 
         Set<QuestionsSeparatelyStatisticDTO> dto =
                 separatelyStatisticMapper.toSetQuestionsDTO(survey);
-        System.out.println(dto);
-        System.out.println(expected);
         assertEquals(expected,dto);
     }
 
