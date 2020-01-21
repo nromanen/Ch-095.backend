@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.ParameterMode;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,18 @@ import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEm
 
 @Repository
 public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> implements ContactRepository {
+
+    @Override
+    public void saveOrUpdate(Contact contact) {
+        sessionFactory.getCurrentSession()
+                .createStoredProcedureQuery("insert_or_update_contact")
+                .registerStoredProcedureParameter("name", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("email", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("userId", Long.class, ParameterMode.IN)
+                .setParameter("name", contact.getName())
+                .setParameter("email", contact.getEmail())
+                .setParameter("userId", contact.getUser().getId()).getSingleResult();
+    }
 
     @Override
     public Optional<Contact> findFirstById(Long id) {

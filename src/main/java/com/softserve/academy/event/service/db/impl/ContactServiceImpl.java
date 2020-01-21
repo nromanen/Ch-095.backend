@@ -2,6 +2,7 @@ package com.softserve.academy.event.service.db.impl;
 
 import com.softserve.academy.event.dto.ContactDTO;
 import com.softserve.academy.event.entity.Contact;
+import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.exception.ContactNotFound;
 import com.softserve.academy.event.exception.DataAlreadyUsedException;
 import com.softserve.academy.event.exception.IncorrectLinkException;
@@ -19,8 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.PersistenceException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
 
@@ -93,11 +94,13 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public List<Long> saveAll(List<Contact> contacts) {
+    public void saveAll(List<Contact> contacts) {
         EmailValidator.validate(contacts);
-        List<Long> list = new ArrayList<>();
-        contacts.forEach(e -> list.add(repository.save(e).getId()));
-        return list;
+        User user = userService.findByEmail(getCurrentUserEmail());
+        for (Contact contact : contacts) {
+                contact.setUser(user);
+                repository.saveOrUpdate(contact);
+        }
     }
 
     @Override

@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/contact")
@@ -44,13 +46,10 @@ public class ContactsController {
 
     @PostMapping("/import/scv")
     @ResponseStatus(HttpStatus.OK)
-    public byte[] importScv(@RequestParam("file") MultipartFile file) throws IOException {
-        if (true) return CsvUtils.write(service.findAll());
-        if (!file.getContentType().contains("csv")) {
-            throw new TypeMismatchException("Can't read file. File type must be '.csv'");
-        }
-        service.saveAll(CsvUtils.read(Contact.class, file.getInputStream()));
-        return null;
+    public void importCsv(@RequestParam("file") MultipartFile file) throws IOException {
+        service.saveAll(
+                CsvUtils.read(Contact.class, CsvUtils.CONTACT_WITH_HEADER_SCHEMA,
+                        file.getInputStream()));
     }
 
     @PostMapping

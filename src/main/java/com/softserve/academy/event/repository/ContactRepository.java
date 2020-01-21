@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface ContactRepository extends BasicRepository<Contact, Long> {
 
+    void saveOrUpdate(Contact contact);
+
     Page<Contact> findAllByPageable(Pageable pageable);
 
     Page<Contact> findAllByPageableAndFilterLikeNameOrEmail(Pageable pageable, String text);

@@ -18,7 +18,7 @@ public interface ContactService extends BasicService<Contact, Long>  {
 
     Contact save(ContactDTO contactDTO);
 
-    List<Long> saveAll(List<Contact> contact);
+    void saveAll(List<Contact> contact);
 
     void update(ContactDTO contactDTO);
 
