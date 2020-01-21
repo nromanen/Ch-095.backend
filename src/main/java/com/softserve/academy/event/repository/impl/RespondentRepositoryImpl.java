@@ -34,6 +34,6 @@ public class RespondentRepositoryImpl extends BasicRepositoryImpl<Respondent, Lo
         if (result.isEmpty()){
             return Optional.empty();
         }
-        return Optional.ofNullable(result.get(0));
+        return Optional.ofNullable((Respondent) result.get(0));
     }
 }

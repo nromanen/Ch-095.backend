@@ -66,7 +66,7 @@ public class QuestionServiceImpl implements QuestionService{
     @Override
     public List<SurveyAnswer> saveAnswers(List<SurveyAnswer> answers) {
 
-        Respondent respondent = respondentService.save(anonymService.save(answers.get(0)));
+        Respondent respondent = respondentService.save(anonymService.save(answers.get(0).getValue()));
         answers.remove(0);
         answers.forEach(answer -> answer.setRespondent(respondent));
         answerService.saveAll(answers);
