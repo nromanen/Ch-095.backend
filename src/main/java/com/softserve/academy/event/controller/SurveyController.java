@@ -10,7 +10,6 @@ import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
-import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -34,15 +33,13 @@ public class SurveyController {
 
     private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyService service;
-    private final SurveyMapper surveyMapper;
     private final QuestionService questionService;
 
     @Autowired
-    public SurveyController(SurveyService service, SurveyMapper surveyMapper,
-                            SaveQuestionMapper saveQuestionMapper, QuestionService questionService) {
+    public SurveyController(SurveyService service, SaveQuestionMapper saveQuestionMapper,
+                            QuestionService questionService) {
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
-        this.surveyMapper = surveyMapper;
         this.questionService = questionService;
     }
 

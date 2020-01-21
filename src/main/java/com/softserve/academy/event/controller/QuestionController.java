@@ -30,23 +30,17 @@ public class QuestionController {
     private final ContactService contactService;
     private final QuestionService questionService;
     private final QuestionMapper questionMapper;
-    private final AnswerService answerService;
     private final SurveyContactConnectorService surveyContactConnectorService;
     private final AnswerMapper answerMapper;
-    private final AnonymService anonymService;
-    private final RespondentService respondentService;
     private final SurveyService surveyService;
 
     @Autowired
-    public QuestionController(AnswerMapper answerMapper, ContactService contactService, QuestionService questionService, QuestionMapper questionMapper, AnswerService answerService, SurveyContactConnectorService surveyContactConnectorService, AnonymService anonymService, RespondentService respondentService, SurveyService surveyService) {
+    public QuestionController(AnswerMapper answerMapper, ContactService contactService, QuestionService questionService, QuestionMapper questionMapper, SurveyContactConnectorService surveyContactConnectorService, SurveyService surveyService) {
         this.questionService = questionService;
-        this.answerService = answerService;
         this.surveyContactConnectorService = surveyContactConnectorService;
         this.contactService = contactService;
         this.questionMapper = questionMapper;
         this.answerMapper = answerMapper;
-        this.anonymService = anonymService;
-        this.respondentService = respondentService;
         this.surveyService = surveyService;
     }
 
