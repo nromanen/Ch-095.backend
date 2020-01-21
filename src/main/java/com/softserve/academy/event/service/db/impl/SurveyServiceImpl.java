@@ -6,6 +6,8 @@ import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.entity.enums.SurveyType;
+import com.softserve.academy.event.exception.AccessDeniedException;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.QuestionRepository;
@@ -139,6 +141,16 @@ public class SurveyServiceImpl implements SurveyService {
         survey.getSurveyQuestions().clear();
         surveyQuestions.forEach(survey::addQuestion);
         return repository.update(survey);
+    }
+
+    @Override
+    public boolean isCommonWithIdAndNameExist(Long id, String name) {
+        Optional<Survey> surveyOptional = findFirstById(id);
+        if (!surveyOptional.isPresent()){
+            return false;
+        }
+        Survey survey = surveyOptional.get();
+        return survey.getType().equals(SurveyType.COMMON) && survey.getTitle().equals(name);
     }
 
 }

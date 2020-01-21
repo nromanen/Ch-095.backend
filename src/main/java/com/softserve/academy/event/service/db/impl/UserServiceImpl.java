@@ -59,14 +59,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<Long> getAuthenticationId() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            String email = ((UserDetails) principal).getUsername();
-            Long id = userRepository.findByEmail(email).orElseThrow(UserNotFound::new).getId();
-            return Optional.of(id);
+        String email = getAuthenticatedUserEmail();
+        if (email == null) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        return  Optional.of(userRepository.findByEmail(email).orElseThrow(UserNotFound::new).getId());
+
+
     }
 
     @Override
