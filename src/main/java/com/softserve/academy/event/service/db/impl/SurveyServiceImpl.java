@@ -7,7 +7,6 @@ import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.entity.enums.SurveyType;
-import com.softserve.academy.event.exception.AccessDeniedException;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.repository.QuestionRepository;
@@ -126,6 +125,11 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
+    public Optional<Survey> findFirstByIdForNormPeople(long surveyId) {
+        return repository.findFirstByIdForNormPeople(surveyId);
+    }
+
+    @Override
     public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
         String email = userService.getAuthenticatedUserEmail();
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFound::new);
@@ -145,7 +149,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public boolean isCommonWithIdAndNameExist(Long id, String name) {
-        Optional<Survey> surveyOptional = findFirstById(id);
+        Optional<Survey> surveyOptional = findFirstByIdForNormPeople(id);
         if (!surveyOptional.isPresent()){
             return false;
         }
