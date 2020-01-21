@@ -8,6 +8,5 @@ import lombok.Setter;
 public class AnswerDTO {
 
     private Long questionId;
-    private Long contactId;
     private Object answers;
 }
