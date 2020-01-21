@@ -35,41 +35,5 @@ class SurveyServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
-    public void findAllByPageableAndStatus() {
-        System.out.println(surveyService);
-//        List<SurveyDTO> surveys = surveyService.findAllByPageableAndStatus(pageable, status).getItems();
-//        assertEquals(0, surveys.size());
-    }
-
-    @Test
-    public void checkFilterByStatus(Pageable pageable, String status) {
-        List<SurveyDTO> surveys = surveyService.findAllByPageableAndStatus(pageable, status).getItems();
-        assertEquals(0, surveys.size());
-    }
-
-    @Test
-    void updateTitle() {
-    }
-
-    @Test
-    void updateStatus() {
-    }
-
-    @Test
-    void duplicateSurvey() {
-    }
-
-    @Test
-    void delete() {
-    }
-
-    @Test
-    void findFirstById() {
-    }
-
-    @Test
-    void saveSurveyWithQuestions() {
-    }
 
 }

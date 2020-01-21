@@ -31,7 +31,7 @@ public class SurveyAnswer implements Serializable {
 
     @JoinColumn
     @ManyToOne
-    private Contact contact;
+    private Respondent respondent;
 
     @Column
     private String value;

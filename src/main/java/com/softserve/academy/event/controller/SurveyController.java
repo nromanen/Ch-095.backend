@@ -6,6 +6,7 @@ import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.entity.enums.SurveyType;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
@@ -63,7 +64,7 @@ public class SurveyController {
     @PostMapping
     public ResponseEntity<Long> duplicateSurvey(@RequestBody DuplicateSurveySettings settings) {
         return ResponseEntity.ok(
-                service.duplicateSurvey(settings)
+                service.duplicate(settings)
         );
     }
 
@@ -80,6 +81,13 @@ public class SurveyController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Disable a survey")
+    @PutMapping("/disable")
+    public ResponseEntity<HttpStatus> disableSurvey(@RequestParam Long id) {
+        service.disable(id);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Delete a survey")
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteSurvey(@RequestParam Long id) {
@@ -90,6 +98,7 @@ public class SurveyController {
     @PostMapping(value = "/createNewSurvey")
     public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws IOException {
         Survey survey = saveQuestionMapper.toSurvey(saveSurveyDTO);
+        survey.setType(SurveyType.COMMON);
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         for (SurveyQuestionDTO question : saveSurveyDTO.getQuestions()) {
             surveyQuestions.add(saveQuestionMapper.toEntity(question));
