@@ -82,7 +82,7 @@ public class QuestionController {
                                 null, surveyAnswer.getValue()))
                 );
 
-        SurveyType type = surveyService.findFirstById(contactResponseDTO.getSurveyId())
+        SurveyType type = surveyService.findFirstByIdForNormPeople(contactResponseDTO.getSurveyId())
                 .orElseThrow(() -> new NotFoundException("Survey not found")).getType();
 
         if (type.equals(SurveyType.COMMON)) {

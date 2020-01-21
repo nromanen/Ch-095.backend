@@ -14,11 +14,11 @@ public class Respondent implements Serializable {
     private Long id;
 
     @JoinColumn
-    @ManyToOne
+    @OneToOne
     private Contact contact;
 
     @JoinColumn
-    @ManyToOne
+    @OneToOne
     private Anonym anonym;
 
     public Respondent(){}
