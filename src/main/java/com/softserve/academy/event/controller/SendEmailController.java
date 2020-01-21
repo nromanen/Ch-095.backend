@@ -15,7 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.constraints.Pattern;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,17 +44,17 @@ public class SendEmailController {
         emailService.sendEmailForUser(idUser, idSurvey, emails);
     }
 
+    @GetMapping("/availableContacts")
+    public Set<String> listOfAvailableContacts(Long surveyId) {
+        Long userId = service.getAuthenticationId().orElseThrow(UserNotFound::new);
+        List<Contact> contacts = contactService.findAvailableContacts(surveyId, userId);
+        return contacts.stream().map(Contact::getEmail).collect(Collectors.toSet());
+    }
+
     @ExceptionHandler(IncorrectEmailsException.class)
     public ResponseEntity<String> incorrectEmailsHandler(Exception e, WebRequest request) {
         log.error("Incorrect emails : ", e);
         log.error(request.getDescription(false));
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @GetMapping("/availableContacts")
-    public List<String> listOfAvailableContacts(Long surveyId) {
-        Long userId = service.getAuthenticationId().orElseThrow(UserNotFound::new);
-        List<Contact> contacts = contactService.findAvailableContacts(surveyId, userId);
-        return contacts.stream().map(Contact::getEmail).collect(Collectors.toList());
     }
 }
