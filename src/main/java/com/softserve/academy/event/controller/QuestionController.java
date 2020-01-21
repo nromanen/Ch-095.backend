@@ -7,12 +7,8 @@ import com.softserve.academy.event.dto.SurveyContactDTO;
 import com.softserve.academy.event.entity.Respondent;
 import com.softserve.academy.event.entity.SurveyAnswer;
 import com.softserve.academy.event.entity.SurveyContact;
-import com.softserve.academy.event.service.db.*;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
-import com.softserve.academy.event.service.db.AnswerService;
-import com.softserve.academy.event.service.db.ContactService;
-import com.softserve.academy.event.service.db.QuestionService;
-import com.softserve.academy.event.service.db.SurveyContactConnectorService;
+import com.softserve.academy.event.service.db.*;
 import com.softserve.academy.event.service.mapper.AnswerMapper;
 import com.softserve.academy.event.service.mapper.QuestionMapper;
 import io.swagger.annotations.Api;
@@ -24,8 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Base64;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,21 +57,21 @@ public class QuestionController {
 
     @ApiOperation(value = "Get a survey form for contact", notes = "Checks an e-mail, Id(survey) and builds a form", response = SurveyContactDTO.class)
     @GetMapping
-    public ResponseEntity<SurveyContactDTO> startSurvey(Long surveyId, String contactEmail) {
+    public ResponseEntity<SurveyContactDTO> startSurvey(Long surveyId, String contactEmail) throws IOException {
         if (!contactService.canPass(surveyId, contactEmail))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return getSurveyContactDTO(surveyId, contactEmail);
     }
 
     @GetMapping(value = "common/{token}")
-    public ResponseEntity<SurveyContactDTO> startSurvey(@PathVariable(name = "token") String token) {
+    public ResponseEntity<SurveyContactDTO> startSurvey(@PathVariable(name = "token") String token) throws IOException {
         String[] strings = new String(Base64.getDecoder().decode(token)).split("~");
         Long id = Long.valueOf(strings[0]);
 
         return getSurveyContactDTO(id, "anonymousUser");
     }
 
-    private ResponseEntity<SurveyContactDTO> getSurveyContactDTO(Long id, String respondent) {
+    private ResponseEntity<SurveyContactDTO> getSurveyContactDTO(Long id, String respondent) throws IOException {
         List<QuestionDTO> questionsDTO = questionMapper.listQuestionToDTO(questionService.findBySurveyId(id));
         savePhotoInQuestionDTO(questionsDTO);
         SurveyContactDTO dto = new SurveyContactDTO();

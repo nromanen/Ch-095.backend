@@ -10,6 +10,7 @@ import java.util.List;
 public class EditSurveyDTO  {
     private String title;
     private String surveyPhotoName;
+    private String surveyType;
 
     private List<EditSurveyQuestionDTO> questions;
 }
