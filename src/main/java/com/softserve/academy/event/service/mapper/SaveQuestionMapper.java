@@ -30,10 +30,12 @@ public interface SaveQuestionMapper {
     EditSurveyQuestionDTO toEditSurveyQuestionDTO(SurveyQuestion surveyQuestions) throws JsonProcessingException;
 
     @Mapping(target = "imageUrl", source = "surveyPhotoName")
+    @Mapping(target = "type", source = "surveyType")
     Survey toSurvey(SaveSurveyDTO saveSurveyDTO);
 
     @Mapping(target = "surveyPhotoName", expression = "java(survey.getImageUrl())")
     @Mapping(target = "title", expression = "java(survey.getTitle())")
+    @Mapping(target = "surveyType", expression = "java(survey.getType().toString())")
     EditSurveyDTO toEditSurveyDTO(Survey survey, List<EditSurveyQuestionDTO> questions);
 }
 

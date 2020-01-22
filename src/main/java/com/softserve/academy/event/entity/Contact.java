@@ -43,7 +43,7 @@ public class Contact implements Serializable {
     @Column(length = 128, nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "contact")
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "contact")
     private Set<SurveyContact> surveyContacts = new HashSet<>();
 
 }
