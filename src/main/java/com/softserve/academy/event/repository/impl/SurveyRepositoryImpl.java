@@ -28,6 +28,15 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     }
 
     @Override
+    public Optional<Survey> findFirstByIdForNormPeople(Long id){
+        return Optional.ofNullable((Survey) sessionFactory.getCurrentSession()
+                .createQuery("from " + clazz.getName() + " as s where s.id = :id")
+                .setParameter("id", id)
+                .setMaxResults(1)
+                .getSingleResult());
+    }
+
+    @Override
     public Page<Survey> findAllByPageableAndUserEmail(Pageable pageable, String userEmail) {
         Session session = sessionFactory.getCurrentSession();
         return getSurveyPage(pageable, session, userEmail,

@@ -31,6 +31,8 @@ public class CheckPossibilityController {
     private final ContactService contactService;
     private final SurveyService surveyService;
 
+    private static final String CANT_PASS = "Sorry, but you can`t pass survey by this link";
+
     @Autowired
     public CheckPossibilityController(SurveyContactConnectorService surveyContactConnectorService, ContactService contactService, CheckPossibilityService checkPossibilityService, SurveyService surveyService) {
         this.surveyContactConnectorService = surveyContactConnectorService;
@@ -46,13 +48,13 @@ public class CheckPossibilityController {
         Optional<Long> longOptional = contactService.getIdByEmail(res[0]);
         if (!longOptional.isPresent()) {
             log.error("This survey with 'id'=' " + res[1] + "' is not available for the contact with 'email'='" + res[0] + "'");
-            return new ResponseEntity<>("Sorry, but you can`t pass survey by this link", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(CANT_PASS, HttpStatus.UNAUTHORIZED);
         }
         if (surveyContactConnectorService.isEnable(longOptional.get(), Long.valueOf(res[1]))) {
             return ResponseEntity.ok(token);
         }
         log.error("Contact with 'id'='" + longOptional.get() + " has already passed survey with 'id'='" + res[1] + "'");
-        return new ResponseEntity<>("Sorry, but you can`t pass survey by this link", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(CANT_PASS, HttpStatus.UNAUTHORIZED);
     }
 
     @ApiOperation(value = "Check e-mail")
@@ -78,6 +80,6 @@ public class CheckPossibilityController {
         if (surveyService.isCommonWithIdAndNameExist(id, strings[1])){
             return ResponseEntity.ok(id);
         }
-        throw new IncorrectLinkException("Sorry, but you can`t pass survey by this link");
+        throw new IncorrectLinkException(CANT_PASS);
     }
 }

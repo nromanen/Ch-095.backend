@@ -43,7 +43,7 @@ public class StatisticResolver {
     static List<String> parseAnswer
             (Set<SurveyAnswer> surveyAnswerSet, SurveyContact contact) {
         return surveyAnswerSet.stream()
-                .filter(surveyAnswer ->surveyAnswer.getContact().equals(contact.getContact()))
+                .filter(surveyAnswer ->surveyAnswer.getRespondent().getContact().equals(contact.getContact()))
                 .map(answer -> {
                     try {
                         return new ObjectMapper().readValue(answer.getValue(), String[].class);
