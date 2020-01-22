@@ -42,8 +42,8 @@ public class SurveyController {
     private final QuestionService questionService;
 
     @Autowired
-    public SurveyController(SurveyService service,
-                            SaveQuestionMapper saveQuestionMapper, QuestionService questionService) {
+    public SurveyController(SurveyService service, SaveQuestionMapper saveQuestionMapper,
+                            QuestionService questionService) {
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
         this.questionService = questionService;
