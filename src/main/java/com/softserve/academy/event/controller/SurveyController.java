@@ -6,6 +6,7 @@ import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
+import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
@@ -19,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -58,9 +61,7 @@ public class SurveyController {
     @ApiOperation(value = "Duplicates a survey")
     @PostMapping
     public ResponseEntity<Long> duplicateSurvey(@RequestBody DuplicateSurveySettings settings) {
-        return ResponseEntity.ok(
-                service.duplicateSurvey(settings)
-        );
+        return ResponseEntity.ok(service.duplicateSurvey(settings));
     }
 
     @ApiOperation(value = "Change the title of the survey")
@@ -86,6 +87,9 @@ public class SurveyController {
     @PostMapping(value = "/createNewSurvey")
     public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws IOException {
         Survey survey = saveQuestionMapper.toSurvey(saveSurveyDTO);
+        if ("MANAGER".equals(getRole())) {
+            survey.setStatus(SurveyStatus.TEMPLATE);
+        }
         List<SurveyQuestion> surveyQuestions = new ArrayList<>();
         for (SurveyQuestionDTO question : saveSurveyDTO.getQuestions()) {
             surveyQuestions.add(saveQuestionMapper.toEntity(question));
@@ -115,5 +119,11 @@ public class SurveyController {
             questions.add(saveQuestionMapper.toEntity(questionDTO));
         }
         return ResponseEntity.ok(service.updateSurvey(Long.parseLong(id), questions));
+    }
+
+    private String getRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                             .findFirst().orElseThrow(UserNotFound::new).toString();
     }
 }

@@ -14,6 +14,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@NamedQuery(
+        name = "findSurveyTemplate",
+        query = "from Survey s where s.status= :status"
+)
+
+
 @Entity
 @Table(name = "surveys")
 @EqualsAndHashCode(of = {"id"})

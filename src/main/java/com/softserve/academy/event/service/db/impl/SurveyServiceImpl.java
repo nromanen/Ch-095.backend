@@ -56,7 +56,11 @@ public class SurveyServiceImpl implements SurveyService {
     @Transactional(readOnly = true)
     public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status) {
         Page<Survey> surveysPage;
-        if (Objects.nonNull(status) && status.length() > 0) {
+
+        if ("TEMPLATE".equals(status)) {
+            surveysPage = repository.findSurveysByTemplateStatus(pageable,
+                    SurveyStatus.valueOf(status));
+        } else if (Objects.nonNull(status) && status.length() > 0) {
             surveysPage = repository.findAllByPageableAndStatusAndUserEmail(pageable,
                     SurveyStatus.valueOf(status), getCurrentUserEmail());
         } else {
@@ -93,7 +97,8 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public long duplicateSurvey(DuplicateSurveySettings settings) {
-        return repository.cloneSurvey(settings)
+        Long id = userService.getAuthenticationId().orElseThrow(UserNotFound::new);
+        return repository.cloneSurvey(settings, id)
                 .orElseThrow(SurveyNotFound::new)
                 .longValue();
     }

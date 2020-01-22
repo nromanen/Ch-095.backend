@@ -2,13 +2,14 @@ package com.softserve.academy.event.controller;
 
 import com.softserve.academy.event.dto.UserDto;
 import com.softserve.academy.event.entity.enums.TokenValidation;
-import com.softserve.academy.event.exception.EmailExistException;
 import com.softserve.academy.event.service.db.UserService;
 import com.softserve.academy.event.service.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 public class LoginController {
@@ -46,7 +47,7 @@ public class LoginController {
     }
 
     @GetMapping(value = "/login")
-    public ResponseEntity getLogin() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public Principal getLogin(Principal user) {
+        return user;
     }
 }
