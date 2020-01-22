@@ -19,20 +19,11 @@ import java.util.Optional;
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> implements SurveyRepository {
 
     @Override
-    public Optional<Survey> findFirstById(Long id) {
+    public Optional<Survey> findFirstByIdAndUserEmail(Long id, String email) {
         return Optional.ofNullable((Survey) sessionFactory.getCurrentSession()
                 .createQuery("from " + clazz.getName() + " where id = :id and user.email = :user")
                 .setParameter("id", id)
                 .setParameter("user", SecurityUserUtil.getCurrentUserEmail())
-                .setMaxResults(1)
-                .getSingleResult());
-    }
-
-    @Override
-    public Optional<Survey> findFirstByIdForNormPeople(Long id){
-        return Optional.ofNullable((Survey) sessionFactory.getCurrentSession()
-                .createQuery("from " + clazz.getName() + " as s where s.id = :id")
-                .setParameter("id", id)
                 .setMaxResults(1)
                 .getSingleResult());
     }

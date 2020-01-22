@@ -3,25 +3,21 @@ package com.softserve.academy.event.controller;
 import com.softserve.academy.event.dto.ContactDTO;
 import com.softserve.academy.event.dto.ItemDTO;
 import com.softserve.academy.event.entity.Contact;
-import com.softserve.academy.event.entity.User;
 import com.softserve.academy.event.service.db.ContactService;
 import com.softserve.academy.event.service.mapper.ContactMapper;
 import com.softserve.academy.event.util.CsvUtils;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
-import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.File;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.Writer;
 
 @RestController
 @RequestMapping("/contact")
@@ -46,10 +42,22 @@ public class ContactsController {
 
     @PostMapping("/import/scv")
     @ResponseStatus(HttpStatus.OK)
-    public void importCsv(@RequestParam("file") MultipartFile file) throws IOException {
+    public void importCsv(@RequestParam("file") MultipartFile file, @RequestParam("importNames") boolean importNames) throws IOException {
         service.saveAll(
                 CsvUtils.read(Contact.class, CsvUtils.CONTACT_WITH_HEADER_SCHEMA,
-                        file.getInputStream()));
+                        file.getInputStream()), importNames);
+    }
+
+    @GetMapping(value = "/export/scv")
+    @ResponseStatus(HttpStatus.OK)
+    public void exportCsv(HttpServletResponse response) throws IOException {
+        response.setContentType("application/csv");
+        response.setHeader("Content-Disposition","attachment; filename=\"contacts.csv\"");
+        try(ServletOutputStream outputStream = response.getOutputStream()){
+            CsvUtils.write(ContactDTO.class, CsvUtils.CONTACT_WITH_HEADER_SCHEMA,
+                    outputStream, mapper.toListDTO(service.findAll()));
+            outputStream.flush();
+        }
     }
 
     @PostMapping

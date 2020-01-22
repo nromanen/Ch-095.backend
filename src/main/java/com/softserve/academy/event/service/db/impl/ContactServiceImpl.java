@@ -94,12 +94,19 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public void saveAll(List<Contact> contacts) {
+    public void saveAll(List<Contact> contacts, boolean importNames) {
         EmailValidator.validate(contacts);
         User user = userService.findByEmail(getCurrentUserEmail());
-        for (Contact contact : contacts) {
+        if (importNames) {
+            contacts.forEach(contact -> {
                 contact.setUser(user);
-                repository.saveOrUpdate(contact);
+                repository.saveWithConflictUpdate(contact);
+            });
+        } else {
+            contacts.forEach(contact -> {
+                contact.setUser(user);
+                repository.saveWithConflictIgnore(contact);
+            });
         }
     }
 

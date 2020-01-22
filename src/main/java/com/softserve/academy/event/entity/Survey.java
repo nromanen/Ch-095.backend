@@ -52,7 +52,7 @@ public class Survey implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SurveyType type;
+    private SurveyType type = SurveyType.COMMON;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "survey", cascade = CascadeType.ALL)

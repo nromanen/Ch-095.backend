@@ -8,7 +8,9 @@ import java.util.Optional;
 
 public interface ContactRepository extends BasicRepository<Contact, Long> {
 
-    void saveOrUpdate(Contact contact);
+    void saveWithConflictUpdate(Contact contact);
+
+    void saveWithConflictIgnore(Contact contact);
 
     Page<Contact> findAllByPageable(Pageable pageable);
 

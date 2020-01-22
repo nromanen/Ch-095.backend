@@ -10,7 +10,6 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.ParameterMode;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
@@ -21,15 +20,28 @@ import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEm
 public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> implements ContactRepository {
 
     @Override
-    public void saveOrUpdate(Contact contact) {
+    public void saveWithConflictUpdate(Contact contact) {
         sessionFactory.getCurrentSession()
-                .createStoredProcedureQuery("insert_or_update_contact")
-                .registerStoredProcedureParameter("name", String.class, ParameterMode.IN)
-                .registerStoredProcedureParameter("email", String.class, ParameterMode.IN)
-                .registerStoredProcedureParameter("userId", Long.class, ParameterMode.IN)
+                .createNativeQuery("INSERT INTO contacts(name, email, user_id)" +
+                        " VALUES (:name, :email, :userId)" +
+                        " ON CONFLICT (email,user_id)" +
+                        " DO UPDATE SET name = :name")
                 .setParameter("name", contact.getName())
                 .setParameter("email", contact.getEmail())
-                .setParameter("userId", contact.getUser().getId()).getSingleResult();
+                .setParameter("userId", contact.getUser().getId())
+                .executeUpdate();
+    }
+
+    @Override
+    public void saveWithConflictIgnore(Contact contact) {
+        sessionFactory.getCurrentSession()
+                .createNativeQuery("INSERT INTO contacts(name, email, user_id)" +
+                        " VALUES (:name, :email, :userId)" +
+                        " ON CONFLICT DO NOTHING")
+                .setParameter("name", contact.getName())
+                .setParameter("email", contact.getEmail())
+                .setParameter("userId", contact.getUser().getId())
+                .executeUpdate();
     }
 
     @Override
