@@ -15,7 +15,9 @@ import java.util.List;
 public interface QuestionMapper {
 
     @Mapping(target = "value", source = "question")
+    @Mapping(target = "uploadingPhotos",ignore = true)
     QuestionDTO toDTO(SurveyQuestion surveyQuestion);
+
     List<QuestionDTO> listQuestionToDTO(List<SurveyQuestion> list);
 
 

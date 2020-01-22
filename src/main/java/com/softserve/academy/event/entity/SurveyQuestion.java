@@ -34,7 +34,7 @@ public class SurveyQuestion implements Serializable {
     @Column(nullable = false)
     private String question;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+    @OneToMany(fetch = FetchType.EAGER ,cascade = CascadeType.ALL, mappedBy = "question")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<SurveyAnswer> surveyAnswers = new HashSet<>();
 
