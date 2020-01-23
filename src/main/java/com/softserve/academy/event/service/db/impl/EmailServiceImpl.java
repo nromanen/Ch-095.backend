@@ -30,7 +30,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Value("${app.frontend.url}")
     private String BASE_URL;
-    private static final String END_POINT = "test/";
+    private static final String END_POINT = "/test/";
     private final JavaMailSender javaMailSender;
     private final SurveyRepository surveyRepository;
     private final ContactRepository contactRepository;
@@ -50,7 +50,8 @@ public class EmailServiceImpl implements EmailService {
         User user = userRepository.findFirstById(idUser).orElseThrow(UserNotFound::new);
         for (String email : emails) {
             Contact contact = newContact(idUser, email);
-            newSurveyContact(surveyRepository.findFirstById(Long.valueOf(surveyId)).orElseThrow(SurveyNotFound::new), contact);
+            Survey survey = surveyRepository.findFirstByIdForNormPeople(Long.valueOf(surveyId)).orElseThrow(SurveyNotFound::new);
+            newSurveyContact(survey, contact);
         }
         for (String email : emails) {
             String codEmail = email + ";" + surveyId;
