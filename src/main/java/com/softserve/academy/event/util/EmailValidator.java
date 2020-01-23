@@ -26,7 +26,7 @@ public class EmailValidator {
             violations.addAll(validator.validate(address));
         }
         if (!violations.isEmpty()) {
-            throw new IncorrectEmailsException(violations.stream().map(e -> (String) e.getInvalidValue()).collect(Collectors.joining(",")));
+            throw new IncorrectEmailsException(violations.stream().map(e -> (String) e.getInvalidValue()).collect(Collectors.joining(",")) + ": this email is not valid");
         }
     }
 

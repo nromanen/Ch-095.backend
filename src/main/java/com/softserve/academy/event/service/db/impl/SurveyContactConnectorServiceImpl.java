@@ -54,6 +54,11 @@ public class SurveyContactConnectorServiceImpl implements SurveyContactConnector
     }
 
     @Override
+    public SurveyContact surveyContactsByContactId(Long contactId, Long surveyId){
+        return repository.surveyContactsByContactId(contactId, surveyId);
+    }
+
+    @Override
     public Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId) {
         return repository.findByContactAndSurvey(contactId, surveyId);
     }

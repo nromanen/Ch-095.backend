@@ -1,10 +1,6 @@
 package com.softserve.academy.event.exception;
 
-public class SurveyAlreadyPassedException extends Exception {
-    public SurveyAlreadyPassedException() {
-        super();
-    }
-
+public class SurveyAlreadyPassedException extends RuntimeException {
     public SurveyAlreadyPassedException(String message) {
         super(message);
     }

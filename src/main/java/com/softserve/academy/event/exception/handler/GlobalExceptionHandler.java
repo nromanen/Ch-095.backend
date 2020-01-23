@@ -65,9 +65,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
     }
 
-    @ExceptionHandler(EmailNotMatchContactException.class)
-    public ResponseEntity<Object> emailNotMatchContactHandler(Exception e, WebRequest request){
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(SurveyAlreadyReceivedException.class)
+    public ResponseEntity<Object> surveyAlreadyReceivedHandler(Exception e, WebRequest request) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
     }
 
     private ResponseEntity<Object> handler(Exception e, WebRequest request, String message, HttpStatus status) {
