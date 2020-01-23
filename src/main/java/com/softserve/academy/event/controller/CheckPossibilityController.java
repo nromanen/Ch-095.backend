@@ -3,11 +3,13 @@ package com.softserve.academy.event.controller;
 import com.softserve.academy.event.dto.CheckPossibilityDTO;
 import com.softserve.academy.event.dto.ContactSurveyDTO;
 import com.softserve.academy.event.entity.User;
+import com.softserve.academy.event.exception.EmailNotMatchContactException;
 import com.softserve.academy.event.exception.IncorrectLinkException;
 import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
 import com.softserve.academy.event.service.db.CheckPossibilityService;
 import com.softserve.academy.event.service.db.ContactService;
 import com.softserve.academy.event.service.db.SurveyContactConnectorService;
+import com.softserve.academy.event.service.db.SurveyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +29,16 @@ public class CheckPossibilityController {
     private final SurveyContactConnectorService surveyContactConnectorService;
     private final CheckPossibilityService checkPossibilityService;
     private final ContactService contactService;
+    private final SurveyService surveyService;
+
+    private static final String CANT_PASS = "Sorry, but you can`t pass survey by this link";
 
     @Autowired
-    public CheckPossibilityController(SurveyContactConnectorService surveyContactConnectorService, ContactService contactService, CheckPossibilityService checkPossibilityService) {
+    public CheckPossibilityController(SurveyContactConnectorService surveyContactConnectorService, ContactService contactService, CheckPossibilityService checkPossibilityService, SurveyService surveyService) {
         this.surveyContactConnectorService = surveyContactConnectorService;
         this.checkPossibilityService = checkPossibilityService;
         this.contactService = contactService;
+        this.surveyService = surveyService;
     }
 
     @ApiOperation(value = "Mail verification")
@@ -41,19 +47,20 @@ public class CheckPossibilityController {
         String[] res = checkPossibilityService.parseToken(token);
         Optional<Long> longOptional = contactService.getIdByEmail(res[0]);
         if (!longOptional.isPresent()) {
-            log.error("This survey is not available for the current user");
-            return new ResponseEntity<>("Sorry, but you can`t pass survey by this link", HttpStatus.UNAUTHORIZED);
+            log.error("This survey with 'id'=' " + res[1] + "' is not available for the contact with 'email'='" + res[0] + "'");
+            return new ResponseEntity<>(CANT_PASS, HttpStatus.UNAUTHORIZED);
         }
         if (surveyContactConnectorService.isEnable(longOptional.get(), Long.valueOf(res[1]))) {
             return ResponseEntity.ok(token);
         }
-        log.error("This user has already passed survey");
-        return new ResponseEntity<>("Sorry, but you can`t pass survey by this link", HttpStatus.UNAUTHORIZED);
+        log.error("Contact with 'id'='" + longOptional.get() + " has already passed survey with 'id'='" + res[1] + "'");
+        return new ResponseEntity<>(CANT_PASS, HttpStatus.UNAUTHORIZED);
     }
 
     @ApiOperation(value = "Check e-mail")
     @PostMapping(value = "/check")
-    public ResponseEntity<ContactSurveyDTO> enterEmail(@RequestBody CheckPossibilityDTO checkPossibilityDTO) {
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ContactSurveyDTO> enterEmail(@RequestBody CheckPossibilityDTO checkPossibilityDTO) throws EmailNotMatchContactException {
         String[] strings = new String(Base64.getDecoder().decode(checkPossibilityDTO.getToken())).split(";");
         final ContactSurveyDTO dto = new ContactSurveyDTO(strings[0], Long.valueOf(strings[1]));
         if (strings[0].matches(User.EMAIL_PATTERN)
@@ -61,7 +68,18 @@ public class CheckPossibilityController {
                 && strings[0].equals(checkPossibilityDTO.getEmail())) {
             return ResponseEntity.ok(dto);
         }
-        log.error("Email does not match the specified contact");
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        log.error("Entered email does not match the specified contact");
+        throw new EmailNotMatchContactException("Entered email does not match the specified contact");
+    }
+
+    @GetMapping(value = "/common/{token}")
+    public ResponseEntity<Long> commonTest(@PathVariable(name = "token") String token) throws IncorrectLinkException {
+        String[] strings = new String(Base64.getDecoder().decode(token)).split("~");
+
+        Long id = Long.valueOf(strings[0]);
+        if (surveyService.isCommonWithIdAndNameExist(id, strings[1])){
+            return ResponseEntity.ok(id);
+        }
+        throw new IncorrectLinkException(CANT_PASS);
     }
 }

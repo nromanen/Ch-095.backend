@@ -45,5 +45,9 @@ public class AnswerServiceImpl implements AnswerService {
     public void delete(SurveyAnswer entity) {
         answerRepository.delete(entity);
     }
-    
+
+    @Override
+    public List<SurveyAnswer> saveAll(List<SurveyAnswer> answers) {
+        return answerRepository.saveAll(answers);
+    }
 }
