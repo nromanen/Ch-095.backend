@@ -11,6 +11,7 @@ import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
+import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;

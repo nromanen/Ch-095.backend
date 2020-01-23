@@ -89,4 +89,5 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
                 .setParameter("currentUserId", id)
                 .getSingleResult());
     }
+
 }
