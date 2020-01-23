@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.softserve.academy.event.dto.*;
 import com.softserve.academy.event.entity.Survey;
 import com.softserve.academy.event.entity.SurveyQuestion;
+import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
-import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -32,19 +32,21 @@ import java.util.List;
 @RestController
 @RequestMapping("survey")
 @Slf4j
+@PropertySource("classpath:application.properties")
 public class SurveyController {
+
+    @Value("${image.upload.dir}")
+    private String imageUploadDir;
 
     private final SaveQuestionMapper saveQuestionMapper;
     private final SurveyService service;
-    private final SurveyMapper surveyMapper;
     private final QuestionService questionService;
 
     @Autowired
-    public SurveyController(SurveyService service, SurveyMapper surveyMapper,
-                            SaveQuestionMapper saveQuestionMapper, QuestionService questionService) {
+    public SurveyController(SurveyService service, SaveQuestionMapper saveQuestionMapper,
+                            QuestionService questionService) {
         this.saveQuestionMapper = saveQuestionMapper;
         this.service = service;
-        this.surveyMapper = surveyMapper;
         this.questionService = questionService;
     }
 
@@ -77,6 +79,13 @@ public class SurveyController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Disable a survey")
+    @PutMapping("/disable")
+    public ResponseEntity<HttpStatus> disableSurvey(@RequestParam Long id) {
+        service.disable(id);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Delete a survey")
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteSurvey(@RequestParam Long id) {
@@ -102,13 +111,25 @@ public class SurveyController {
     public ResponseEntity<EditSurveyDTO> loadForEditSurvey(@PathVariable(name = "id") Long surveyId) throws IOException {
         List<SurveyQuestion> questions = questionService.findBySurveyId(surveyId);
         List<EditSurveyQuestionDTO> editSurveyQuestionsDTO = new ArrayList<>();
-        for (SurveyQuestion question : questions) {
-            editSurveyQuestionsDTO.add(saveQuestionMapper.toEditSurveyQuestionDTO(question));
-        }
+        savePhotoInEditSurveyDTO(questions, editSurveyQuestionsDTO);
         Survey survey = service.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
         EditSurveyDTO editSurveyDTO = saveQuestionMapper.toEditSurveyDTO(survey, editSurveyQuestionsDTO);
         return new ResponseEntity<>(editSurveyDTO, HttpStatus.OK);
     }
+
+    private void savePhotoInEditSurveyDTO(List<SurveyQuestion> questions, List<EditSurveyQuestionDTO> editSurveyQuestionsDTO) throws IOException {
+        for (SurveyQuestion question : questions) {
+            EditSurveyQuestionDTO editSurveyQuestionDTO = saveQuestionMapper.toEditSurveyQuestionDTO(question);
+            if (question.getType().equals(SurveyQuestionType.CHECKBOX_PICTURE) ||
+                question.getType().equals(SurveyQuestionType.RADIO_PICTURE)) {
+                for (String filename : editSurveyQuestionDTO.getChoiceAnswers()) {
+                    editSurveyQuestionDTO.getUploadingPhotos().add(FileUploadController.getPhotoAsEncodeStrByFilename(imageUploadDir, filename));
+                }
+            }
+            editSurveyQuestionsDTO.add(editSurveyQuestionDTO);
+        }
+    }
+
 
     @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
     @PostMapping(value = "/update/{id}")

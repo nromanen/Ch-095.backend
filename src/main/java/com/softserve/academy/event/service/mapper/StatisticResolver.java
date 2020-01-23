@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class StatisticResolver {
 
     @Named("parseChoiceAnswers")
-    static public List<String> parseChoiceAnswers(SurveyQuestion surveyQuestion){
+    static List<String> parseChoiceAnswers(SurveyQuestion surveyQuestion){
         try {
             return Arrays.asList(new ObjectMapper().readValue(
                     surveyQuestion.getChoiceAnswers(),String[].class));
@@ -27,7 +27,7 @@ public class StatisticResolver {
     }
 
     @Named("parseAllAnswers")
-    static public List<List<String>> parseAllAnswers(Set<SurveyAnswer> surveyAnswerSet) {
+    static List<List<String>> parseAllAnswers(Set<SurveyAnswer> surveyAnswerSet) {
         return surveyAnswerSet.stream()
                 .map(surveyAnswer -> {
                     try {
@@ -40,10 +40,10 @@ public class StatisticResolver {
     }
 
     @Named("parseAnswer")
-    static public List<String> parseAnswer
+    static List<String> parseAnswer
             (Set<SurveyAnswer> surveyAnswerSet, SurveyContact contact) {
         return surveyAnswerSet.stream()
-                .filter(surveyAnswer ->surveyAnswer.getContact().equals(contact.getContact()))
+                .filter(surveyAnswer ->surveyAnswer.getRespondent().getContact().equals(contact.getContact()))
                 .map(answer -> {
                     try {
                         return new ObjectMapper().readValue(answer.getValue(), String[].class);
@@ -56,5 +56,6 @@ public class StatisticResolver {
                 .collect(Collectors.toList());
     }
 
+    private StatisticResolver(){}
 
 }

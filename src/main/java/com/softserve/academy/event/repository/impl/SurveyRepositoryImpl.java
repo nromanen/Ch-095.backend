@@ -6,6 +6,7 @@ import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
+import com.softserve.academy.event.util.SecurityUserUtil;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,24 @@ import java.util.Optional;
 public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> implements SurveyRepository {
 
     @Override
+    public Optional<Survey> findFirstById(Long id) {
+        return Optional.ofNullable((Survey) sessionFactory.getCurrentSession()
+                .createQuery("from " + clazz.getName() + " where user.email = :user")
+                .setParameter("user", SecurityUserUtil.getCurrentUserEmail())
+                .setMaxResults(1)
+                .getSingleResult());
+    }
+
+    @Override
+    public Optional<Survey> findFirstByIdForNormPeople(Long id){
+        return Optional.ofNullable((Survey) sessionFactory.getCurrentSession()
+                .createQuery("from " + clazz.getName() + " as s where s.id = :id")
+                .setParameter("id", id)
+                .setMaxResults(1)
+                .getSingleResult());
+    }
+
+    @Override
     public Page<Survey> findAllByPageableAndUserEmail(Pageable pageable, String userEmail) {
         Session session = sessionFactory.getCurrentSession();
         return getSurveyPage(pageable, session, userEmail,
@@ -25,8 +44,7 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     }
 
     @Override
-    public Page<Survey> findAllByPageableAndStatusAndUserEmail(Pageable pageable,
-                                                               SurveyStatus status, String userEmail) {
+    public Page<Survey> findAllByPageableAndStatusAndUserEmail(Pageable pageable, SurveyStatus status, String userEmail) {
         Session session = sessionFactory.getCurrentSession();
         return getSurveyPage(pageable, session, userEmail, status, "s.status = :status");
     }

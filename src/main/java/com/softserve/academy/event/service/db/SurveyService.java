@@ -18,14 +18,20 @@ public interface SurveyService {
 
     void updateStatus(Long id, SurveyStatus status);
 
-    long duplicateSurvey(DuplicateSurveySettings settings);
+    long duplicate(DuplicateSurveySettings settings);
+
+    void disable(Long id);
 
     void delete(Long id);
 
     Optional<Survey> findFirstById(long surveyId);
 
+    Optional<Survey> findFirstByIdForNormPeople(long surveyId);
+
     Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions);
 
     Survey updateSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions);
+
+    boolean isCommonWithIdAndNameExist(Long id, String name);
 }
 

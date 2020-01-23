@@ -8,12 +8,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class EditSurveyDTO  {
-
     private String title;
     private String surveyPhotoName;
-    private List<EditSurveyQuestionDTO> questions;
+    private String surveyType;
 
-    public EditSurveyDTO(List<EditSurveyQuestionDTO> questions){
-        this.questions = questions;
-    }
+    private List<EditSurveyQuestionDTO> questions;
 }
