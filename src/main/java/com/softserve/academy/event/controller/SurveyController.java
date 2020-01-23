@@ -9,6 +9,7 @@ import com.softserve.academy.event.entity.enums.SurveyStatus;
 import com.softserve.academy.event.exception.SurveyNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
+import com.softserve.academy.event.service.db.impl.QuestionServiceImpl;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
@@ -121,7 +122,7 @@ public class SurveyController {
             if (question.getType().equals(SurveyQuestionType.CHECKBOX_PICTURE) ||
                 question.getType().equals(SurveyQuestionType.RADIO_PICTURE)) {
                 for (String filename : editSurveyQuestionDTO.getChoiceAnswers()) {
-                    editSurveyQuestionDTO.getUploadingPhotos().add(FileUploadController.getPhotoAsEncodeStrByFilename(imageUploadDir, filename));
+                    editSurveyQuestionDTO.getUploadingPhotos().add(QuestionServiceImpl.getPhotoAsEncodeStrByFilename(imageUploadDir, filename));
                 }
             }
             editSurveyQuestionsDTO.add(editSurveyQuestionDTO);

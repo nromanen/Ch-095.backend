@@ -6,10 +6,14 @@ import com.softserve.academy.event.dto.QuestionDTO;
 import com.softserve.academy.event.dto.SurveyContactDTO;
 import com.softserve.academy.event.entity.SurveyAnswer;
 import com.softserve.academy.event.entity.SurveyContact;
+import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import com.softserve.academy.event.entity.enums.SurveyType;
 import com.softserve.academy.event.exception.SurveyAlreadyPassedException;
-import com.softserve.academy.event.entity.enums.SurveyQuestionType;
-import com.softserve.academy.event.service.db.*;
+import com.softserve.academy.event.service.db.ContactService;
+import com.softserve.academy.event.service.db.QuestionService;
+import com.softserve.academy.event.service.db.SurveyContactConnectorService;
+import com.softserve.academy.event.service.db.SurveyService;
+import com.softserve.academy.event.service.db.impl.QuestionServiceImpl;
 import com.softserve.academy.event.service.mapper.AnswerMapper;
 import com.softserve.academy.event.service.mapper.QuestionMapper;
 import io.swagger.annotations.Api;
@@ -86,7 +90,7 @@ public class QuestionController {
             if(questionDTO.getType().equals(SurveyQuestionType.RADIO_PICTURE) ||
               questionDTO.getType().equals(SurveyQuestionType.CHECKBOX_PICTURE)){
                 for (String filename : new ObjectMapper().readValue(questionDTO.getChoiceAnswers(),String[].class)) {
-                    questionDTO.getUploadingPhotos().add(FileUploadController.getPhotoAsEncodeStrByFilename(imageUploadDir,filename));
+                    questionDTO.getUploadingPhotos().add(QuestionServiceImpl.getPhotoAsEncodeStrByFilename(imageUploadDir,filename));
                 }
             }
         }
