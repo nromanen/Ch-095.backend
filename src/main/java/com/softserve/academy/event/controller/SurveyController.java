@@ -66,7 +66,7 @@ public class SurveyController {
     @ApiOperation(value = "Duplicates a survey")
     @PostMapping
     public ResponseEntity<Long> duplicateSurvey(@RequestBody DuplicateSurveySettings settings) {
-        return ResponseEntity.ok(service.duplicateSurvey(settings));
+        return ResponseEntity.ok(service.duplicate(settings));
     }
 
     @ApiOperation(value = "Change the title of the survey")

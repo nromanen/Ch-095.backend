@@ -102,7 +102,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public long duplicateSurvey(DuplicateSurveySettings settings) {
+    public long duplicate(DuplicateSurveySettings settings) {
         Long id = userService.getAuthenticationId().orElseThrow(UserNotFound::new);
         return repository.cloneSurvey(settings, id)
                 .orElseThrow(SurveyNotFound::new)

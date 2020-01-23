@@ -58,7 +58,7 @@ public class Survey implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SurveyType type;
+    private SurveyType type = SurveyType.COMMON;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "survey", cascade = CascadeType.ALL)
@@ -66,6 +66,7 @@ public class Survey implements Serializable {
     private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "survey")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {
