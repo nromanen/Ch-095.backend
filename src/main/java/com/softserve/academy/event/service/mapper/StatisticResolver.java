@@ -58,12 +58,14 @@ public class StatisticResolver {
         return surveyAnswerSet.stream()
                 .map(surveyAnswer -> {
                     try {
+                        List<String> answers ;
+                        answers = Arrays.asList(new ObjectMapper()
+                                .readValue(surveyAnswer.getValue(), String[].class));
                         if (surveyAnswer.getQuestion().getType().equals(SurveyQuestionType.CHECKBOX_PICTURE)
                                 || surveyAnswer.getQuestion().getType().equals(SurveyQuestionType.RADIO_PICTURE)){
-                            return encodeImageList(Arrays.asList(
-                                    new ObjectMapper().readValue(surveyAnswer.getValue(), String[].class)));
+                            return encodeImageList(answers);
                         }
-                        return Arrays.asList(new ObjectMapper().readValue(surveyAnswer.getValue(), String[].class));
+                        return answers;
                     } catch (JsonProcessingException e) {
                         throw new IncorrectDataDB(String.format("Value = %s incorrect in surveyAnswer with id = %s",
                                 surveyAnswer.getValue(),surveyAnswer.getId()));
@@ -77,13 +79,13 @@ public class StatisticResolver {
                 .filter(surveyAnswer ->surveyAnswer.getRespondent().getContact().equals(contact.getContact()))
                 .map(answer -> {
                     try {
+                        List<String> answers ;
+                        answers = Arrays.asList(new ObjectMapper().readValue(answer.getValue(), String[].class));
                         if (answer.getQuestion().getType().equals(SurveyQuestionType.CHECKBOX_PICTURE)
                                 || answer.getQuestion().getType().equals(SurveyQuestionType.RADIO_PICTURE)){
-                            return encodeImageList(Arrays.asList(
-                                    new ObjectMapper().readValue(answer.getValue(), String[].class)))
-                                    .toArray(new String[0]);
+                            return encodeImageList(answers).toArray(new String[0]);
                         }
-                        return new ObjectMapper().readValue(answer.getValue(), String[].class);
+                        return answers.toArray(new String[0]);
                     } catch (JsonProcessingException e) {
                         throw new IncorrectDataDB(String.format("Value = %s incorrect in surveyAnswer with id = %s",
                                 answer.getValue(),answer.getId()));

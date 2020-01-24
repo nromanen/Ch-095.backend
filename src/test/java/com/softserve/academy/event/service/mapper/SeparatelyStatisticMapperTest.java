@@ -86,7 +86,6 @@ class SeparatelyStatisticMapperTest {
         question.setQuestion("What's time?");
         answerSet = new HashSet<>();
 
-
         contactIterator = contacts.iterator();
         surveyAnswer = new SurveyAnswer();
         surveyAnswer.setQuestion(question);
