@@ -8,6 +8,10 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
 import java.util.Properties;
 
 @Configuration
@@ -70,4 +74,5 @@ public class EmailConfig {
         properties.setProperty("mail.debug", mailDebug);
         return properties;
     }
+
 }

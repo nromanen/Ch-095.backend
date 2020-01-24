@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.mail.AuthenticationFailedException;
+
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -23,6 +25,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFound.class)
     public ResponseEntity<Object> userNotFoundHandler(Exception e, WebRequest request) {
         return handler(e, request, "", HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<Object> authenticationFailedHandler(Exception e, WebRequest request) {
+        log.error("Server smtp authentication failed", e);
+        log.error(request.getDescription(false));
+        return new ResponseEntity<>("Server smtp authentication failed", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(SurveyNotFound.class)
