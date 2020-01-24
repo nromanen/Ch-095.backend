@@ -56,14 +56,22 @@ class GeneralStatisticMapperTest {
 
         Iterator<SurveyContact> contactIterator = contacts.iterator();
         SurveyAnswer surveyAnswer = new SurveyAnswer();
+        surveyAnswer.setQuestion(question);
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        Respondent respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(1L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"Vlad\"]");
         answerSet.add(surveyAnswer);
 
         surveyAnswer = new SurveyAnswer();
+        surveyAnswer.setQuestion(question);
         surveyAnswer.setId(2L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(2L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"Ivan\"]");
         answerSet.add(surveyAnswer);
 
@@ -82,14 +90,22 @@ class GeneralStatisticMapperTest {
 
         contactIterator = contacts.iterator();
         surveyAnswer = new SurveyAnswer();
+        surveyAnswer.setQuestion(question);
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(1L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"1 p.m.\"]");
         answerSet.add(surveyAnswer);
 
         surveyAnswer = new SurveyAnswer();
+        surveyAnswer.setQuestion(question);
         surveyAnswer.setId(2L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(2L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"3 p.m.\"]");
         answerSet.add(surveyAnswer);
 
@@ -108,14 +124,22 @@ class GeneralStatisticMapperTest {
         contactIterator = contacts.iterator();
         surveyAnswer = new SurveyAnswer();
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        surveyAnswer.setQuestion(question);
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(1L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"Monday\"]");
         answerSet.add(surveyAnswer);
 
 
         surveyAnswer = new SurveyAnswer();
         surveyAnswer.setId(2L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        surveyAnswer.setQuestion(question);
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(2L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"Monday\",\"Sunday\"]");
         answerSet.add(surveyAnswer);
 
@@ -246,6 +270,7 @@ class GeneralStatisticMapperTest {
         Set<SurveyAnswer> surveyAnswers = new HashSet<>();
         SurveyAnswer surveyAnswer = new SurveyAnswer();
         surveyAnswer.setValue("asdqw");
+        surveyAnswer.setQuestion(question);
         surveyAnswers.add(surveyAnswer);
         question.setSurveyAnswers(surveyAnswers);
         survey.setSurveyQuestions(surveyQuestions);
@@ -253,8 +278,6 @@ class GeneralStatisticMapperTest {
 
         assertThrows(IncorrectDataDB.class,() -> generalStatisticMapper.toQuestionsDTO(survey));
     }
-
-
 }
 
 

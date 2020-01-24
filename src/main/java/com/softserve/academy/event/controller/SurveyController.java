@@ -149,4 +149,10 @@ public class SurveyController {
         return authentication.getAuthorities().stream()
                              .findFirst().orElseThrow(UserNotFound::new).toString();
     }
+
+    @ApiOperation(value = "Get a survey's contacts", response = SaveSurveyDTO.class)
+    @GetMapping(value = "/contacts/{id}")
+    public ResponseEntity getContacts(@PathVariable("id") String id) {
+        return ResponseEntity.ok(service.getSurveyContacts(Long.parseLong(id)));
+    }
 }

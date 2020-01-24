@@ -43,7 +43,8 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Autowired
     public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,
-                             UserService userService, QuestionRepository questionRepository, SurveyMapper mapper) {
+                             UserService userService, QuestionRepository questionRepository,
+                             SurveyMapper mapper) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.repository = repository;
@@ -159,6 +160,15 @@ public class SurveyServiceImpl implements SurveyService {
         }
         Survey survey = surveyOptional.get();
         return survey.getType().equals(SurveyType.COMMON) && survey.getTitle().equals(name);
+    }
+
+    @Override
+    public List<String> getSurveyContacts(long surveyId){
+        return repository.findFirstById(surveyId).map(survey ->
+                survey.getSurveyContacts().stream()
+                        .map(surveyContact -> surveyContact.getContact().getEmail())
+                        .collect(Collectors.toList())
+        ).orElseThrow(SurveyNotFound::new);
     }
 
 }
