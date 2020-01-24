@@ -11,7 +11,6 @@ import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.QuestionService;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
-import com.softserve.academy.event.service.mapper.SurveyMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
@@ -19,6 +18,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -64,7 +65,7 @@ public class SurveyController {
     @ApiOperation(value = "Duplicates a survey")
     @PostMapping
     public ResponseEntity<Long> duplicateSurvey(@RequestBody DuplicateSurveySettings settings) {
-        return ResponseEntity.ok(service.duplicateSurvey(settings));
+        return ResponseEntity.ok(service.duplicate(settings));
     }
 
     @ApiOperation(value = "Change the title of the survey")

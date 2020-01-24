@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -102,7 +101,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public long duplicateSurvey(DuplicateSurveySettings settings) {
+    public long duplicate(DuplicateSurveySettings settings) {
         Long id = userService.getAuthenticationId().orElseThrow(UserNotFound::new);
         return repository.cloneSurvey(settings, id)
                 .orElseThrow(SurveyNotFound::new)
@@ -119,7 +118,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public void delete(Long id) {
-        Survey survey = repository.findFirstById(id)
+        Survey survey = repository.findFirstByIdForNormPeople(id)
                 .orElseThrow(SurveyNotFound::new);
         repository.delete(survey);
     }

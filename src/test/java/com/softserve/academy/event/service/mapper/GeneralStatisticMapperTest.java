@@ -57,7 +57,7 @@ class GeneralStatisticMapperTest {
         Iterator<SurveyContact> contactIterator = contacts.iterator();
         SurveyAnswer surveyAnswer = new SurveyAnswer();
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        surveyAnswer..setContact(contactIterator.next().getContact());
         surveyAnswer.setValue("[\"Vlad\"]");
         answerSet.add(surveyAnswer);
 
