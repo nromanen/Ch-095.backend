@@ -103,8 +103,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public long duplicate(DuplicateSurveySettings settings) {
-        Long id = userService.getAuthenticationId().orElseThrow(UserNotFound::new);
-        return repository.cloneSurvey(settings, id)
+        return repository.cloneSurvey(settings)
                 .orElseThrow(SurveyNotFound::new)
                 .longValue();
     }
@@ -119,7 +118,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public void delete(Long id) {
-        Survey survey = repository.findFirstByIdAndUserEmail(id, getCurrentUserEmail())
+        Survey survey = repository.findFirstById(id)
                 .orElseThrow(SurveyNotFound::new);
         repository.delete(survey);
     }
@@ -127,6 +126,11 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public Optional<Survey> findFirstById(long surveyId) {
         return repository.findFirstById(surveyId);
+    }
+
+    @Override
+    public Optional<Survey> findFirstByIdForNormPeople(long surveyId) {
+        return repository.findFirstByIdForNormPeople(surveyId);
     }
 
     @Override
@@ -140,7 +144,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public Survey updateSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions) {
-        Survey survey = repository.findFirstByIdAndUserEmail(surveyId, getCurrentUserEmail()).orElseThrow(SurveyNotFound::new);
+        Survey survey = repository.findFirstById(surveyId).orElseThrow(SurveyNotFound::new);
         survey.getSurveyQuestions().forEach(questionRepository::delete);
         survey.getSurveyQuestions().clear();
         surveyQuestions.forEach(survey::addQuestion);
@@ -149,8 +153,8 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public boolean isCommonWithIdAndNameExist(Long id, String name) {
-        Optional<Survey> surveyOptional = findFirstById(id);
-        if (!surveyOptional.isPresent()) {
+        Optional<Survey> surveyOptional = findFirstByIdForNormPeople(id);
+        if (!surveyOptional.isPresent()){
             return false;
         }
         Survey survey = surveyOptional.get();

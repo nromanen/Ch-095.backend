@@ -26,4 +26,7 @@ public interface ContactRepository extends BasicRepository<Contact, Long> {
     List<Contact> listContactsByUserId(Long userId);
 
     List<Contact> findAvailableContacts(Long surveyId, Long userId);
+
+    boolean isSurveysContainContact(Long contactId);
+
 }

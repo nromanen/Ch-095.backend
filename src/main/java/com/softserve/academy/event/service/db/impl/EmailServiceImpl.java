@@ -50,7 +50,7 @@ public class EmailServiceImpl implements EmailService {
         User user = userRepository.findFirstById(idUser).orElseThrow(UserNotFound::new);
         for (String email : emails) {
             Contact contact = newContact(idUser, email);
-            Survey survey = surveyRepository.findFirstByIdForNormPeople(Long.valueOf(surveyId)).orElseThrow(SurveyNotFound::new);
+            Survey survey = surveyRepository.findFirstById(Long.valueOf(surveyId)).orElseThrow(SurveyNotFound::new);
             newSurveyContact(survey, contact);
         }
         for (String email : emails) {

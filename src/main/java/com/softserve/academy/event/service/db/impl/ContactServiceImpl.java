@@ -20,8 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.PersistenceException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
 
