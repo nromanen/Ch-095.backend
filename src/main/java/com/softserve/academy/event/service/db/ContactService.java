@@ -14,6 +14,8 @@ public interface ContactService extends BasicService<Contact, Long>  {
 
     boolean canPass(Long surveyId, String contactEmail);
 
+    List<Contact> findAvailableContacts(Long surveyId, Long userId);
+
     Page<Contact> findAllByPageableAndFilter(Pageable pageable, String filter);
 
     Contact save(ContactDTO contactDTO);

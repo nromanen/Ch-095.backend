@@ -15,6 +15,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@NamedQuery(
+        name = "findSurveyTemplate",
+        query = "from Survey s where s.status= :status"
+)
 @Entity
 @Table(name = "surveys")
 @EqualsAndHashCode(of = {"id"})
@@ -52,7 +56,7 @@ public class Survey implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SurveyType type = SurveyType.COMMON;
+    private SurveyType type = SurveyType.INDIVIDUAL;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "survey", cascade = CascadeType.ALL)
@@ -60,6 +64,7 @@ public class Survey implements Serializable {
     private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "survey")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {

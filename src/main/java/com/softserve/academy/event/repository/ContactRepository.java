@@ -4,6 +4,7 @@ import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.util.Page;
 import com.softserve.academy.event.util.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ContactRepository extends BasicRepository<Contact, Long> {
@@ -20,8 +21,9 @@ public interface ContactRepository extends BasicRepository<Contact, Long> {
 
     Optional<Long> getIdByEmail(String email);
 
-    Contact getEmailAndUserId(String email, Long userId);
+    Optional<Contact> findByEmailAndUserId(String email, Long userId);
 
-    boolean isSurveysContainContact(Long contactId);
+    List<Contact> listContactsByUserId(Long userId);
 
+    List<Contact> findAvailableContacts(Long surveyId, Long userId);
 }

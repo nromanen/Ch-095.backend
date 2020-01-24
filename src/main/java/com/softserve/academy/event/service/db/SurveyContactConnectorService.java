@@ -11,4 +11,6 @@ public interface SurveyContactConnectorService extends BasicService<SurveyContac
     Optional<SurveyContact> findByContactAndSurvey(Long contactId, Long surveyId);
 
     boolean isEnable(Long contactId, Long surveyId) throws IncorrectLinkException, SurveyAlreadyPassedException;
+
+    SurveyContact surveyContactsByContactId(Long contactId, Long surveyId);
 }

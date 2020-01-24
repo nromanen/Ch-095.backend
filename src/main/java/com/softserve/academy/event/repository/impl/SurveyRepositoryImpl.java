@@ -10,8 +10,8 @@ import com.softserve.academy.event.util.SecurityUserUtil;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.ParameterMode;
+import javax.persistence.TypedQuery;
 import java.math.BigInteger;
 import java.util.Optional;
 
@@ -41,6 +41,13 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
         return getSurveyPage(pageable, session, userEmail, status, "s.status = :status");
     }
 
+    @Override
+    public Page<Survey> findSurveysByTemplateStatus(Pageable pageable, SurveyStatus status) {
+            TypedQuery<Survey> query = sessionFactory.getCurrentSession().createNamedQuery("findSurveyTemplate", Survey.class);
+            query.setParameter("status", status);
+            return new Page<>(query.getResultList(), pageable);
+        }
+
     @SuppressWarnings("unchecked")
     private Page<Survey> getSurveyPage(Pageable pageable, Session session,
                                        String userEmail, SurveyStatus status, String statusQuery) {
@@ -62,13 +69,16 @@ public class SurveyRepositoryImpl extends BasicRepositoryImpl<Survey, Long> impl
     }
 
     @Override
-    public Optional<BigInteger> cloneSurvey(DuplicateSurveySettings settings) {
+    public Optional<BigInteger> cloneSurvey(DuplicateSurveySettings settings, Long id) {
+
         return Optional.of((BigInteger) sessionFactory.getCurrentSession()
-                .createStoredProcedureQuery("clone_survey")
-                .registerStoredProcedureParameter("id", Long.class, ParameterMode.IN)
+                .createStoredProcedureQuery("clone_survey_template")
+                .registerStoredProcedureParameter("surveyId", Long.class, ParameterMode.IN)
                 .registerStoredProcedureParameter("clearContacts", Boolean.class, ParameterMode.IN)
-                .setParameter("id", settings.getId())
+                .registerStoredProcedureParameter("currentUserId", Long.class, ParameterMode.IN)
+                .setParameter("surveyId", settings.getId())
                 .setParameter("clearContacts", settings.isClearContacts())
+                .setParameter("currentUserId", id)
                 .getSingleResult());
     }
 

@@ -7,9 +7,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-
-
-
 @NamedQuery(
         name = "findToken",
         query = "from VerificationToken v where v.token= :token"

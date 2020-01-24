@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
 
@@ -117,15 +118,35 @@ public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> im
         return Optional.ofNullable(res.get(0));
     }
 
-    public Contact getEmailAndUserId(String email, Long userId) {
+    public Optional<Contact> findByEmailAndUserId(String email, Long userId) {
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("from " + clazz.getName() + " as t " +
                 "where t.email = :email and t.user.id = :userId")
                 .setParameter("email", email)
                 .setParameter("userId", userId);
         List<Contact> res = query.getResultList();
-        if (res.isEmpty()) return null;
-        return res.get(0);
+        if (res.isEmpty()) return Optional.empty();
+        return Optional.ofNullable(res.get(0));
+    }
+
+    public List<Contact> findAvailableContacts(Long surveyId, Long userId) {
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from " + clazz.getName() + " as t " +
+                " left join fetch t.surveyContacts c " + " where t.id not in( " +
+                " select c.contact.id from " + "c " + " where c.survey.id = :surveyId) and t.user.id = :userId")
+                .setParameter("surveyId", surveyId)
+                .setParameter("userId", userId);
+        List<Contact> res = query.getResultList();
+        return res.stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Contact> listContactsByUserId(Long userId) {
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from " + clazz.getName() + " as t " + " where t.user.id = :userId")
+                .setParameter("userId", userId);
+        List<Contact> res = query.getResultList();
+        return res.stream().collect(Collectors.toList());
     }
 
     @Override

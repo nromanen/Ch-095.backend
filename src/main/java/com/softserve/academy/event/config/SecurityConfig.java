@@ -33,7 +33,6 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
