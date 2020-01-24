@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.lang.Nullable;
-
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
