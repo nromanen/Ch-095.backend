@@ -4,6 +4,8 @@ import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.exception.IncorrectLinkException;
 import com.softserve.academy.event.repository.SurveyContactConnectorRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,6 +32,18 @@ public class SurveyContactConnectorRepositoryImpl extends BasicRepositoryImpl<Su
             throw new IncorrectLinkException("Sorry, but you can`t pass survey by this link");
         }
         return (boolean) res.get(0);
+    }
+
+    @Override
+    public SurveyContact surveyContactsByContactId(Long contactId, Long surveyId) {
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from " + clazz.getName() + " as t " +
+                " where t.contact.id = :contactId and t.survey.id = :surveyId")
+                .setParameter("contactId", contactId)
+                .setParameter("surveyId", surveyId);
+        List<SurveyContact> res = query.getResultList();
+        if (res.isEmpty()) return null;
+        return res.get(0);
     }
 
     @Override

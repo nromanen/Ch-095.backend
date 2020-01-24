@@ -4,5 +4,5 @@ import com.softserve.academy.event.exception.IncorrectLinkException;
 
 public interface CheckPossibilityService {
 
-    public String[] parseToken(String token) throws IncorrectLinkException;
+    String[] parseToken(String token) throws IncorrectLinkException;
 }

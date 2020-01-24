@@ -11,12 +11,14 @@ import java.util.Optional;
 
 public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
-    public Optional<Survey> findFirstByIdForNormPeople(Long id);
+    Optional<Survey> findFirstByIdForNormPeople(Long id);
 
     Page<Survey> findAllByPageableAndUserEmail(Pageable pageable, String userEmail);
 
     Page<Survey> findAllByPageableAndStatusAndUserEmail(Pageable pageable, SurveyStatus status, String userEmail);
 
-    Optional<BigInteger> cloneSurvey(DuplicateSurveySettings settings);
+    Page<Survey> findSurveysByTemplateStatus(Pageable pageable, SurveyStatus status);
+
+    Optional<BigInteger> cloneSurvey(DuplicateSurveySettings settings, Long id);
 
 }

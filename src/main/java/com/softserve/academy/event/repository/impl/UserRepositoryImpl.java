@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepositoryImpl extends BasicRepositoryImpl<User, Long>  implements UserRepository {
+public class UserRepositoryImpl extends BasicRepositoryImpl<User, Long> implements UserRepository {
 
     @Override
     public Optional<User> findByEmail(String email) {
@@ -19,7 +19,7 @@ public class UserRepositoryImpl extends BasicRepositoryImpl<User, Long>  impleme
         if (user.isEmpty()) {
             return Optional.empty();
         }
-       return Optional.of(query.getResultList().get(0));
+        return Optional.of(query.getResultList().get(0));
     }
 }
 
