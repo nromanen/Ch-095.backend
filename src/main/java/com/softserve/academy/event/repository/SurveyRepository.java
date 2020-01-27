@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface SurveyRepository extends BasicRepository<Survey, Long> {
 
-    Optional<Survey> findFirstByIdForNormPeople(Long id);
+    Optional<Survey> findFirstByIdAndUserEmail(Long id, String email);
 
     Page<Survey> findAllByPageableAndUserEmail(Pageable pageable, String userEmail);
 

@@ -2,6 +2,8 @@ package com.softserve.academy.event.exception.handler;
 
 import com.softserve.academy.event.exception.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -62,6 +64,33 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SurveyNotBelongUser.class)
     public ResponseEntity<Object> surveyNotBelongUserHandler(Exception e, WebRequest request) {
         return handler(e, request, "Current survey is not belong to this user", HttpStatus.LOCKED);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> dataIntegrityViolationHandler(Exception e, WebRequest request) {
+        if (e.getCause() instanceof ConstraintViolationException){
+            log.error("Constraint violation", e);
+            log.error(request.getDescription(false));
+            return new ResponseEntity<>("Can't change data that used in other data", HttpStatus.CONFLICT);
+        }
+        return handler(e,request,"Data integrity violation", HttpStatus.NOT_MODIFIED);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> constraintViolationHandler(Exception e, WebRequest request) {
+        log.error("Constraint violation", e);
+        log.error(request.getDescription(false));
+        return new ResponseEntity<>("Can't change data that used in other data", HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(DataAlreadyUsedException.class)
+    public ResponseEntity<Object> dataAlreadyUsedHandler(Exception e, WebRequest request) {
+        return handler(e, request, "Data already used", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataAlreadyExistException.class)
+    public ResponseEntity<Object> dataAlreadyExistException(Exception e, WebRequest request) {
+        return handler(e, request, "This data already exist", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IncorrectLinkException.class)

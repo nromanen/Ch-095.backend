@@ -52,7 +52,7 @@ public class SurveyController {
         this.questionService = questionService;
     }
 
-    @ApiOperation(value = "Get all surveys")
+    @ApiOperation(value = "Get pageable surveys")
     @GetMapping
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
             Pageable pageable,

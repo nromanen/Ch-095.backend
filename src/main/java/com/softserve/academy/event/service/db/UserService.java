@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface UserService extends BasicService<User, Long> {
 
+    User findByEmail(String email);
+
     Optional<Long> getAuthenticationId();
 
     VerificationToken updateTokenExpiration(String token);
