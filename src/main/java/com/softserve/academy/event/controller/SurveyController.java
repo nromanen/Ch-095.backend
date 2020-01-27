@@ -4,11 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.softserve.academy.event.dto.EditSurveyDTO;
 import com.softserve.academy.event.dto.SaveSurveyDTO;
 import com.softserve.academy.event.dto.SurveyDTO;
-import com.softserve.academy.event.dto.SurveyQuestionDTO;
-import com.softserve.academy.event.entity.Survey;
-import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
-import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
@@ -20,13 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Api(value = "/survey")
 @RestController
@@ -88,15 +80,7 @@ public class SurveyController {
 
     @PostMapping(value = "/createNewSurvey")
     public ResponseEntity saveSurvey(@RequestBody SaveSurveyDTO saveSurveyDTO) throws IOException {
-        Survey survey = saveQuestionMapper.toSurvey(saveSurveyDTO);
-        if ("MANAGER".equals(getRole())) {
-            survey.setStatus(SurveyStatus.TEMPLATE);
-        }
-        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
-        for (SurveyQuestionDTO question : saveSurveyDTO.getQuestions()) {
-            surveyQuestions.add(saveQuestionMapper.toEntity(question));
-        }
-        return ResponseEntity.ok(service.saveSurveyWithQuestions(survey, surveyQuestions));
+        return ResponseEntity.ok(service.saveSurveyWithQuestions(saveSurveyDTO));
     }
 
     @ApiOperation(value = "Get a survey and get user access to edit him", response = SaveSurveyDTO.class)
@@ -113,9 +97,5 @@ public class SurveyController {
         return ResponseEntity.ok(service.updateSurvey(Long.parseLong(id), saveSurveyDTO));
     }
 
-    private String getRole() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getAuthorities().stream()
-                             .findFirst().orElseThrow(UserNotFound::new).toString();
-    }
+
 }

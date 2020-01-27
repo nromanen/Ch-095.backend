@@ -26,7 +26,6 @@ import java.util.Optional;
 @PropertySource("classpath:application.properties")
 public class QuestionServiceImpl implements QuestionService {
 
-    @Value("${image.upload.dir}")
     private static String imageUploadDir;
 
     private final QuestionRepository questionRepository;
@@ -34,6 +33,11 @@ public class QuestionServiceImpl implements QuestionService {
     private final AnonymService anonymService;
     private final AnswerService answerService;
     private final SurveyContactConnectorService surveyContactService;
+
+    @Value("${image.upload.dir}")
+    public static void setImageUploadDir(String imageUploadDir) {
+        QuestionServiceImpl.imageUploadDir = imageUploadDir;
+    }
 
     @Autowired
     public QuestionServiceImpl(QuestionRepository questionRepository, AnswerRepository answerRepository, AnonymService anonymService, RespondentService respondentService, AnonymService anonymService1, AnswerService answerService, SurveyContactConnectorService surveyContactService) {
@@ -97,7 +101,7 @@ public class QuestionServiceImpl implements QuestionService {
         return answers;
     }
 
-    public static String getPhotoAsEncodeStrByFilename(String imageUploadDir, String filename) throws IOException {
+    public static String getPhotoAsEncodeStrByFilename(String filename) throws IOException {
         Path path = Paths.get(imageUploadDir,filename);
         byte[] arr = Files.readAllBytes(path);
         return Base64.getEncoder().encodeToString(arr);

@@ -90,7 +90,7 @@ public class QuestionController {
             if(questionDTO.getType().equals(SurveyQuestionType.RADIO_PICTURE) ||
               questionDTO.getType().equals(SurveyQuestionType.CHECKBOX_PICTURE)){
                 for (String filename : new ObjectMapper().readValue(questionDTO.getChoiceAnswers(),String[].class)) {
-                    questionDTO.getUploadingPhotos().add(QuestionServiceImpl.getPhotoAsEncodeStrByFilename(imageUploadDir,filename));
+                    questionDTO.getUploadingPhotos().add(QuestionServiceImpl.getPhotoAsEncodeStrByFilename(filename));
                 }
             }
         }

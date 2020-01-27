@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,8 +63,8 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Autowired
     public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,
-                             UserService userService, QuestionRepository questionRepository, SurveyMapper mapper,
-                             QuestionService questionService, SaveQuestionMapper saveQuestionMapper) {
+                             UserService userService, QuestionRepository questionRepository,
+                             SurveyMapper mapper, QuestionService questionService, SaveQuestionMapper saveQuestionMapper) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.repository = repository;
@@ -155,7 +157,15 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
+    public Survey saveSurveyWithQuestions(SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException {
+        Survey survey = saveQuestionMapper.toSurvey(saveSurveyDTO);
+        if ("MANAGER".equals(getRole())) {
+            survey.setStatus(SurveyStatus.TEMPLATE);
+        }
+        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
+        for (SurveyQuestionDTO question : saveSurveyDTO.getQuestions()) {
+            surveyQuestions.add(saveQuestionMapper.toEntity(question));
+        }
         String email = userService.getAuthenticatedUserEmail();
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFound::new);
         survey.setUser(user);
@@ -202,11 +212,17 @@ public class SurveyServiceImpl implements SurveyService {
             if (question.getType().equals(SurveyQuestionType.CHECKBOX_PICTURE) ||
                     question.getType().equals(SurveyQuestionType.RADIO_PICTURE)) {
                 for (String filename : editSurveyQuestionDTO.getChoiceAnswers()) {
-                    editSurveyQuestionDTO.getUploadingPhotos().add(QuestionServiceImpl.getPhotoAsEncodeStrByFilename(imageUploadDir, filename));
+                    editSurveyQuestionDTO.getUploadingPhotos().add(QuestionServiceImpl.getPhotoAsEncodeStrByFilename(filename));
                 }
             }
             editSurveyQuestionsDTO.add(editSurveyQuestionDTO);
         }
+    }
+
+    private String getRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                .findFirst().orElseThrow(UserNotFound::new).toString();
     }
 
 
