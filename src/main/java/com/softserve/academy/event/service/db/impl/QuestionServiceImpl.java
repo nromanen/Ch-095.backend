@@ -35,7 +35,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final SurveyContactConnectorService surveyContactService;
 
     @Value("${image.upload.dir}")
-    public static void setImageUploadDir(String imageUploadDir) {
+    public void setImageUploadDir(String imageUploadDir) {
         QuestionServiceImpl.imageUploadDir = imageUploadDir;
     }
 

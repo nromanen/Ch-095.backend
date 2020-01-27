@@ -5,6 +5,7 @@ import com.softserve.academy.event.dto.EditSurveyDTO;
 import com.softserve.academy.event.dto.SaveSurveyDTO;
 import com.softserve.academy.event.dto.SurveyDTO;
 import com.softserve.academy.event.entity.enums.SurveyStatus;
+import com.softserve.academy.event.exception.UserNotFound;
 import com.softserve.academy.event.service.db.SurveyService;
 import com.softserve.academy.event.service.mapper.SaveQuestionMapper;
 import com.softserve.academy.event.util.DuplicateSurveySettings;
@@ -16,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;

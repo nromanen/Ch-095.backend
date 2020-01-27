@@ -12,6 +12,7 @@ import com.softserve.academy.event.util.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public interface SurveyService {
@@ -29,9 +30,6 @@ public interface SurveyService {
     void delete(Long id);
 
     Optional<Survey> findFirstById(long surveyId);
-
-    Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions);
-    Optional<Survey> findFirstByIdForNormPeople(long surveyId);
 
     Survey saveSurveyWithQuestions(SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException;
 

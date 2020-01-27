@@ -34,14 +34,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Base64;
-
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
@@ -67,7 +61,7 @@ public class SurveyServiceImpl implements SurveyService {
     @Autowired
     public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,
                              UserService userService, QuestionRepository questionRepository,
-                             SurveyMapper mapper) {
+                             SurveyMapper mapper, QuestionService questionService, SaveQuestionMapper saveQuestionMapper) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.repository = repository;
@@ -232,6 +226,7 @@ public class SurveyServiceImpl implements SurveyService {
         return authentication.getAuthorities().stream()
                 .findFirst().orElseThrow(UserNotFound::new).toString();
     }
+
 
 
 }
