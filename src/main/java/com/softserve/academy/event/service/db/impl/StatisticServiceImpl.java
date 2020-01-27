@@ -3,20 +3,19 @@ package com.softserve.academy.event.service.db.impl;
 import com.softserve.academy.event.dto.QuestionsGeneralStatisticDTO;
 import com.softserve.academy.event.dto.QuestionsSeparatelyStatisticDTO;
 import com.softserve.academy.event.entity.Survey;
+import com.softserve.academy.event.entity.enums.SurveyType;
 import com.softserve.academy.event.exception.SurveyNotBelongUser;
 import com.softserve.academy.event.exception.SurveyNotFound;
-import com.softserve.academy.event.exception.UnauthorizedException;
 import com.softserve.academy.event.repository.SurveyRepository;
 import com.softserve.academy.event.service.db.StatisticService;
 import com.softserve.academy.event.service.mapper.GeneralStatisticMapper;
 import com.softserve.academy.event.service.mapper.SeparatelyStatisticMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -60,7 +59,12 @@ public class StatisticServiceImpl implements StatisticService {
     public Set<QuestionsSeparatelyStatisticDTO> getSeparatelyStatistic(Long id) {
         log.info("call with id = " + id);
         Optional<Survey> surveyOptional = surveyRepository.findFirstById(id);
-        return surveyOptional.map(survey -> separatelyStatisticMapper.toSetQuestionsDTO(survey))
+        return surveyOptional.map(survey -> {
+            if(survey.getType() == SurveyType.INDIVIDUAL) {
+                return separatelyStatisticMapper.toSetQuestionsDTO(survey);
+            }
+            return new HashSet<QuestionsSeparatelyStatisticDTO>();
+        })
                 .orElseThrow(SurveyNotFound::new);
     }
 
@@ -81,4 +85,5 @@ public class StatisticServiceImpl implements StatisticService {
 
 
     }
+
 }
