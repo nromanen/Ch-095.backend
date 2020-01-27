@@ -37,8 +37,8 @@ public interface SurveyService {
 
     boolean isCommonWithIdAndNameExist(Long id, String name);
 
-    List<String> getSurveyContacts(long surveyId);
-
     ResponseEntity<EditSurveyDTO> loadSurvey(Long surveyId) throws IOException;
+
+    List<String> getSurveyContacts(long surveyId);
 }
 

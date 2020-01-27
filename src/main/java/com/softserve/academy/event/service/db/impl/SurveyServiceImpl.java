@@ -227,6 +227,4 @@ public class SurveyServiceImpl implements SurveyService {
                 .findFirst().orElseThrow(UserNotFound::new).toString();
     }
 
-
-
 }
