@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,12 +35,13 @@ public class SendEmailController {
     }
 
     @PostMapping("/sendEmails")
-    public void doSendEmails(@RequestBody EmailDTO emailDTO) {
+    public void doSendEmails(@RequestBody EmailDTO emailDTO) throws MessagingException {
         String[] emails = emailDTO.getEmailsArray();
         EmailValidator.validate(emails);
         Long idUser = service.getAuthenticationId().orElseThrow(UserNotFound::new);
         String idSurvey = emailDTO.getSurveyId();
-        emailService.sendEmailForUser(idUser, idSurvey, emails);
+        emailService.checkMailAuthentication();
+        emailService.sendEmailForUserAndSurvey(idUser, idSurvey, emails);
     }
 
     @GetMapping("/availableContacts")

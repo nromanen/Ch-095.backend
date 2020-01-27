@@ -29,7 +29,6 @@ public class StatisticController {
     public ResponseEntity<QuestionsGeneralStatisticDTO> getGeneralStatistic(
             @RequestParam(name = "surveyId") long surveyId) {
         log.info("call with surveyId = " + surveyId);
-
         statisticService.isSurveyBelongsUser(surveyId);
         QuestionsGeneralStatisticDTO surveyDTO =
                 statisticService.getGeneralStatistic(surveyId);
@@ -47,7 +46,6 @@ public class StatisticController {
                 statisticService.getSeparatelyStatistic(surveyId);
         log.info(String.format(RETURN_ID, HttpStatus.OK, surveyId));
         return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
-
     }
 
 }

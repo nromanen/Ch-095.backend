@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -102,9 +103,10 @@ public class SurveyServiceImpl implements SurveyService {
                 survey,
                 survey.getSurveyContacts()
                         .stream()
-                        .filter(SurveyContact::isCanPass)
+                        .filter(SurveyContact::isCanNotPass)
                         .count(),
-                (long) survey.getSurveyContacts().size());
+                (long) survey.getSurveyContacts().size(),
+                new String(Base64.getEncoder().withoutPadding().encode((survey.getId() + "~" + survey.getTitle()).getBytes())));
     }
 
     @Override
@@ -141,7 +143,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public void delete(Long id) {
-        Survey survey = repository.findFirstByIdForNormPeople(id)
+        Survey survey = repository.findFirstById(id)
                 .orElseThrow(SurveyNotFound::new);
         repository.delete(survey);
     }
@@ -225,5 +227,11 @@ public class SurveyServiceImpl implements SurveyService {
                 .findFirst().orElseThrow(UserNotFound::new).toString();
     }
 
-
+    public List<String> getSurveyContacts(long surveyId){
+        return repository.findFirstById(surveyId).map(survey ->
+                survey.getSurveyContacts().stream()
+                        .map(surveyContact -> surveyContact.getContact().getEmail())
+                        .collect(Collectors.toList())
+        ).orElseThrow(SurveyNotFound::new);
+    }
 }

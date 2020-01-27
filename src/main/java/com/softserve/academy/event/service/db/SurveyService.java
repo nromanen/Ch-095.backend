@@ -37,7 +37,9 @@ public interface SurveyService {
     Survey updateSurvey(Long surveyId, SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException;
 
     boolean isCommonWithIdAndNameExist(Long id, String name);
-
+  
     ResponseEntity<EditSurveyDTO> loadSurvey(Long surveyId) throws IOException;
+  
+    List<String> getSurveyContacts(long surveyId);
 }
 
