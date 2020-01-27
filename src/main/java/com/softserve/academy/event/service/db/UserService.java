@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Optional;
 
 public interface UserService extends BasicService<User, Long> {
+
     Optional<Long> getAuthenticationId();
 
     VerificationToken updateTokenExpiration(String token);

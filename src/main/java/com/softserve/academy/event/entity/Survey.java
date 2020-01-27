@@ -6,7 +6,6 @@ import com.softserve.academy.event.entity.enums.SurveyType;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,6 +13,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+@NamedQuery(
+        name = "findSurveyTemplate",
+        query = "from Survey s where s.status= :status"
+)
+
 
 @Entity
 @Table(name = "surveys")
@@ -60,6 +65,7 @@ public class Survey implements Serializable {
     private List<SurveyQuestion> surveyQuestions = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "survey")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<SurveyContact> surveyContacts = new HashSet<>();
 
     public Survey(Long id) {

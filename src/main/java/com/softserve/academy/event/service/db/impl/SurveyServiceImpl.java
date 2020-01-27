@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,7 +55,11 @@ public class SurveyServiceImpl implements SurveyService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Page<SurveyDTO> findAllByPageableAndStatus(Pageable pageable, String status) {
         Page<Survey> surveysPage;
-        if (Objects.nonNull(status) && status.length() > 0) {
+
+        if ("TEMPLATE".equals(status)) {
+            surveysPage = repository.findSurveysByTemplateStatus(pageable,
+                    SurveyStatus.valueOf(status));
+        } else if (Objects.nonNull(status) && status.length() > 0) {
             surveysPage = repository.findAllByPageableAndStatusAndUserEmail(pageable,
                     SurveyStatus.valueOf(status), getCurrentUserEmail());
         } else {
@@ -99,7 +102,8 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public long duplicate(DuplicateSurveySettings settings) {
-        return repository.cloneSurvey(settings)
+        Long id = userService.getAuthenticationId().orElseThrow(UserNotFound::new);
+        return repository.cloneSurvey(settings, id)
                 .orElseThrow(SurveyNotFound::new)
                 .longValue();
     }
@@ -114,7 +118,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public void delete(Long id) {
-        Survey survey = repository.findFirstById(id)
+        Survey survey = repository.findFirstByIdForNormPeople(id)
                 .orElseThrow(SurveyNotFound::new);
         repository.delete(survey);
     }

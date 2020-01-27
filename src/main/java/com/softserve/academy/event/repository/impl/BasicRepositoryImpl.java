@@ -55,6 +55,7 @@ public abstract class BasicRepositoryImpl<T extends Serializable, I extends Seri
     public void delete(T entity) {
         sessionFactory.getCurrentSession()
                 .remove(entity);
+
     }
 
 }
