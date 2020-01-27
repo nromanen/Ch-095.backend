@@ -20,6 +20,8 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEmail;
+
 
 @Service
 @Slf4j
@@ -65,12 +67,12 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     @Transactional
     public void isSurveyBelongsUser(Long surveyId) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!(principal instanceof UserDetails)) {
-            log.info("Throw UnauthorizedException");
-            throw new UnauthorizedException();
-        }
-        UserDetails userDetails = (UserDetails) principal;
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // unneeded, read SecurityUserUtils!
+//        if (!(principal instanceof UserDetails)) {
+//            log.info("Throw UnauthorizedException");
+//            throw new UnauthorizedException();
+//        }
+//        UserDetails userDetails = (UserDetails) principal;
         Optional<Survey> survey = surveyRepository.findFirstById(surveyId);
 
         if (!survey.isPresent()) {
@@ -78,7 +80,7 @@ public class StatisticServiceImpl implements StatisticService {
             throw new SurveyNotFound();
         }
 
-        if (!survey.get().getUser().getEmail().equals(userDetails.getUsername())) {
+        if (!survey.get().getUser().getEmail().equals(getCurrentUserEmail())) {
             log.info("Throw SurveyNotBelongUser");
             throw new SurveyNotBelongUser();
         }

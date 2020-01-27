@@ -103,7 +103,8 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public long duplicate(DuplicateSurveySettings settings) {
-        return repository.cloneSurvey(settings)
+        Long userId = userService.getAuthenticationId().orElseThrow(UserNotFound::new);
+        return repository.cloneSurvey(settings, userId)
                 .orElseThrow(SurveyNotFound::new)
                 .longValue();
     }
@@ -129,11 +130,6 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public Optional<Survey> findFirstByIdForNormPeople(long surveyId) {
-        return repository.findFirstByIdForNormPeople(surveyId);
-    }
-
-    @Override
     public Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions) {
         String email = userService.getAuthenticatedUserEmail();
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFound::new);
@@ -153,7 +149,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public boolean isCommonWithIdAndNameExist(Long id, String name) {
-        Optional<Survey> surveyOptional = findFirstByIdForNormPeople(id);
+        Optional<Survey> surveyOptional = findFirstById(id);
         if (!surveyOptional.isPresent()){
             return false;
         }

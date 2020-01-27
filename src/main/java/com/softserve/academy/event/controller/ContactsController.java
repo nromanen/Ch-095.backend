@@ -57,7 +57,7 @@ public class ContactsController {
         try (StringWriter writer = new StringWriter()) {
             CsvUtils.write(ContactDTO.class, CsvUtils.CONTACT_WITH_HEADER_SCHEMA,
                     writer, mapper.toListDTO(service.findAll()));
-            return ResponseEntity.ok(mapper.toItemDTO(writer.toString()));
+            return ResponseEntity.ok(mapper.toItemDTO(writer.getBuffer().toString()));
         }
     }
 

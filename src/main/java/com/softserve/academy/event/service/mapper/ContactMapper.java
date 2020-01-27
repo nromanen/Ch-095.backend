@@ -5,6 +5,7 @@ import com.softserve.academy.event.dto.ItemDTO;
 import com.softserve.academy.event.entity.Contact;
 import com.softserve.academy.event.util.Page;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +14,11 @@ import java.util.List;
 @Service
 public interface ContactMapper {
 
-    <T> ItemDTO<T> toItemDTO(T id);
+    @Mapping(target = "item", expression = "java(item)")
+    ItemDTO<Long> toItemDTO(Long item);
+    @Mapping(target = "item", expression = "java(item)")
+    ItemDTO<String> toItemDTO(String item);
+
     ContactDTO toDTO(Contact contact);
     List<ContactDTO> toListDTO(List<Contact> contact);
     Page<ContactDTO> toPageDTO(Page<Contact> contacts);
