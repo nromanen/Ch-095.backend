@@ -13,5 +13,4 @@ public class OneQuestionSeparatelyStatisticDTO {
     private int index;
     private List<String> answer;
 
-
 }

@@ -18,5 +18,6 @@ public class SurveyDTO {
     private String imageUrl;
     private Long countAnswers;
     private Long countContacts;
-
+    private String surveyType;
+    private String commonUrl;
 }

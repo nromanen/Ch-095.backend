@@ -7,6 +7,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,16 @@ public class EmailValidator {
         }
         if (!violations.isEmpty()) {
             throw new IncorrectEmailsException(violations.stream().map(e -> (String) e.getInvalidValue()).collect(Collectors.joining(",")) + ": this email is not valid");
+        }
+    }
+
+    public static void validate(List<?> list) {
+        Set<ConstraintViolation<Object>> violations = new HashSet<>();
+        for (Object address : list) {
+            violations.addAll(validator.validate(address));
+        }
+        if (!violations.isEmpty()) {
+            throw new IncorrectEmailsException(violations.stream().map(e -> (String) e.getInvalidValue()).collect(Collectors.joining(",")));
         }
     }
 

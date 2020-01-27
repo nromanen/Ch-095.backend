@@ -30,6 +30,7 @@ public interface SurveyService {
 
     Optional<Survey> findFirstById(long surveyId);
 
+    Survey saveSurveyWithQuestions(Survey survey, List<SurveyQuestion> surveyQuestions);
     Optional<Survey> findFirstByIdForNormPeople(long surveyId);
 
     Survey saveSurveyWithQuestions(SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException;
@@ -37,6 +38,8 @@ public interface SurveyService {
     Survey updateSurvey(Long surveyId, SaveSurveyDTO saveSurveyDTO) throws JsonProcessingException;
 
     boolean isCommonWithIdAndNameExist(Long id, String name);
+
+    List<String> getSurveyContacts(long surveyId);
 
     ResponseEntity<EditSurveyDTO> loadSurvey(Long surveyId) throws IOException;
 }

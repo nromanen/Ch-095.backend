@@ -35,7 +35,7 @@ public class SurveyController {
         this.service = service;
     }
 
-    @ApiOperation(value = "Get all surveys")
+    @ApiOperation(value = "Get pageable surveys")
     @GetMapping
     public ResponseEntity<Page<SurveyDTO>> findAllSurveys(
             Pageable pageable,
@@ -98,4 +98,15 @@ public class SurveyController {
     }
 
 
+    private String getRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                             .findFirst().orElseThrow(UserNotFound::new).toString();
+    }
+
+    @ApiOperation(value = "Get a survey's contacts", response = SaveSurveyDTO.class)
+    @GetMapping(value = "/contacts/{id}")
+    public ResponseEntity getContacts(@PathVariable("id") String id) {
+        return ResponseEntity.ok(service.getSurveyContacts(Long.parseLong(id)));
+    }
 }

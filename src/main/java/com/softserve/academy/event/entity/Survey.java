@@ -6,6 +6,7 @@ import com.softserve.academy.event.entity.enums.SurveyType;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,8 +19,6 @@ import java.util.Set;
         name = "findSurveyTemplate",
         query = "from Survey s where s.status= :status"
 )
-
-
 @Entity
 @Table(name = "surveys")
 @EqualsAndHashCode(of = {"id"})

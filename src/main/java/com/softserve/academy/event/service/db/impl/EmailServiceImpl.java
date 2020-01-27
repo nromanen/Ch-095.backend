@@ -15,9 +15,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -46,19 +50,24 @@ public class EmailServiceImpl implements EmailService {
         this.userRepository = userRepository;
     }
 
-    public void sendEmailForUser(Long idUser, String surveyId, String[] emails) {
+    @Override
+    public void sendEmailForUserAndSurvey(Long idUser, String surveyId, String[] emails) {
         User user = userRepository.findFirstById(idUser).orElseThrow(UserNotFound::new);
+        Survey survey = surveyRepository.findFirstById(Long.valueOf(surveyId)).orElseThrow(SurveyNotFound::new);
         for (String email : emails) {
-            Contact contact = newContact(idUser, email);
-            Survey survey = surveyRepository.findFirstByIdForNormPeople(Long.valueOf(surveyId)).orElseThrow(SurveyNotFound::new);
+            Contact contact = newContact(user, email);
             newSurveyContact(survey, contact);
+            Runnable sending = () -> {
+                sendMail(email, subject, generateMessage(user.getEmail(), email, surveyId));
+            };
+            new Thread(sending).start();
         }
-        for (String email : emails) {
-            String codEmail = email + ";" + surveyId;
-            String encodedString = BASE_URL + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
-            String message = "Message from " + user.getEmail() + ": " + "<<Please, follow the link and take the survey " + encodedString + " >>";
-            sendMail(email, subject, message);
-        }
+    }
+
+    private String generateMessage(String userEmail, String contactEmail, String surveyId) {
+        String codEmail = contactEmail + ";" + surveyId;
+        String encodedString = BASE_URL + END_POINT + Base64.getEncoder().withoutPadding().encodeToString(codEmail.getBytes());
+        return "Message from " + userEmail + ": " + "<<Please, follow the link and take the survey " + encodedString + " >>";
     }
 
     private Optional<SurveyContact> surveyContact(Long contactId, Long surveyId) {
@@ -86,11 +95,10 @@ public class EmailServiceImpl implements EmailService {
         return contactRepository.findByEmailAndUserId(email, userId).isPresent();
     }
 
-    private Contact newContact(Long userId, String email) {
+    private Contact newContact(User user, String email) {
         Contact contact = new Contact();
-        User user = userRepository.findFirstById(userId).orElseThrow(UserNotFound::new);
-        if (isContactExist(email, userId)) {
-            contact = contactRepository.findByEmailAndUserId(email, userId).orElseThrow(ContactNotFound::new);
+        if (isContactExist(email, user.getId())) {
+            contact = contactRepository.findByEmailAndUserId(email, user.getId()).orElseThrow(ContactNotFound::new);
         } else {
             contact.setEmail(email);
             contact.setUser(user);
@@ -98,6 +106,15 @@ public class EmailServiceImpl implements EmailService {
             return contact;
         }
         return contact;
+    }
+
+    @Override
+    public void checkMailAuthentication() throws MessagingException {
+        JavaMailSenderImpl mailSender = (JavaMailSenderImpl) javaMailSender;
+        Session session = Session.getInstance(mailSender.getJavaMailProperties(), null);
+        Transport transport = session.getTransport("smtp");
+        transport.connect(mailSender.getHost(), mailSender.getPort(), mailSender.getUsername(), mailSender.getPassword());
+        transport.close();
     }
 
     @Override

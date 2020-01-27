@@ -34,6 +34,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Base64;
+
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +67,7 @@ public class SurveyServiceImpl implements SurveyService {
     @Autowired
     public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,
                              UserService userService, QuestionRepository questionRepository,
-                             SurveyMapper mapper, QuestionService questionService, SaveQuestionMapper saveQuestionMapper) {
+                             SurveyMapper mapper) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.repository = repository;
@@ -102,14 +105,15 @@ public class SurveyServiceImpl implements SurveyService {
                 survey,
                 survey.getSurveyContacts()
                         .stream()
-                        .filter(SurveyContact::isCanPass)
+                        .filter(SurveyContact::isCanNotPass)
                         .count(),
-                (long) survey.getSurveyContacts().size());
+                (long) survey.getSurveyContacts().size(),
+                new String(Base64.getEncoder().withoutPadding().encode((survey.getId() + "~" + survey.getTitle()).getBytes())));
     }
 
     @Override
     public void updateTitle(Long id, String title) {
-        Survey survey = repository.findFirstById(id)
+        Survey survey = repository.findFirstByIdAndUserEmail(id, getCurrentUserEmail())
                 .orElseThrow(SurveyNotFound::new);
         survey.setTitle(title);
         repository.update(survey);
@@ -117,7 +121,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public void updateStatus(Long id, SurveyStatus status) {
-        Survey survey = repository.findFirstById(id)
+        Survey survey = repository.findFirstByIdAndUserEmail(id, getCurrentUserEmail())
                 .orElseThrow(SurveyNotFound::new);
         survey.setStatus(status);
         repository.update(survey);
@@ -125,15 +129,15 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public long duplicate(DuplicateSurveySettings settings) {
-        Long id = userService.getAuthenticationId().orElseThrow(UserNotFound::new);
-        return repository.cloneSurvey(settings, id)
+        Long userId = userService.getAuthenticationId().orElseThrow(UserNotFound::new);
+        return repository.cloneSurvey(settings, userId)
                 .orElseThrow(SurveyNotFound::new)
                 .longValue();
     }
 
     @Override
     public void disable(Long id) {
-        Survey survey = repository.findFirstById(id)
+        Survey survey = repository.findFirstByIdAndUserEmail(id, getCurrentUserEmail())
                 .orElseThrow(SurveyNotFound::new);
         survey.setActive(false);
         repository.update(survey);
@@ -141,7 +145,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public void delete(Long id) {
-        Survey survey = repository.findFirstByIdForNormPeople(id)
+        Survey survey = repository.findFirstById(id)
                 .orElseThrow(SurveyNotFound::new);
         repository.delete(survey);
     }
@@ -149,11 +153,6 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public Optional<Survey> findFirstById(long surveyId) {
         return repository.findFirstById(surveyId);
-    }
-
-    @Override
-    public Optional<Survey> findFirstByIdForNormPeople(long surveyId) {
-        return repository.findFirstByIdForNormPeople(surveyId);
     }
 
     @Override
@@ -188,12 +187,21 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public boolean isCommonWithIdAndNameExist(Long id, String name) {
-        Optional<Survey> surveyOptional = findFirstByIdForNormPeople(id);
+        Optional<Survey> surveyOptional = findFirstById(id);
         if (!surveyOptional.isPresent()){
             return false;
         }
         Survey survey = surveyOptional.get();
         return survey.getType().equals(SurveyType.COMMON) && survey.getTitle().equals(name);
+    }
+
+    @Override
+    public List<String> getSurveyContacts(long surveyId){
+        return repository.findFirstById(surveyId).map(survey ->
+                survey.getSurveyContacts().stream()
+                        .map(surveyContact -> surveyContact.getContact().getEmail())
+                        .collect(Collectors.toList())
+        ).orElseThrow(SurveyNotFound::new);
     }
 
     @Override
