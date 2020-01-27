@@ -53,7 +53,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendEmailForUserAndSurvey(Long idUser, String surveyId, String[] emails) {
         User user = userRepository.findFirstById(idUser).orElseThrow(UserNotFound::new);
-        Survey survey = surveyRepository.findFirstByIdForNormPeople(Long.valueOf(surveyId)).orElseThrow(SurveyNotFound::new);
+        Survey survey = surveyRepository.findFirstById(Long.valueOf(surveyId)).orElseThrow(SurveyNotFound::new);
         for (String email : emails) {
             Contact contact = newContact(user, email);
             newSurveyContact(survey, contact);
