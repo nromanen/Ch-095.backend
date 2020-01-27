@@ -13,10 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.List;
 
 @Api(value = "Uploading photo")
@@ -42,12 +38,6 @@ public class FileUploadController {
             inputFile.transferTo(destinationFile);
         }
         return new ResponseEntity(HttpStatus.OK);
-    }
-
-    public static String getPhotoAsEncodeStrByFilename(String imageUploadDir, String filename) throws IOException {
-        Path path = Paths.get(imageUploadDir,filename);
-        byte[] arr = Files.readAllBytes(path);
-        return Base64.getEncoder().encodeToString(arr);
     }
 
     private boolean isValidPhoto(MultipartFile file) {

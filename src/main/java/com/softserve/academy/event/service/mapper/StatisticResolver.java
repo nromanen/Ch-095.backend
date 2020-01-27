@@ -2,29 +2,25 @@ package com.softserve.academy.event.service.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softserve.academy.event.controller.FileUploadController;
 import com.softserve.academy.event.entity.SurveyAnswer;
 import com.softserve.academy.event.entity.SurveyContact;
 import com.softserve.academy.event.entity.SurveyQuestion;
 import com.softserve.academy.event.entity.enums.SurveyQuestionType;
 import com.softserve.academy.event.exception.EncodePhotoException;
 import com.softserve.academy.event.exception.IncorrectDataDB;
-import org.springframework.beans.factory.annotation.Value;
+import com.softserve.academy.event.service.db.impl.QuestionServiceImpl;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 public class StatisticResolver {
 
-    private  static  String imageUploadDir;
-
-    @Value("${image.upload.dir}")
-    public void setImageUploadDir(String imageUploadDir) {
-        StatisticResolver.imageUploadDir = imageUploadDir;
-    }
 
     static List<String> parseChoiceAnswers(SurveyQuestion surveyQuestion){
         try {
@@ -45,7 +41,7 @@ public class StatisticResolver {
         List<String> encodeImages = new ArrayList<>();
         imageNames.forEach(choiceAnswer -> {
             try {
-                encodeImages.add(FileUploadController.getPhotoAsEncodeStrByFilename(imageUploadDir,choiceAnswer));
+                encodeImages.add(QuestionServiceImpl.getPhotoAsEncodeStrByFilename(choiceAnswer));
             } catch (IOException e) {
                 throw new EncodePhotoException();
             }
