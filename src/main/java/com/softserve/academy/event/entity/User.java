@@ -67,18 +67,4 @@ public class User implements Serializable {
         this.password = password;
         this.active = false;
     }
-
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getUsername() {
-        return email;
-    }
-
-    public Roles getRole() {
-        return role;
-    }
-
 }
