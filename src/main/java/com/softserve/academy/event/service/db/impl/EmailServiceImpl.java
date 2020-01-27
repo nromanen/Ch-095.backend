@@ -51,26 +51,17 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendEmailForUser(Long idUser, String surveyId, String[] emails) {
+    public void sendEmailForUserAndSurvey(Long idUser, String surveyId, String[] emails) {
         User user = userRepository.findFirstById(idUser).orElseThrow(UserNotFound::new);
         Survey survey = surveyRepository.findFirstByIdForNormPeople(Long.valueOf(surveyId)).orElseThrow(SurveyNotFound::new);
         for (String email : emails) {
             Contact contact = newContact(user, email);
             newSurveyContact(survey, contact);
-            Runnable task2 = () -> {
+            Runnable sending = () -> {
                 sendMail(email, subject, generateMessage(user.getEmail(), email, surveyId));
             };
-            new Thread(task2).start();
+            new Thread(sending).start();
         }
-    }
-
-    @Override
-    public void mailHealthCheck() throws MessagingException {
-        JavaMailSenderImpl mailSender = (JavaMailSenderImpl) javaMailSender;
-        Session session = Session.getInstance(mailSender.getJavaMailProperties(), null);
-        Transport transport = session.getTransport("smtp");
-        transport.connect(mailSender.getHost(), mailSender.getPort(), mailSender.getUsername(), mailSender.getPassword());
-        transport.close();
     }
 
     private String generateMessage(String userEmail, String contactEmail, String surveyId) {
@@ -115,6 +106,15 @@ public class EmailServiceImpl implements EmailService {
             return contact;
         }
         return contact;
+    }
+
+    @Override
+    public void checkMailAuthentication() throws MessagingException {
+        JavaMailSenderImpl mailSender = (JavaMailSenderImpl) javaMailSender;
+        Session session = Session.getInstance(mailSender.getJavaMailProperties(), null);
+        Transport transport = session.getTransport("smtp");
+        transport.connect(mailSender.getHost(), mailSender.getPort(), mailSender.getUsername(), mailSender.getPassword());
+        transport.close();
     }
 
     @Override

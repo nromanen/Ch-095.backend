@@ -40,8 +40,8 @@ public class SendEmailController {
         EmailValidator.validate(emails);
         Long idUser = service.getAuthenticationId().orElseThrow(UserNotFound::new);
         String idSurvey = emailDTO.getSurveyId();
-        emailService.mailHealthCheck();
-        emailService.sendEmailForUser(idUser, idSurvey, emails);
+        emailService.checkMailAuthentication();
+        emailService.sendEmailForUserAndSurvey(idUser, idSurvey, emails);
     }
 
     @GetMapping("/availableContacts")

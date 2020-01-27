@@ -74,5 +74,4 @@ public class EmailConfig {
         properties.setProperty("mail.debug", mailDebug);
         return properties;
     }
-
 }
