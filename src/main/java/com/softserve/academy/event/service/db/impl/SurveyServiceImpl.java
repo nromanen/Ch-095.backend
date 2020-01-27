@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -79,9 +81,10 @@ public class SurveyServiceImpl implements SurveyService {
                 survey,
                 survey.getSurveyContacts()
                         .stream()
-                        .filter(SurveyContact::isCanPass)
+                        .filter(SurveyContact::isCanNotPass)
                         .count(),
-                (long) survey.getSurveyContacts().size());
+                (long) survey.getSurveyContacts().size(),
+                new String(Base64.getEncoder().withoutPadding().encode((survey.getId() + "~" + survey.getTitle()).getBytes())));
     }
 
     @Override
@@ -118,7 +121,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public void delete(Long id) {
-        Survey survey = repository.findFirstByIdForNormPeople(id)
+        Survey survey = repository.findFirstById(id)
                 .orElseThrow(SurveyNotFound::new);
         repository.delete(survey);
     }

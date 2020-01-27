@@ -30,4 +30,8 @@ public class SurveyContact implements Serializable {
     @Column(name = "can_pass")
     private boolean canPass;
 
+    public boolean isCanNotPass(){
+        return !canPass;
+    }
+
 }
