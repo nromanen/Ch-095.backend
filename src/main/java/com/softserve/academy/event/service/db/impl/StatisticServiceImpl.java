@@ -67,12 +67,6 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     @Transactional
     public void isSurveyBelongsUser(Long surveyId) {
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // unneeded, read SecurityUserUtils!
-//        if (!(principal instanceof UserDetails)) {
-//            log.info("Throw UnauthorizedException");
-//            throw new UnauthorizedException();
-//        }
-//        UserDetails userDetails = (UserDetails) principal;
         Optional<Survey> survey = surveyRepository.findFirstById(surveyId);
 
         if (!survey.isPresent()) {
