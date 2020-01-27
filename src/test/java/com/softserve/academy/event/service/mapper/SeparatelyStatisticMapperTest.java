@@ -1,6 +1,5 @@
 package com.softserve.academy.event.service.mapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.softserve.academy.event.dto.OneQuestionSeparatelyStatisticDTO;
 import com.softserve.academy.event.dto.QuestionsSeparatelyStatisticDTO;
 import com.softserve.academy.event.entity.*;
@@ -56,14 +55,22 @@ class SeparatelyStatisticMapperTest {
 
         Iterator<SurveyContact> contactIterator = contacts.iterator();
         SurveyAnswer surveyAnswer = new SurveyAnswer();
+        surveyAnswer.setQuestion(question);
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        Respondent respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(1L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"Vlad\"]");
         answerSet.add(surveyAnswer);
 
         surveyAnswer = new SurveyAnswer();
+        surveyAnswer.setQuestion(question);
         surveyAnswer.setId(2L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(2L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"Ivan\"]");
         answerSet.add(surveyAnswer);
 
@@ -79,18 +86,25 @@ class SeparatelyStatisticMapperTest {
         question.setQuestion("What's time?");
         answerSet = new HashSet<>();
 
-
         contactIterator = contacts.iterator();
         surveyAnswer = new SurveyAnswer();
+        surveyAnswer.setQuestion(question);
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(1L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"1 p.m.\"]");
         answerSet.add(surveyAnswer);
 
         surveyAnswer = new SurveyAnswer();
+        surveyAnswer.setQuestion(question);
         surveyAnswer.setId(2L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
-        surveyAnswer.setValue("[\"1 p.m.\",\"3 p.m.\"]");
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(2L);
+        surveyAnswer.setRespondent(respondent);
+        surveyAnswer.setValue("[\"3 p.m.\"]");
         answerSet.add(surveyAnswer);
 
         question.setSurveyAnswers(answerSet);
@@ -108,14 +122,22 @@ class SeparatelyStatisticMapperTest {
         contactIterator = contacts.iterator();
         surveyAnswer = new SurveyAnswer();
         surveyAnswer.setId(1L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        surveyAnswer.setQuestion(question);
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(1L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"Monday\"]");
         answerSet.add(surveyAnswer);
 
 
         surveyAnswer = new SurveyAnswer();
         surveyAnswer.setId(2L);
-        surveyAnswer.setContact(contactIterator.next().getContact());
+        surveyAnswer.setQuestion(question);
+        respondent = new Respondent();
+        respondent.setContact(contactIterator.next().getContact());
+        respondent.setId(2L);
+        surveyAnswer.setRespondent(respondent);
         surveyAnswer.setValue("[\"Monday\",\"Sunday\"]");
         answerSet.add(surveyAnswer);
 
@@ -196,7 +218,7 @@ class SeparatelyStatisticMapperTest {
         oneQuestion.setType(SurveyQuestionType.RADIOBUTTON);
         oneQuestion.setQuestion("What's time?");
         oneQuestion.setChoiceAnswers(Arrays.asList("1 a.m.","1 p.m.","3 p.m."));
-        oneQuestion.setAnswer(Arrays.asList("1 p.m.","3 p.m."));
+        oneQuestion.setAnswer(Arrays.asList("3 p.m."));
         oneQuestionSet.add(oneQuestion);
         questions.setQuestionDTOS(oneQuestionSet);
 
@@ -239,7 +261,7 @@ class SeparatelyStatisticMapperTest {
         survey.setSurveyQuestions(surveyQuestions);
         Set<QuestionsSeparatelyStatisticDTO> actual;
         actual =separatelyStatisticMapper.toSetQuestionsDTO(survey);
-       assertTrue(actual.isEmpty());
+        assertTrue(actual.isEmpty());
     }
 
     @Test
@@ -280,7 +302,11 @@ class SeparatelyStatisticMapperTest {
         SurveyAnswer surveyAnswer = new SurveyAnswer();
         surveyAnswer.setValue("asdzxc89");
         surveyAnswers.add(surveyAnswer);
-        surveyAnswer.setContact(contact);
+        surveyAnswer.setQuestion(question);
+        Respondent respondent = new Respondent();
+        respondent.setId(1L);
+        respondent.setContact(contact);
+        surveyAnswer.setRespondent(respondent);
         question.setSurveyAnswers(surveyAnswers);
         question.setType(SurveyQuestionType.TEXTAREA);
         question.setChoiceAnswers("[]");

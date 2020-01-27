@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Base64;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,7 +46,8 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Autowired
     public SurveyServiceImpl(UserRepository userRepository, SurveyRepository repository,
-                             UserService userService, QuestionRepository questionRepository, SurveyMapper mapper) {
+                             UserService userService, QuestionRepository questionRepository,
+                             SurveyMapper mapper) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.repository = repository;
@@ -80,9 +83,10 @@ public class SurveyServiceImpl implements SurveyService {
                 survey,
                 survey.getSurveyContacts()
                         .stream()
-                        .filter(SurveyContact::isCanPass)
+                        .filter(SurveyContact::isCanNotPass)
                         .count(),
-                (long) survey.getSurveyContacts().size());
+                (long) survey.getSurveyContacts().size(),
+                new String(Base64.getEncoder().withoutPadding().encode((survey.getId() + "~" + survey.getTitle()).getBytes())));
     }
 
     @Override
@@ -155,6 +159,15 @@ public class SurveyServiceImpl implements SurveyService {
         }
         Survey survey = surveyOptional.get();
         return survey.getType().equals(SurveyType.COMMON) && survey.getTitle().equals(name);
+    }
+
+    @Override
+    public List<String> getSurveyContacts(long surveyId){
+        return repository.findFirstById(surveyId).map(survey ->
+                survey.getSurveyContacts().stream()
+                        .map(surveyContact -> surveyContact.getContact().getEmail())
+                        .collect(Collectors.toList())
+        ).orElseThrow(SurveyNotFound::new);
     }
 
 }

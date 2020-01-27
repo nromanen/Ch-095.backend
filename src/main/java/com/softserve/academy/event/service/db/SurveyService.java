@@ -31,5 +31,7 @@ public interface SurveyService {
     Survey updateSurvey(Long surveyId, List<SurveyQuestion> surveyQuestions);
 
     boolean isCommonWithIdAndNameExist(Long id, String name);
+
+    List<String> getSurveyContacts(long surveyId);
 }
 
