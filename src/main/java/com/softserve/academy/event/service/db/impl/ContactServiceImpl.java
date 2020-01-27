@@ -44,6 +44,11 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
+    public List<Contact> findAllByCurrentUser() {
+        return repository.findAllByUserEmail(getCurrentUserEmail());
+    }
+
+    @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Page<Contact> findAllByPageableAndFilter(Pageable pageable, String filter) {
         if (Objects.nonNull(filter) && filter.length() > 0) {

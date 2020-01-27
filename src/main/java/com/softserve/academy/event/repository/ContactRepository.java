@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface ContactRepository extends BasicRepository<Contact, Long> {
 
+    List<Contact> findAllByUserEmail(String userEmail);
+
     void saveWithConflictUpdate(Contact contact);
 
     void saveWithConflictIgnore(Contact contact);

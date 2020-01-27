@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface ContactService extends BasicService<Contact, Long>  {
 
+    List<Contact> findAllByCurrentUser();
+
     Optional<Long> getIdByEmail(String email);
 
     boolean canPass(Long surveyId, String contactEmail);
