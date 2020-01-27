@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public interface ContactMapper {
 
-    ItemDTO<Long> toItemDTO(Long id);
+    <T> ItemDTO<T> toItemDTO(T id);
     ContactDTO toDTO(Contact contact);
     List<ContactDTO> toListDTO(List<Contact> contact);
     Page<ContactDTO> toPageDTO(Page<Contact> contacts);

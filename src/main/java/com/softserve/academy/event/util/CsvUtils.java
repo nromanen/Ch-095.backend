@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 
 public class CsvUtils {
@@ -22,11 +20,11 @@ public class CsvUtils {
         return mapper.reader(schema).forType(clazz).<T>readValues(stream).readAll();
     }
 
-    public static void write(Class<?> clazz, CsvSchema schema, OutputStream stream, List<?> items) throws IOException {
+    public static void write(Class<?> clazz, CsvSchema schema, Writer writer, List<?> items) throws IOException {
         mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true)
                 .writer(schema)
                 .forType(clazz)
-                .writeValues(stream)
+                .writeValues(writer)
                 .writeAll(items);
     }
 
