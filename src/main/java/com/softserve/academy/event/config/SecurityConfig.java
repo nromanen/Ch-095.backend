@@ -1,7 +1,6 @@
 package com.softserve.academy.event.config;
 
 import com.softserve.academy.event.service.MyAuthenticationEntryPoint;
-import com.softserve.academy.event.service.MyAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,11 +27,11 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,17 +53,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MyAuthenticationEntryPoint myAuthenticationEntryPoint;
 
-    private final MyAuthenticationSuccessHandler mySuccessHandler;
-
-    private final SimpleUrlAuthenticationFailureHandler myFailureHandler = new SimpleUrlAuthenticationFailureHandler();
-
     private final Environment env;
 
     @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService, MyAuthenticationEntryPoint myAuthenticationEntryPoint, MyAuthenticationSuccessHandler mySuccessHandler, Environment env) {
+    public SecurityConfig(UserDetailsService userDetailsService, MyAuthenticationEntryPoint myAuthenticationEntryPoint, Environment env) {
         this.userDetailsService = userDetailsService;
         this.myAuthenticationEntryPoint = myAuthenticationEntryPoint;
-        this.mySuccessHandler = mySuccessHandler;
         this.env = env;
     }
 
@@ -74,19 +68,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().configurationSource(e -> corsConfiguration())
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(myAuthenticationEntryPoint)
                 .and()
                 .httpBasic()
+                .authenticationEntryPoint(myAuthenticationEntryPoint)
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/resendRegistrationToken", "/registrationConfirm", "/registration").permitAll()
                 .antMatchers("/oauth_login", "/loginSuccess", "/loginFailure", "/authenticatedEmail").permitAll()
                 .antMatchers("/question", "/question/common/{token}", "/testAccess/{token}", "/testAccess/common/{token}", "/testAccess/check").permitAll()
                 .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .successHandler(mySuccessHandler)
-                .failureHandler(myFailureHandler)
                 .and()
                 .logout()
                     .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
