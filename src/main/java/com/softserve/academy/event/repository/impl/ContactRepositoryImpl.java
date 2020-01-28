@@ -21,6 +21,15 @@ import static com.softserve.academy.event.util.SecurityUserUtil.getCurrentUserEm
 public class ContactRepositoryImpl extends BasicRepositoryImpl<Contact, Long> implements ContactRepository {
 
     @Override
+    @SuppressWarnings("unchecked")
+    public List<Contact> findAllByUserEmail(String userEmail) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from " + clazz.getName() + " where user.email = :email")
+                .setParameter("email", userEmail)
+                .getResultList();
+    }
+
+    @Override
     public void saveWithConflictUpdate(Contact contact) {
         sessionFactory.getCurrentSession()
                 .createNativeQuery("INSERT INTO contacts(name, email, user_id)" +

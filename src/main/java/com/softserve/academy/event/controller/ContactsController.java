@@ -56,7 +56,7 @@ public class ContactsController {
     public ResponseEntity<ItemDTO<String>> exportCsv() throws IOException {
         try (StringWriter writer = new StringWriter()) {
             CsvUtils.write(ContactDTO.class, CsvUtils.CONTACT_WITH_HEADER_SCHEMA,
-                    writer, mapper.toListDTO(service.findAll()));
+                    writer, mapper.toListDTO(service.findAllByCurrentUser()));
             return ResponseEntity.ok(mapper.toItemDTO(writer.getBuffer().toString()));
         }
     }
